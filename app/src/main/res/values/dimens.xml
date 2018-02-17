@@ -1,0 +1,64 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
+    <dimen name="nav_header_height">160dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">10dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="terms_margin">20dp</dimen>
+
+    <dimen name="search_card">50dp</dimen>
+    <dimen name="search_card_margi_virtcal">20dp</dimen>
+    <dimen name="search_card_margin_horizontal">30dp</dimen>
+    <dimen name="search_text_margin">10dp</dimen>
+    <dimen name="search_text_drawable_pading">20dp</dimen>
+    <dimen name="search_card_elevation">5dp</dimen>
+    <dimen name="scroll_margin_top">90dp</dimen>
+
+    <dimen name="row_icon_size">50dp</dimen>
+    <dimen name="deal_foru_size">400dp</dimen>
+    <dimen name="deal_margin">10dp</dimen>
+
+    <dimen name="deal_text_margin">10dp</dimen>
+    <dimen name="deal_small_text_margin">30dp</dimen>
+
+    <!--Registration-->
+    <dimen name="registration_text_margin">10dp</dimen>
+    <dimen name="registration_card_vertical_margin">10dp</dimen>
+    <dimen name="registration_card_horizontal_margin">10dp</dimen>
+    <dimen name="registration_edit_horizontal_margin">5dp</dimen>
+    <dimen name="registration_padding_drawable_margin">10dp</dimen>
+    <dimen name="registration_scroll_margin">60dp</dimen>
+    <dimen name="registration_button_horizontal_margin">10dp</dimen>
+    <dimen name="registration_button_drawable_margin">20dp</dimen>
+
+    <!--MoreFragment-->
+    <dimen name="list_image_size">30dp</dimen>
+    <dimen name="more_list_image_margin_vertical">10dp</dimen>
+    <dimen name="more_list_image_margin_horizontal">20dp</dimen>
+    <dimen name="more_list_text_margin_horizontal">20dp</dimen>
+    <dimen name="more_profile_linear_margin_horizontal">20dp</dimen>
+
+    <!--Select id Upload activity-->
+    <dimen name="id_header_margin_horizontal">20dp</dimen>
+    <dimen name="id_header_margin_vertical">10dp</dimen>
+    <dimen name="id_linear_margin_horizontal">20dp</dimen>
+    <dimen name="id_linear_margin_vertical">10dp</dimen>
+    <dimen name="id_type_margin_vertical">10dp</dimen>
+    <dimen name="id_type_margin_horizontal">10dp</dimen>
+
+    <!--Upload Id-->
+    <dimen name="upload_margin_horizontal">20dp</dimen>
+    <dimen name="upload_margin_vertical">10dp</dimen>
+    <dimen name="upload_size">310dp</dimen>
+
+    <!--MapActivity-->
+    <dimen name="map_card_margin_horizontal">20dp</dimen>
+    <dimen name="map_card_margin_vertical">20dp</dimen>
+    <dimen name="map_card_size">50dp</dimen>
+    <dimen name="search_pading">5dp</dimen>
+
+    <dimen name="item_offset">2dp</dimen>
+
+</resources>

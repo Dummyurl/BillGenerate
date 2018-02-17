@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#D7CCC8"
+        android:gravity="center"
+        >
+
+
+        <Button
+            android:id="@+id/create_property"
+            android:layout_width="200dp"
+            android:layout_marginTop="10dp"
+            android:layout_height="wrap_content"
+            android:text="Create Property"
+            android:layout_centerHorizontal="true"
+            />
+
+        <Button
+            android:id="@+id/create_room"
+            android:layout_width="200dp"
+            android:layout_marginTop="10dp"
+            android:layout_height="wrap_content"
+            android:text="Create Room"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/create_property"
+            />
+
+        <Button
+            android:id="@+id/create_plan"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="Create plan"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/create_room"
+            />
+
+
+
+        <Button
+            android:id="@+id/create_bill"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="Create Bill"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/create_plan"
+            />
+
+
+
+
+
+
+    </RelativeLayout>
+
+</LinearLayout>
