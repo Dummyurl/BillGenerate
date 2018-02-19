@@ -18,6 +18,7 @@ public class BillDataBase extends SQLiteOpenHelper {
 
     public static final String BILL_TABLE_NAME = "bill";
     public static final String BILL_COLUMN_ID = "_id";
+    public static final String BILL_COLUMN_BOOKINGID = "bookingid";
     public static final String BILL_COLUMN_PROPERTY = "property";
     public static final String BILL_COLUMN_LOCATION = "location";
     public static final String BILL_COLUMN_CITY = "city";
@@ -47,6 +48,7 @@ public class BillDataBase extends SQLiteOpenHelper {
         db.execSQL(
                 "CREATE TABLE " + BILL_TABLE_NAME +
                         "(" + BILL_COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                        BILL_COLUMN_BOOKINGID + " TEXT, " +
                         BILL_COLUMN_PROPERTY + " TEXT, " +
                         BILL_COLUMN_LOCATION + " TEXT, " +
                         BILL_COLUMN_CITY + " TEXT, " +
@@ -73,13 +75,14 @@ public class BillDataBase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertBILL(String property,String city,String location,String guest,
+    public boolean insertBILL(String bookingID,String property,String city,String location,String guest,
                               String mobile,String bdate,String cit,String cot,String room,
                               String nor,String totguest,String plan,String payment,
                               String inclusion,String amount,String booking,String zingo) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
+        contentValues.put(BILL_COLUMN_BOOKINGID, bookingID);
         contentValues.put(BILL_COLUMN_PROPERTY, property);
         contentValues.put(BILL_COLUMN_LOCATION, city);
         contentValues.put(BILL_COLUMN_CITY, location);

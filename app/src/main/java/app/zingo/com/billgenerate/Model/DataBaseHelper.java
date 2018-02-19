@@ -7,6 +7,9 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by CSC on 2/17/2018.
  */
@@ -22,6 +25,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String PROPERTY_COLUMN_LOCATION = "location";
     public static final String PROPERTY_COLUMN_CITY = "city";
     public static final String PROPERTY_COLUMN_EMAIL = "mail";
+    public String property_name;
 
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME , null, DATABASE_VERSION);
@@ -69,12 +73,21 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery("SELECT * FROM " + PROPERTY_TABLE_NAME + " WHERE " +
                 PROPERTY_COLUMN_NAME + "=?", new String[]{name});
+        property_name = res.getString(res.getColumnIndex(name));
+        System.out.println("Name=="+property_name);
         return res;
     }
 
     public Cursor getAllProperty() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery( "SELECT * FROM " + PROPERTY_TABLE_NAME, null );
+       // String s1 = res.getString(res.getColumnNames());
+        List<String> array = new ArrayList<String>();
+        while(res.moveToNext()){
+            String uname = res.getString(res.getColumnIndex("name"));
+            System.out.println("Name=="+uname);
+            array.add(uname);
+        }
         return res;
     }
 }

@@ -1,20 +1,30 @@
 package app.zingo.com.billgenerate;
 
 import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -31,6 +41,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.File;
@@ -38,8 +49,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -50,12 +63,15 @@ import com.itextpdf.text.Anchor;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chapter;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.List;
 import com.itextpdf.text.ListItem;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Section;
@@ -66,15 +82,16 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import app.zingo.com.billgenerate.Model.BillDataBase;
 import app.zingo.com.billgenerate.Model.DataBaseHelper;
+import app.zingo.com.billgenerate.Model.Permission;
 import app.zingo.com.billgenerate.Model.PlanDataBase;
 import app.zingo.com.billgenerate.Model.RoomDataBase;
 
 public class BillDetails extends AppCompatActivity {
-    
-    Spinner mProperty,mRoomType,mRoomCount,mRate,mPayment;
-    EditText mLocation,mCity,mGuest,mMobile,
-            mGuestCount,mDesc,mTotal,mBooking,mZingo;
-    TextView mBook,mCID,mCOD;
+
+    Spinner mRoomCount, mPayment;
+    EditText mLocation, mCity, mGuest, mMobile, mProperty, mRoomType, mRate,
+            mGuestCount, mDesc, mTotal, mBooking, mZingo, mBookingID, mEmail, mOTA;
+    TextView mBook, mCID, mCOD;
     Button mSave;
 
     //Databaases
@@ -88,32 +105,55 @@ public class BillDetails extends AppCompatActivity {
     boolean boolean_save;
     Bitmap bitmap;
     ProgressDialog progressDialog;
+    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
+    private static final int REQUEST_RUNTIME_PERMISSION = 123;
+
+
+    //pdf
+    String property, email, ota, city, location, guest, mobile, bdate, cit, cot, rooms, roomNum, count, plans, payment, desc, total, booking, zingo;
+    Document document;
+    Paragraph paragraph;
+    String propertyN;
+    String[] headers = {"Description", "Details"};
 
     public static Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18,
-            Font.BOLD);
+            Font.NORMAL, BaseColor.RED);
+
+    public static Font catFonts = new Font(Font.FontFamily.TIMES_ROMAN, 12,
+            Font.NORMAL, BaseColor.RED);
     private static Font redFont = new Font(Font.FontFamily.TIMES_ROMAN, 12,
             Font.NORMAL, BaseColor.RED);
     private static Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 16,
             Font.BOLD);
     private static Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12,
             Font.BOLD);
+    private static Font smallBolds = new Font(Font.FontFamily.TIMES_ROMAN, 12,
+            Font.UNDERLINE, BaseColor.RED);
+
+
+    private static Font small = new Font(Font.FontFamily.TIMES_ROMAN, 12,
+            Font.NORMAL);
 
     File destination = new File(Environment.getExternalStorageDirectory(),
             System.currentTimeMillis() + ".pdf");
-
+    File path = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + System.currentTimeMillis() + ".pdf");
+    private String bookingID;
+    private int STORAGE_PERMISSION_CODE = 23;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bill_details);
-        
-        mProperty = (Spinner) findViewById(R.id.bill_property_name);
-        mRoomType = (Spinner) findViewById(R.id.bill_property_room);
-        mRate = (Spinner) findViewById(R.id.bill_property_rate);
+
+        mProperty = (EditText) findViewById(R.id.bill_property_name);
+        mRoomType = (EditText) findViewById(R.id.bill_property_room);
+        mRate = (EditText) findViewById(R.id.bill_property_rate);
         mRoomCount = (Spinner) findViewById(R.id.bill_property_room_num);
         mPayment = (Spinner) findViewById(R.id.bill_property_payment);
         mLocation = (EditText) findViewById(R.id.bill_property_location);
+        mEmail = (EditText) findViewById(R.id.bill_property_emal);
+        mBookingID = (EditText) findViewById(R.id.bill_booking_id);
         mCity = (EditText) findViewById(R.id.bill_property_city);
         mGuest = (EditText) findViewById(R.id.bill_guest_name);
         mMobile = (EditText) findViewById(R.id.bill_guest_mobile);
@@ -122,6 +162,7 @@ public class BillDetails extends AppCompatActivity {
         mTotal = (EditText) findViewById(R.id.bill_property_amount);
         mBooking = (EditText) findViewById(R.id.bill_booking_com);
         mZingo = (EditText) findViewById(R.id.bill_zingo_com);
+        mOTA = (EditText) findViewById(R.id.bill_booking_ota);
         mBook = (TextView) findViewById(R.id.bill_property_booking);
         mCID = (TextView) findViewById(R.id.bill_property_checkiin);
         mCOD = (TextView) findViewById(R.id.bill_property_checkout);
@@ -159,35 +200,12 @@ public class BillDetails extends AppCompatActivity {
         room = new RoomDataBase(this);
         plan = new PlanDataBase(this);
 
-        getProperty();
+       /* getProperty();
         getRoom();
-        getPlan();
+        getPlan();*/
         fn_permission();
+        //Permission.checkPermission(BillDetails.this);
 
-        mRate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String plan = mRate.getSelectedItem().toString();
-               // getPlanDesc(plan);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        mProperty.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String name = mProperty.getSelectedItem().toString();
-                //getPropertyDet(name);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
 
         mSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -199,55 +217,105 @@ public class BillDetails extends AppCompatActivity {
 
     }
 
-    public void validate(){
+    public void validate() {
 
-        String property = mProperty.getSelectedItem().toString();
-        String room = mRoomType.getSelectedItem().toString();
-        String plan = mRate.getSelectedItem().toString();
-        String roomNum = mRoomCount.getSelectedItem().toString();
-        String payment = mPayment.getSelectedItem().toString();
-        String location = mLocation.getText().toString();
-        String city = mCity.getText().toString();
-        String guest = mGuest.getText().toString();
-        String mobile = mMobile.getText().toString();
-        String count = mGuestCount.getText().toString();
-        String desc = mDesc.getText().toString();
-        String total = mTotal.getText().toString();
-        String booking = mBooking.getText().toString();
-        String zingo = mZingo.getText().toString();
-        String bdate = mBook.getText().toString();
-        String cit = mCID.getText().toString();
-        String cot = mCOD.getText().toString();
+        property = mProperty.getText().toString();
+        rooms = mRoomType.getText().toString();
+        plans = mRate.getText().toString();
+        roomNum = mRoomCount.getSelectedItem().toString();
+        payment = mPayment.getSelectedItem().toString();
+        bookingID = mBookingID.getText().toString();
+        location = mLocation.getText().toString();
+        city = mCity.getText().toString();
+        guest = mGuest.getText().toString();
+        mobile = mMobile.getText().toString();
+        email = mEmail.getText().toString();
+        count = mGuestCount.getText().toString();
+        desc = mDesc.getText().toString();
+        total = mTotal.getText().toString();
+        booking = mBooking.getText().toString();
+        zingo = mZingo.getText().toString();
+        bdate = mBook.getText().toString();
+        cit = mCID.getText().toString();
+        cot = mCOD.getText().toString();
+        ota = mOTA.getText().toString();
+        System.out.println("Print"+String.valueOf(path));
 
-        if(location == null || location.isEmpty()){
+        if (location == null || location.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        }else if(city == null || city.isEmpty()){
+        } else if (city == null || city.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        }else if(guest == null || guest.isEmpty()){
+        } else if (guest == null || guest.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        }else if(mobile == null || mobile.isEmpty()){
+        } else if (mobile == null || mobile.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        }else if(count == null || count.isEmpty()){
+        } else if (count == null || count.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        }else if(desc == null || desc.isEmpty()){
+        } else if (desc == null || desc.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        }else if(total == null || total.isEmpty()){
+        } else if (total == null || total.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        }else if(booking == null || booking.isEmpty()){
+        } else if (booking == null || booking.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        }else if(zingo == null || zingo.isEmpty()){
+        } else if (zingo == null || zingo.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        }else if(bdate == null || bdate.isEmpty()){
+        } else if (bdate == null || bdate.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        }else if(cit == null || cit.isEmpty()){
+        } else if (cit == null || cit.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        }else if(cot == null || cot.isEmpty()){
+        } else if (cot == null || cot.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        }else{
-            if(bill.insertBILL(property,city,location,guest,mobile,bdate,cit,cot,room,roomNum,count,plan,payment,desc,total,booking,zingo)) {
+        } else if (email == null || email.isEmpty()) {
+            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else if (ota == null || ota.isEmpty()) {
+            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else {
+
+            //createPdf();
+            if (bill.insertBILL(bookingID, property, city, location, guest, mobile, bdate, cit, cot, rooms, roomNum, count, plans, payment, desc, total, booking, zingo)) {
                 createPdf();
-            }
-            else{
+                //boolean result = isStoragePermissionGranted();
+                boolean result= Permission.checkPermission(BillDetails.this);
+
+                if(isReadStorageAllowed()){
+                    String[] mailto = {email};
+                    Uri uri = Uri.fromFile(path);
+                    System.out.println("path" + String.valueOf(destination));
+
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Hotel Partner,\n" +
+                            "We Thank you for your continued support in ensuring the highest level of service Standards. \n" +
+                            "\n" +
+                            "Please find the attached reservation for you.");
+                    emailIntent.setType("application/pdf");
+                    emailIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+
+                    startActivity(Intent.createChooser(emailIntent, "Send email using:"));
+                }
+                requestStoragePermission();
+
+                /*Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                Uri uri = null;
+                //Uri.fromFile(path);
+
+                String[] mailto = {email};uri = FileProvider.getUriForFile(BillDetails.this,
+                        getString(R.string.file_provider_authority),
+                        path);
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
+                emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Hotel Partner,\n" +
+                        "We Thank you for your continued support in ensuring the highest level of service Standards. \n" +
+                        "\n" +
+                        "Please find the attached reservation for you.");
+                emailIntent.setType("application/pdf");
+                emailIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+
+                startActivity(Intent.createChooser(emailIntent, "Send email using:"));
+*/
+
+            } else {
                 Toast.makeText(getApplicationContext(), "Could not Insert Bill", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -255,17 +323,20 @@ public class BillDetails extends AppCompatActivity {
             }
         }
 
+
     }
 
-    private void createPdf(){
+    private void createPdf() {
 
         try {
-            Document document = new Document();
+            document = new Document();
             PdfWriter.getInstance(document, new FileOutputStream(destination));
             document.open();
             addMetaData(document);
-            addTitlePage(document);
-            addContent(document);
+            //addTitles();
+            addParagraph();
+            // addTitlePage(document);
+            //addContent(document);
             document.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -273,128 +344,151 @@ public class BillDetails extends AppCompatActivity {
 
     }
 
-    private static void addMetaData(Document document) {
-        document.addTitle("My first PDF");
-        document.addSubject("Using iText");
+    private void addMetaData(Document document) {
+
+        document.addTitle("Title");
+        document.addSubject("Subject");
         document.addKeywords("Java, PDF, iText");
         document.addAuthor("Lars Vogel");
         document.addCreator("Lars Vogel");
     }
 
-    private static void addTitlePage(Document document)
-            throws DocumentException {
-        Paragraph preface = new Paragraph();
-        // We add one empty line
-        addEmptyLine(preface, 1);
-        // Lets write a big header
-        preface.add(new Paragraph("Title of the document", catFont));
+    public void addTitles() {
 
-        addEmptyLine(preface, 1);
-        // Will create: Report generated by: _name, _date
-        preface.add(new Paragraph(
-                "Report generated by: " + System.getProperty("user.name") + ", " + new Date(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                smallBold));
-        addEmptyLine(preface, 3);
-        preface.add(new Paragraph(
-                "This document describes something which is very important ",
-                smallBold));
+        try {
+            paragraph = new Paragraph();
 
-        addEmptyLine(preface, 8);
+            //paragraph.setSpacingAfter(30);
+            addParagraph();
 
-        preface.add(new Paragraph(
-                "This document is a preliminary version and not subject to your license agreement or any other agreement with vogella.com ;-).",
-                redFont));
+            document.add(paragraph);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        document.add(preface);
-        // Start a new page
-        document.newPage();
-    }
-
-    private static void addContent(Document document) throws DocumentException {
-        Anchor anchor = new Anchor("First Chapter", catFont);
-        anchor.setName("First Chapter");
-
-        // Second parameter is the number of the chapter
-        Chapter catPart = new Chapter(new Paragraph(anchor), 1);
-
-        Paragraph subPara = new Paragraph("Subcategory 1", subFont);
-        Section subCatPart = catPart.addSection(subPara);
-        subCatPart.add(new Paragraph("Hello"));
-
-        subPara = new Paragraph("Subcategory 2", subFont);
-        subCatPart = catPart.addSection(subPara);
-        subCatPart.add(new Paragraph("Paragraph 1"));
-        subCatPart.add(new Paragraph("Paragraph 2"));
-        subCatPart.add(new Paragraph("Paragraph 3"));
-
-        // add a list
-        createList(subCatPart);
-        Paragraph paragraph = new Paragraph();
-        addEmptyLine(paragraph, 5);
-        subCatPart.add(paragraph);
-
-        // add a table
-        createTable(subCatPart);
-
-        // now add all this to the document
-        document.add(catPart);
-
-        // Next section
-        anchor = new Anchor("Second Chapter", catFont);
-        anchor.setName("Second Chapter");
-
-        // Second parameter is the number of the chapter
-        catPart = new Chapter(new Paragraph(anchor), 1);
-
-        subPara = new Paragraph("Subcategory", subFont);
-        subCatPart = catPart.addSection(subPara);
-        subCatPart.add(new Paragraph("This is a very important message"));
-
-        // now add all this to the document
-        document.add(catPart);
 
     }
 
-    private static void createTable(Section subCatPart)
+    public void addChild(Paragraph para) {
+        para.setAlignment(Element.ALIGN_CENTER);
+        paragraph.add(para);
+
+    }
+
+    public void addFooter(Paragraph para) {
+        para.setAlignment(Element.ALIGN_BOTTOM);
+        paragraph.add(para);
+
+    }
+
+
+    public void addParagraph() {
+        try {
+            paragraph = new Paragraph();
+
+            String text = "Dear Hotel Partner,\n" + "We Thank you for your continued support in ensuring the highest level of service Standards. Please find the reservation for you. ";
+            String important = "IMPORTANT NOTE:";
+            String footer =
+                            "                                                                         ZingoHotels.com\n" +
+                            "#702, 6th A Cross, Behind BDA Complex, Above Kanti Sweets, Koramangala 3rd Block, Blore-560034\n" +
+                            "                                                                        www.Zingohotels.com";
+            String note = "Under no circumstances must you charge guest for services listed on this voucher!\n" + "Only payments for extra services are to be collected from clients\n" + "Hotel shall issue invoice to the customer/guests, as and when required by the customer/Guest";
+            addChild(new Paragraph("                                   Lucida Hospitality Pvt Ltd", catFont));
+            //addImage(paragraph);
+            addEmptyLine(paragraph, 1);
+            addChild(new Paragraph("                        Mob: +91- 7065 651 651 | Email- hello@zingohotels.com", subFont));
+            // addChild(new Paragraph("Email- hello@zingohotels.com",subFont));
+
+
+            //paragraph = new Paragraph(text,smallBold);
+            addEmptyLine(paragraph, 2);
+            paragraph.add(new Paragraph("Booking ID: " + bookingID, smallBolds));
+            paragraph.add(new Paragraph("Booking Source: " + ota, smallBolds));
+            addEmptyLine(paragraph,1);
+            paragraph.add(new Paragraph(text, smallBold));
+            addEmptyLine(paragraph, 2);
+            createTables(paragraph);
+            addEmptyLine(paragraph, 2);
+            addChild(new Paragraph(important, subFont));
+            addChild(new Paragraph(note, small));
+            addEmptyLine(paragraph, 2);
+            addFooter(new Paragraph(footer, catFonts));
+
+            document.add(paragraph);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void createTables(Paragraph para)
             throws BadElementException {
-        PdfPTable table = new PdfPTable(3);
+        PdfPTable table = new PdfPTable(2);
 
         // t.setBorderColor(BaseColor.GRAY);
         // t.setPadding(4);
         // t.setSpacing(4);
         // t.setBorderWidth(1);
 
-        PdfPCell c1 = new PdfPCell(new Phrase("Table Header 1"));
+        PdfPCell c1 = new PdfPCell(new Phrase("Description"));
         c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        c1.setBackgroundColor(BaseColor.GRAY);
         table.addCell(c1);
 
-        c1 = new PdfPCell(new Phrase("Table Header 2"));
+        c1 = new PdfPCell(new Phrase("Details"));
         c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-        table.addCell(c1);
-
-        c1 = new PdfPCell(new Phrase("Table Header 3"));
-        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        c1.setBackgroundColor(BaseColor.GRAY);
         table.addCell(c1);
         table.setHeaderRows(1);
 
-        table.addCell("1.0");
-        table.addCell("1.1");
-        table.addCell("1.2");
-        table.addCell("2.1");
-        table.addCell("2.2");
-        table.addCell("2.3");
+        /*c1 = new PdfPCell(new Phrase("Table Header 3"));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        table.addCell(c1);
+        table.setHeaderRows(1);*/
 
-        subCatPart.add(table);
+        table.addCell("BOOKING ID");
+        table.addCell(bookingID);
+        table.addCell("Booking Source");
+        table.addCell(ota);
+        table.addCell("HOTEL NAME");
+        table.addCell(property);
+        table.addCell("LOCATION");
+        table.addCell(location);
+        table.addCell("CITY");
+        table.addCell(city);
+        table.addCell("GUEST NAME");
+        table.addCell(guest);
+        table.addCell("GUEST MOBILE");
+        table.addCell(mobile);
+        table.addCell("BOOKING DATE");
+        table.addCell(bdate);
+        table.addCell("CHECK-IN DATE");
+        table.addCell(cit);
+        table.addCell("CHECK-OUT DATE");
+        table.addCell(cot);
+        table.addCell("ROOM TYPE");
+        table.addCell(rooms);
+        table.addCell("TOTAL ROOM(S)");
+        table.addCell(roomNum);
+        table.addCell("TOTAL GUEST(S)");
+        table.addCell(count);
+        table.addCell("RATE PLAN");
+        table.addCell(plans);
+        table.addCell("PAYMENT MODE");
+        table.addCell(payment);
+        table.addCell("INCLUSION");
+        table.addCell(desc);
+        table.addCell("TOTAL AMOUNT");
+        table.addCell("INR " + total);
+        table.addCell("OTA COMMISSION");
+        table.addCell("INR " + booking);
+        table.addCell("ZINGOHOTELS.COM COMMISION");
+        table.addCell("INR " + zingo);
+
+        para.add(table);
 
     }
 
-    private static void createList(Section subCatPart) {
-        List list = new List(true, false, 10);
-        list.add(new ListItem("First point"));
-        list.add(new ListItem("Second point"));
-        list.add(new ListItem("Third point"));
-        subCatPart.add(list);
-    }
 
     private static void addEmptyLine(Paragraph paragraph, int number) {
         for (int i = 0; i < number; i++) {
@@ -402,125 +496,8 @@ public class BillDetails extends AppCompatActivity {
         }
     }
 
-    /*private void createPdf(){
-        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        float hight = displaymetrics.heightPixels ;
-        float width = displaymetrics.widthPixels ;
-
-        int convertHighet = (int) hight, convertWidth = (int) width;
-
-//        Resources mResources = getResources();
-//        Bitmap bitmap = BitmapFactory.decodeResource(mResources, R.drawable.screenshot);
-
-        PdfDocument document = new PdfDocument();
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(convertWidth, convertHighet, 1).create();
-        PdfDocument.Page page = document.startPage(pageInfo);
-
-        Canvas canvas = page.getCanvas();
-
-
-        Paint paint = new Paint();
-        canvas.drawPaint(paint);
-
-
-//        bitmap = Bitmap.createScaledBitmap(bitmap, convertWidth, convertHighet, true);
-
-        paint.setColor(Color.BLUE);
-        //canvas.drawBitmap(bitmap, 0, 0 , null);
-        document.finishPage(page);
-
-
-        // write the document content
-        File destination = new File(Environment.getExternalStorageDirectory(),
-                System.currentTimeMillis() + ".pdf");
-       *//* String targetPdf = "/0/test.pdf";
-        File filePath = new File(targetPdf);*//*
-        try {
-            document.writeTo(new FileOutputStream(destination));
-           // btn_generate.setText("Check PDF");
-            boolean_save=true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Something wrong: " + e.toString(), Toast.LENGTH_LONG).show();
-        }
-
-        // close the document
-        document.close();
-    }
-*/
-
-   /* public void createandDisplayPdf(String text) {
-
-        Document doc = new Document();
-
-        try {
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Dir";
-
-            File dir = new File(path);
-            if(!dir.exists())
-                dir.mkdirs();
-
-            File file = new File(dir, "newFile.pdf");
-            FileOutputStream fOut = new FileOutputStream(file);
-
-            PdfWriter.getInstance(doc, fOut);
-
-            //open the document
-            doc.open();
-
-            Paragraph p1 = new Paragraph(text);
-            Font paraFont= new Font(Font.COURIER);
-            p1.setAlignment(Paragraph.ALIGN_CENTER);
-            p1.setFont(paraFont);
-
-            //add paragraph to document
-            doc.add(p1);
-
-        } catch (DocumentException de) {
-            Log.e("PDFCreator", "DocumentException:" + de);
-        } catch (IOException e) {
-            Log.e("PDFCreator", "ioException:" + e);
-        }
-        finally {
-            doc.close();
-        }
-
-        viewPdf("newFile.pdf", "Dir");
-    }
-
-    // Method for opening a pdf file
-    private void viewPdf(String file, String directory) {
-
-        File pdfFile = new File(Environment.getExternalStorageDirectory() + "/" + directory + "/" + file);
-        Uri path = Uri.fromFile(pdfFile);
-
-        // Setting the intent for pdf reader
-        Intent pdfIntent = new Intent(Intent.ACTION_VIEW);
-        pdfIntent.setDataAndType(path, "application/pdf");
-        pdfIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        try {
-            startActivity(pdfIntent);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(TableActivity.this, "Can't read pdf file", Toast.LENGTH_SHORT).show();
-        }
-    }*/
-
-
-
-    public static Bitmap loadBitmapFromView(View v, int width, int height) {
-        Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-        v.draw(c);
-
-        return b;
-    }
-
     private void fn_permission() {
-        if ((ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)||
+        if ((ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) ||
                 (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
 
             if ((ActivityCompat.shouldShowRequestPermissionRationale(BillDetails.this, android.Manifest.permission.READ_EXTERNAL_STORAGE))) {
@@ -541,8 +518,29 @@ public class BillDetails extends AppCompatActivity {
 
 
         }
+
+
     }
-    @Override
+
+    public boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if ((checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) && (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+                Log.v("Hi", "Permission is granted");
+                return true;
+            } else {
+
+                Log.v("hi", "Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v("hi", "Permission is granted");
+            return true;
+        }
+    }
+
+  /*  @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_PERMISSIONS) {
@@ -557,43 +555,40 @@ public class BillDetails extends AppCompatActivity {
 
             }
         }
-    }
+    }*/
 
     public void openDatePicker(final TextView tv) {
         // Get Current Date
-
-
-
         final Calendar c = Calendar.getInstance();
-        int mYear  = c.get(Calendar.YEAR);
+        int mYear = c.get(Calendar.YEAR);
         int mMonth = c.get(Calendar.MONTH);
-        int mDay   = c.get(Calendar.DAY_OF_MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
         //launch datepicker modal
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
-                        String from,to;
-                        Log.d("Date", "DATE SELECTED "+dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                        String from, to;
+                        Log.d("Date", "DATE SELECTED " + dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
 
                         Calendar newDate = Calendar.getInstance();
-                        newDate.set(year,monthOfYear,dayOfMonth);
+                        newDate.set(year, monthOfYear, dayOfMonth);
 
 
-                        String date1 = (monthOfYear + 1)  + "/" + dayOfMonth + "/" + year;
+                        String date1 = (monthOfYear + 1) + "/" + dayOfMonth + "/" + year;
 
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
 
-                        if (tv.equals(mBook)){
+                        if (tv.equals(mBook)) {
 
                             try {
                                 Date fdate = simpleDateFormat.parse(date1);
 
                                 from = simpleDateFormat.format(fdate);
 
-                                System.out.println("To = "+from);
+                                System.out.println("To = " + from);
                                 tv.setText(from);
                             } catch (ParseException e) {
                                 e.printStackTrace();
@@ -601,28 +596,27 @@ public class BillDetails extends AppCompatActivity {
                             //
 
 
-                        }else if(tv.equals(mCID)) {
+                        } else if (tv.equals(mCID)) {
                             //to = date1;
                             try {
                                 Date tdate = simpleDateFormat.parse(date1);
                                 to = simpleDateFormat.format(tdate);
-                                System.out.println("To = "+to);
+                                System.out.println("To = " + to);
                                 tv.setText(to);
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
-                        }else if(tv.equals(mCOD)) {
+                        } else if (tv.equals(mCOD)) {
                             //to = date1;
                             try {
                                 Date tdate = simpleDateFormat.parse(date1);
                                 to = simpleDateFormat.format(tdate);
-                                System.out.println("To = "+to);
+                                System.out.println("To = " + to);
                                 tv.setText(to);
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
                         }
-
 
 
                     }
@@ -633,19 +627,23 @@ public class BillDetails extends AppCompatActivity {
 
     }
 
-    public void getProperty(){
+    /*public void getProperty(){
 
         final Cursor cursor = dbHelper.getAllProperty();
+       // propertyN = cursor.getString(cursor.getColumnIndex(DataBaseHelper.PROPERTY_COLUMN_NAME));
         String [] columns = new String[] {
                 DataBaseHelper.PROPERTY_COLUMN_NAME
         };
+
         int [] widgets = new int[] {
                 R.id.property_spinner_item
         };
 
+        //String uname = cursor.getString(cursor.getColumnIndex("name"));
+
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.property_spinner_adapter,
                 cursor, columns, widgets, 0);
-        mProperty.setAdapter(cursorAdapter);
+       // mProperty.setAdapter(cursorAdapter);
     }
 
     public void getRoom(){
@@ -678,9 +676,9 @@ public class BillDetails extends AppCompatActivity {
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.property_spinner_adapter,
                 cursor, columns, widgets, 0);
         mRate.setAdapter(cursorAdapter);
-    }
+    }*/
 
-    public void getPlanDesc(String name){
+   /* public void getPlanDesc(String name){
 
         Cursor rs = plan.getPLAN(name);
         rs.moveToFirst();
@@ -713,5 +711,52 @@ public class BillDetails extends AppCompatActivity {
         mCity.setFocusable(false);
         mCity.setClickable(false);
 
+    }*/
+
+    //We are calling this method to check the permission status
+    private boolean isReadStorageAllowed() {
+        //Getting the permission status
+        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        //If permission is granted returning true
+        if (result == PackageManager.PERMISSION_GRANTED)
+            return true;
+
+        //If permission is not granted returning false
+        return false;
     }
+
+    //Requesting permission
+    private void requestStoragePermission(){
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.READ_EXTERNAL_STORAGE)){
+            //If the user has denied the permission previously your code will come to this block
+            //Here you can explain why you need this permission
+            //Explain here why you need this permission
+        }
+
+        //And finally ask for the permission
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},STORAGE_PERMISSION_CODE);
+    }
+
+    //This method will be called when the user will tap on allow or deny
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        //Checking the request code of our request
+        if(requestCode == STORAGE_PERMISSION_CODE){
+
+            //If permission is granted
+            if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+                //Displaying a toast
+                Toast.makeText(this,"Permission granted now you can read the storage",Toast.LENGTH_LONG).show();
+            }else{
+                //Displaying another toast if permission is not granted
+                Toast.makeText(this,"Oops you just denied the permission",Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+
 }

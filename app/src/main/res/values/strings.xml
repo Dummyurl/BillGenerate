@@ -19,5 +19,7 @@
         <item>ONLINE</item>
     </string-array>
 
+    <string name="file_provider_authority" translatable="false">app.zingo.com.billgenerate</string>
+
 
 </resources>
