@@ -121,6 +121,8 @@ public class BillDetails extends AppCompatActivity {
 
     public static Font catFonts = new Font(Font.FontFamily.TIMES_ROMAN, 12,
             Font.NORMAL, BaseColor.RED);
+    public static Font catFontw = new Font(Font.FontFamily.TIMES_ROMAN, 12,
+            Font.NORMAL, BaseColor.WHITE);
     private static Font redFont = new Font(Font.FontFamily.TIMES_ROMAN, 12,
             Font.NORMAL, BaseColor.RED);
     private static Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 16,
@@ -139,6 +141,7 @@ public class BillDetails extends AppCompatActivity {
     File path = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + System.currentTimeMillis() + ".pdf");
     private String bookingID;
     private int STORAGE_PERMISSION_CODE = 23;
+    private String csvFile;
 
 
     @Override
@@ -200,11 +203,8 @@ public class BillDetails extends AppCompatActivity {
         room = new RoomDataBase(this);
         plan = new PlanDataBase(this);
 
-       /* getProperty();
-        getRoom();
-        getPlan();*/
+
         fn_permission();
-        //Permission.checkPermission(BillDetails.this);
 
 
         mSave.setOnClickListener(new View.OnClickListener() {
@@ -272,75 +272,82 @@ public class BillDetails extends AppCompatActivity {
         } else {
 
             //createPdf();
-            if (bill.insertBILL(bookingID, property, city, location, guest, mobile, bdate, cit, cot, rooms, roomNum, count, plans, payment, desc, total, booking, zingo)) {
-                createPdf();
-                //boolean result = isStoragePermissionGranted();
-                boolean result= Permission.checkPermission(BillDetails.this);
+            boolean isfilecreated=  createPdf();
+            System.out.println("oooo"+isfilecreated);
+            if(isfilecreated)
+            {
+                sendEmailattache();
+            }
+           /* if (bill.insertBILL(bookingID, property, city, location, guest, mobile, bdate, cit, cot, rooms, roomNum, count, plans, payment, desc, total, booking, zingo)) {
 
-                if(isReadStorageAllowed()){
-                    String[] mailto = {email};
-                    Uri uri = Uri.fromFile(path);
-                    System.out.println("path" + String.valueOf(destination));
 
-                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                    emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
-                    emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Hotel Partner,\n" +
-                            "We Thank you for your continued support in ensuring the highest level of service Standards. \n" +
-                            "\n" +
-                            "Please find the attached reservation for you.");
-                    emailIntent.setType("application/pdf");
-                    emailIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-
-                    startActivity(Intent.createChooser(emailIntent, "Send email using:"));
-                }
-                requestStoragePermission();
-
-                /*Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                Uri uri = null;
-                //Uri.fromFile(path);
-
-                String[] mailto = {email};uri = FileProvider.getUriForFile(BillDetails.this,
-                        getString(R.string.file_provider_authority),
-                        path);
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
-                emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Hotel Partner,\n" +
-                        "We Thank you for your continued support in ensuring the highest level of service Standards. \n" +
-                        "\n" +
-                        "Please find the attached reservation for you.");
-                emailIntent.setType("application/pdf");
-                emailIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-
-                startActivity(Intent.createChooser(emailIntent, "Send email using:"));
-*/
 
             } else {
                 Toast.makeText(getApplicationContext(), "Could not Insert Bill", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
-            }
+            }*/
         }
 
 
     }
 
-    private void createPdf() {
+    private void sendEmailattache() {
+        String[] mailto = {email};
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setType("application/pdf");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Hotel Partner,\n" +
+                "We Thank you for your continued support in ensuring the highest level of service Standards. \n" +
+                "\n" +
+                "Please find the attached reservation for you.");
+        File root = Environment.getExternalStorageDirectory();
+        String pathToMyAttachedFile = "/BillGenerate/Pdf/"+csvFile;
+        File file = new File(root, pathToMyAttachedFile);
+        if (!file.exists() || !file.canRead()) {
+            return;
+        }
+        Uri uri = Uri.fromFile(file);
+        emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
+    }
+
+    private boolean createPdf() {
+
+        document =null;
 
         try {
+
+            File sd = Environment.getExternalStorageDirectory();
+            csvFile = System.currentTimeMillis() + ".pdf";
+            File directory = new File(sd.getAbsolutePath()+"/BillGenerate/Pdf");
+            //create directory if not exist
+            if (!directory.exists() && !directory.isDirectory()) {
+                directory.mkdirs();
+            }
+            File file = new File(directory, csvFile);
             document = new Document();
-            PdfWriter.getInstance(document, new FileOutputStream(destination));
+            PdfWriter.getInstance(document, new FileOutputStream(file));
             document.open();
             addMetaData(document);
-            //addTitles();
             addParagraph();
-            // addTitlePage(document);
-            //addContent(document);
-            document.close();
+            return true;
+            //document.close();
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
+        }finally {
+            if(document != null)
+            {
+                try {
+                    document.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
+
 
     }
 
@@ -430,12 +437,12 @@ public class BillDetails extends AppCompatActivity {
         // t.setSpacing(4);
         // t.setBorderWidth(1);
 
-        PdfPCell c1 = new PdfPCell(new Phrase("Description"));
+        PdfPCell c1 = new PdfPCell(new Phrase("Description",catFontw));
         c1.setHorizontalAlignment(Element.ALIGN_CENTER);
         c1.setBackgroundColor(BaseColor.GRAY);
         table.addCell(c1);
 
-        c1 = new PdfPCell(new Phrase("Details"));
+        c1 = new PdfPCell(new Phrase("Details",catFontw));
         c1.setHorizontalAlignment(Element.ALIGN_CENTER);
         c1.setBackgroundColor(BaseColor.GRAY);
         table.addCell(c1);
