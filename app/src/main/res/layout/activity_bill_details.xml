@@ -260,6 +260,7 @@
                     android:inputType="number"
                     android:paddingLeft="10dp"
                     android:hint="Guest Mobile"
+                    android:maxLength="10"
                     android:layout_weight="1"
                     android:drawablePadding="@dimen/registration_padding_drawable_margin"
                     android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
@@ -469,18 +470,16 @@
                     android:layout_marginLeft="10dp"
                     android:textColor="#000000"/>
 
-                <EditText
+                <Spinner
                     android:id="@+id/bill_property_rate"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:inputType="text"
-                    android:paddingLeft="10dp"
-                    android:hint="Rate Plan"
                     android:layout_weight="1"
-                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:entries="@array/room_plan"
                     android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
                     android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
                     android:background="@drawable/spinner_background"/>
+
 
             </LinearLayout>
 
@@ -524,23 +523,17 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
                     android:textColor="#000000"/>
-                <EditText
+
+                <Spinner
                     android:id="@+id/bill_plan_inclusion"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:entries="@array/plan_inclusion"
                     android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
                     android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                    android:background="@drawable/spinner_background"
-                    android:gravity="left|top"
-                    android:hint="Plan Inclusion"
-                    android:inputType="textPostalAddress|textMultiLine"
-                    android:lines="2"
-                    android:maxLines="2"
-                    android:layout_weight="1"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="10dp"
-                    android:singleLine="true" />
+                    android:background="@drawable/spinner_background"/>
+
 
 
             </LinearLayout>
@@ -610,7 +603,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="60dp"
                 android:layout_marginTop="5dp">
                 <TextView
                     android:layout_width="match_parent"
@@ -628,6 +620,133 @@
                     android:paddingLeft="10dp"
                     android:hint="ZINGOHOTELS.COM Commission"
                     android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <Button
+                    android:id="@+id/bill_calculate"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:text="Calculate"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Total no of Nights"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_total_nights"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:enabled="false"
+                    android:hint="Total No of Nights"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Net Amount"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_net_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="Net Amount"
+                    android:enabled="false"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="60dp"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ARR"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_arr"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="Average Room Revenue"
+                    android:layout_weight="1"
+                    android:enabled="false"
                     android:textColor="#000000"
                     android:textStyle="bold"
                     android:drawablePadding="@dimen/registration_padding_drawable_margin"

@@ -16,8 +16,23 @@
 
     <string-array name="payment_mode">
         <item>PaY@HOTEL</item>
-        <item>ONLINE</item>
+        <item>PREPAID/ONLINE</item>
     </string-array>
+
+    <string-array name="room_plan">
+        <item>CP</item>
+        <item>EP</item>
+        <item>AP</item>
+        <item>MAP</item>
+    </string-array>
+
+    <string-array name="plan_inclusion">
+        <item>ROOM ONLY</item>
+        <item>Breakfast,WiFi,Taxes</item>
+        >
+    </string-array>
+
+
 
     <string name="file_provider_authority" translatable="false">app.zingo.com.billgenerate.fileprovider</string>
 

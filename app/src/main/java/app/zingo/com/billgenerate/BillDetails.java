@@ -50,6 +50,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -88,11 +89,12 @@ import app.zingo.com.billgenerate.Model.RoomDataBase;
 
 public class BillDetails extends AppCompatActivity {
 
-    Spinner mRoomCount, mPayment;
-    EditText mLocation, mCity, mGuest, mMobile, mProperty, mRoomType, mRate,
-            mGuestCount, mDesc, mTotal, mBooking, mZingo, mBookingID, mEmail, mOTA;
+    Spinner mRoomCount, mPayment,mRate,mDesc;
+    EditText mLocation, mCity, mGuest, mMobile, mProperty, mRoomType,
+            mGuestCount,  mTotal, mBooking, mZingo,
+            mBookingID, mEmail, mOTA,mNet,mNights,mArr;
     TextView mBook, mCID, mCOD;
-    Button mSave;
+    Button mSave,mCalculate;
 
     //Databaases
     DataBaseHelper dbHelper;
@@ -110,7 +112,9 @@ public class BillDetails extends AppCompatActivity {
 
 
     //pdf
-    String property, email, ota, city, location, guest, mobile, bdate, cit, cot, rooms, roomNum, count, plans, payment, desc, total, booking, zingo;
+    String property, email, ota, city, location, guest,
+            mobile, bdate, cit, cot, rooms, roomNum, count, plans,
+            payment, desc, total, booking, zingo,net,nights,arr;
     Document document;
     Paragraph paragraph;
     String propertyN;
@@ -151,7 +155,7 @@ public class BillDetails extends AppCompatActivity {
 
         mProperty = (EditText) findViewById(R.id.bill_property_name);
         mRoomType = (EditText) findViewById(R.id.bill_property_room);
-        mRate = (EditText) findViewById(R.id.bill_property_rate);
+        mRate = (Spinner) findViewById(R.id.bill_property_rate);
         mRoomCount = (Spinner) findViewById(R.id.bill_property_room_num);
         mPayment = (Spinner) findViewById(R.id.bill_property_payment);
         mLocation = (EditText) findViewById(R.id.bill_property_location);
@@ -161,15 +165,19 @@ public class BillDetails extends AppCompatActivity {
         mGuest = (EditText) findViewById(R.id.bill_guest_name);
         mMobile = (EditText) findViewById(R.id.bill_guest_mobile);
         mGuestCount = (EditText) findViewById(R.id.bill_property_guest_num);
-        mDesc = (EditText) findViewById(R.id.bill_plan_inclusion);
+        mDesc = (Spinner) findViewById(R.id.bill_plan_inclusion);
         mTotal = (EditText) findViewById(R.id.bill_property_amount);
         mBooking = (EditText) findViewById(R.id.bill_booking_com);
         mZingo = (EditText) findViewById(R.id.bill_zingo_com);
         mOTA = (EditText) findViewById(R.id.bill_booking_ota);
+        mNet = (EditText) findViewById(R.id.bill_net_amount);
+        mNights = (EditText) findViewById(R.id.bill_total_nights);
+        mArr = (EditText) findViewById(R.id.bill_arr);
         mBook = (TextView) findViewById(R.id.bill_property_booking);
         mCID = (TextView) findViewById(R.id.bill_property_checkiin);
         mCOD = (TextView) findViewById(R.id.bill_property_checkout);
         mSave = (Button) findViewById(R.id.send_email);
+        mCalculate = (Button) findViewById(R.id.bill_calculate);
 
         bill = new BillDataBase(this);
 
@@ -215,13 +223,95 @@ public class BillDetails extends AppCompatActivity {
             }
         });
 
+        mCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                cit = mCID.getText().toString();
+                cot = mCOD.getText().toString();
+                total = mTotal.getText().toString();
+                zingo = mZingo.getText().toString();
+                booking = mBooking.getText().toString();
+
+                if (booking == null || booking.isEmpty()) {
+                    //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    mBooking.setError("Should not be Empty");
+                    mBooking.requestFocus();
+
+                } else if (zingo == null || zingo.isEmpty()) {
+                    //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    mZingo.setError("Should not be Empty");
+                    mZingo.requestFocus();
+
+                }else if (cit == null || cit.isEmpty()) {
+                    //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    mCID.setError("Should not be Empty");
+                    mCID.requestFocus();
+
+                } else if (cot == null || cot.isEmpty()) {
+                   // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    mCOD.setError("Should not be Empty");
+                    mCOD.requestFocus();
+
+                }else if (total == null || total.isEmpty()) {
+                   // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    mTotal.setError("Should not be Empty");
+                    mTotal.requestFocus();
+
+                }else{
+
+                    //Date Calculation
+                    String from = cit+" 00:00:00";
+                    String to = cot+" 00:00:00";
+
+                    SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
+                    Date d1 = null;
+                    Date d2 = null;
+                    long diffDays=0;
+                    try {
+                            d1 = format.parse(from);
+                            d2 = format.parse(to);
+                        long diff = d2.getTime() - d1.getTime();
+                        diffDays = diff / (24 * 60 * 60 * 1000);
+                        mNights.setText(String.valueOf(diffDays));
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+
+                    //Net Amount
+                    DecimalFormat df = new DecimalFormat("#,###.##");
+                    double totals = Double.parseDouble(total);
+                    double otaAmt = Double.parseDouble(booking);
+                    double zingoAmt = Double.parseDouble(zingo);
+                    double rooms = Double.parseDouble(mRoomCount.getSelectedItem().toString());
+                    if(diffDays!=0){
+                        double arrAmt = totals/diffDays;
+                        mArr.setText(""+df.format(arrAmt));
+                    }else{
+                       // double arrAmt = total/diffDays;
+                        //double arrRamt = totals/rooms;
+                        mArr.setText(""+df.format(totals));
+                    }
+
+
+
+                    double netAmt = totals-(otaAmt+zingoAmt);
+                    mNet.setText(""+df.format(netAmt));
+
+                }
+
+            }
+        });
+
+
     }
 
     public void validate() {
 
         property = mProperty.getText().toString();
         rooms = mRoomType.getText().toString();
-        plans = mRate.getText().toString();
+        plans = mRate.getSelectedItem().toString();
         roomNum = mRoomCount.getSelectedItem().toString();
         payment = mPayment.getSelectedItem().toString();
         bookingID = mBookingID.getText().toString();
@@ -231,10 +321,13 @@ public class BillDetails extends AppCompatActivity {
         mobile = mMobile.getText().toString();
         email = mEmail.getText().toString();
         count = mGuestCount.getText().toString();
-        desc = mDesc.getText().toString();
+        desc = mDesc.getSelectedItem().toString();
         total = mTotal.getText().toString();
         booking = mBooking.getText().toString();
         zingo = mZingo.getText().toString();
+        nights = mNights.getText().toString();
+        net = mNet.getText().toString();
+        arr = mArr.getText().toString();
         bdate = mBook.getText().toString();
         cit = mCID.getText().toString();
         cot = mCOD.getText().toString();
@@ -269,6 +362,12 @@ public class BillDetails extends AppCompatActivity {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
         } else if (ota == null || ota.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        }else if (net == null || net.isEmpty()) {
+            Toast.makeText(BillDetails.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
+        }else if (nights == null || nights.isEmpty()) {
+            Toast.makeText(BillDetails.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
+        }else if (arr == null || arr.isEmpty()) {
+            Toast.makeText(BillDetails.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
         } else {
 
             //createPdf();
@@ -397,12 +496,11 @@ public class BillDetails extends AppCompatActivity {
             String important = "IMPORTANT NOTE:";
             String footer =
                             "                                                                         ZingoHotels.com\n" +
-                            "#702, 6th A Cross, Behind BDA Complex, Above Kanti Sweets, Koramangala 3rd Block, Blore-560034\n" +
+                            "#88, 1st Floor, Koramangala Industrial Layout 5th Block, Near JNC College, Bangalore-560095\n" +
                             "                                                                        www.Zingohotels.com";
             String note = "Under no circumstances must you charge guest for services listed on this voucher!\n" + "Only payments for extra services are to be collected from clients\n" + "Hotel shall issue invoice to the customer/guests, as and when required by the customer/Guest";
             addChild(new Paragraph("                                   Lucida Hospitality Pvt Ltd", catFont));
             //addImage(paragraph);
-            addEmptyLine(paragraph, 1);
             addChild(new Paragraph("                        Mob: +91- 7065 651 651 | Email- hello@zingohotels.com", subFont));
             // addChild(new Paragraph("Email- hello@zingohotels.com",subFont));
 
@@ -413,7 +511,7 @@ public class BillDetails extends AppCompatActivity {
             paragraph.add(new Paragraph("Booking Source: " + ota, smallBolds));
             addEmptyLine(paragraph,1);
             paragraph.add(new Paragraph(text, smallBold));
-            addEmptyLine(paragraph, 2);
+            addEmptyLine(paragraph, 1);
             createTables(paragraph);
             addEmptyLine(paragraph, 2);
             addChild(new Paragraph(important, subFont));
@@ -473,6 +571,8 @@ public class BillDetails extends AppCompatActivity {
         table.addCell(cit);
         table.addCell("CHECK-OUT DATE");
         table.addCell(cot);
+        table.addCell("NUMBER OF NIGHTS");
+        table.addCell(nights);
         table.addCell("ROOM TYPE");
         table.addCell(rooms);
         table.addCell("TOTAL ROOM(S)");
@@ -491,6 +591,10 @@ public class BillDetails extends AppCompatActivity {
         table.addCell("INR " + booking);
         table.addCell("ZINGOHOTELS.COM COMMISION");
         table.addCell("INR " + zingo);
+        table.addCell("NET AMOUNT");
+        table.addCell("INR " +net);
+        table.addCell("ARR");
+        table.addCell("INR " +arr);
 
         para.add(table);
 
