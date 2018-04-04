@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import app.zingo.com.billgenerate.Model.PreferenceHandler;
+
 public class MainActivity extends AppCompatActivity {
 
     Button mProperty,mBill,mPlan,mRoom;
@@ -39,8 +41,12 @@ public class MainActivity extends AppCompatActivity {
         mPlan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent plan = new Intent(MainActivity.this,PlanDetails.class);
-                startActivity(plan);
+                PreferenceHandler.getInstance(MainActivity.this).clear();
+                Intent log = new Intent(MainActivity.this, LoginActivity.class);
+                log.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                log.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(log);
+                finish();
             }
         });
 

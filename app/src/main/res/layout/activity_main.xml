@@ -29,14 +29,14 @@
             android:layout_height="wrap_content"
             android:text="Create Room"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/create_property"
+            android:layout_below="@+id/create_bill"
             />
 
         <Button
             android:id="@+id/create_plan"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="Create plan"
+            android:text="Logout"
             android:layout_marginTop="10dp"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/create_room"
@@ -51,7 +51,7 @@
             android:text="Create Bill"
             android:layout_marginTop="10dp"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/create_plan"
+            android:layout_below="@+id/create_property"
             />
 
 

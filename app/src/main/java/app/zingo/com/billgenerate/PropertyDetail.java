@@ -1,8 +1,11 @@
 package app.zingo.com.billgenerate;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -12,6 +15,13 @@ import com.dd.processbutton.FlatButton;
 import java.util.ArrayList;
 
 import app.zingo.com.billgenerate.Model.DataBaseHelper;
+import app.zingo.com.billgenerate.Model.Documents;
+import app.zingo.com.billgenerate.Model.PreferenceHandler;
+import app.zingo.com.billgenerate.Model.ThreadExecuter;
+import app.zingo.com.billgenerate.Model.Util;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PropertyDetail extends AppCompatActivity {
 
@@ -52,7 +62,7 @@ public class PropertyDetail extends AppCompatActivity {
                     Toast.makeText(PropertyDetail.this, "Please fill the field", Toast.LENGTH_SHORT).show();
                 }else{
 
-                    if(dbHelper.insertProperty(name,location,city,mail)) {
+                    /*if(dbHelper.insertProperty(name,location,city,mail)) {
                         Toast.makeText(getApplicationContext(), "Property Inserted", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
@@ -62,9 +72,66 @@ public class PropertyDetail extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
-                    }
+                    }*/
+                    addHotel(PreferenceHandler.getInstance(PropertyDetail.this).getUserId());
                 }
             }
         });
+    }
+
+    private void addHotel(int id){
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("please wait..");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        final Documents rc = new Documents();
+
+        rc.setDocumentName(mName.getText().toString());
+        rc.setStatus("status");
+        rc.setDocumentType(mLocation.getText().toString());
+        rc.setDocumentNumber(mCity.getText().toString());
+        rc.setReEnterDocumentNumber(mEmail.getText().toString());
+        rc.setProfileId(id);
+
+        new ThreadExecuter().execute(new Runnable() {
+            @Override
+            public void run() {
+
+
+                LoginApi apiService =
+                        Util.getClient().create(LoginApi.class);
+
+                String authenticationString = Util.getToken(PropertyDetail.this);
+                Call<Documents> call = apiService.addHotels(authenticationString,rc);
+
+                call.enqueue(new Callback<Documents>() {
+                    @Override
+                    public void onResponse(Call<Documents> call, Response<Documents> response) {
+                        int statusCode = response.code();
+                        if (statusCode == 200 || statusCode == 201) {
+
+                            Documents dto = response.body();
+                            if (progressDialog!=null)
+                                progressDialog.dismiss();
+                            Toast.makeText(PropertyDetail.this, "Successful", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }else {
+                            if (progressDialog!=null)
+                                progressDialog.dismiss();
+                            Toast.makeText(PropertyDetail.this, "failed due to status code:"+statusCode, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Documents> call, Throwable t) {
+                        if (progressDialog!=null)
+                            progressDialog.dismiss();
+                        Log.e("TAG", t.toString());
+                    }
+                });
+            }
+        });
+
     }
 }

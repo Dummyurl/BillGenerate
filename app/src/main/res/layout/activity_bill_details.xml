@@ -107,18 +107,16 @@
                     android:layout_marginLeft="10dp"
                     android:textColor="#000000"/>
 
-                <EditText
+                <Spinner
                     android:id="@+id/bill_property_name"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:inputType="text"
-                    android:paddingLeft="10dp"
-                    android:hint="Hotel Name"
                     android:layout_weight="1"
-                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
                     android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
                     android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
                     android:background="@drawable/spinner_background"/>
+
+
 
 
             </LinearLayout>

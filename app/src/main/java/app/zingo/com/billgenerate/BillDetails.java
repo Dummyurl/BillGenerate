@@ -18,15 +18,18 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -83,14 +86,22 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import app.zingo.com.billgenerate.Model.BillDataBase;
 import app.zingo.com.billgenerate.Model.DataBaseHelper;
+import app.zingo.com.billgenerate.Model.Documents;
 import app.zingo.com.billgenerate.Model.Permission;
 import app.zingo.com.billgenerate.Model.PlanDataBase;
+import app.zingo.com.billgenerate.Model.PreferenceHandler;
+import app.zingo.com.billgenerate.Model.PropertyAdapter;
 import app.zingo.com.billgenerate.Model.RoomDataBase;
+import app.zingo.com.billgenerate.Model.ThreadExecuter;
+import app.zingo.com.billgenerate.Model.Util;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class BillDetails extends AppCompatActivity {
 
-    Spinner mRoomCount, mPayment,mRate,mDesc;
-    EditText mLocation, mCity, mGuest, mMobile, mProperty, mRoomType,
+    Spinner mRoomCount, mPayment,mRate,mDesc,mProperty;
+    EditText mLocation, mCity, mGuest, mMobile,  mRoomType,
             mGuestCount,  mTotal, mBooking, mZingo,
             mBookingID, mEmail, mOTA,mNet,mNights,mArr;
     TextView mBook, mCID, mCOD;
@@ -153,7 +164,7 @@ public class BillDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bill_details);
 
-        mProperty = (EditText) findViewById(R.id.bill_property_name);
+        mProperty = (Spinner) findViewById(R.id.bill_property_name);
         mRoomType = (EditText) findViewById(R.id.bill_property_room);
         mRate = (Spinner) findViewById(R.id.bill_property_rate);
         mRoomCount = (Spinner) findViewById(R.id.bill_property_room_num);
@@ -181,6 +192,7 @@ public class BillDetails extends AppCompatActivity {
 
         bill = new BillDataBase(this);
 
+        getHotelName();
 
         mBook.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -309,7 +321,7 @@ public class BillDetails extends AppCompatActivity {
 
     public void validate() {
 
-        property = mProperty.getText().toString();
+        property = mProperty.getSelectedItem().toString();
         rooms = mRoomType.getText().toString();
         plans = mRate.getSelectedItem().toString();
         roomNum = mRoomCount.getSelectedItem().toString();
@@ -869,5 +881,131 @@ public class BillDetails extends AppCompatActivity {
         }
     }
 
+    public void getHotelName()
+    {
 
+        if(Util.isNetworkAvailable(BillDetails.this)) {
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+
+                    LoginApi chainNameApi = Util.getClient().create(LoginApi.class);
+                    String authenticationString = Util.getToken(BillDetails.this);
+                    Call<ArrayList<Documents>> getChainResponse = chainNameApi.getHotels(authenticationString, PreferenceHandler.getInstance(BillDetails.this).getUserId());
+                    getChainResponse.enqueue(new Callback<ArrayList<Documents>>() {
+                        @Override
+                        public void onResponse(Call<ArrayList<Documents>> call, Response<ArrayList<Documents>> response) {
+                            /*chainsList = new ArrayList<ChainName>();*/
+                            /*chainsList.add(new ChainName(0,"----------"));*/
+                            ArrayList<Documents> chainsList = response.body();
+                            /*System.out.println("response code = " + response.code());*/
+                            /*System.out.println("response code = " + chainsList.size());*/
+                            if (response.code() == 200) {
+                                //System.out.println("getChainNamesFromServer = "+chainsList.size());
+                                PropertyAdapter chainAdapter = new PropertyAdapter(BillDetails.this,chainsList);
+                                mProperty.setAdapter(chainAdapter);
+                            } else {
+                                //System.out.println("Failed");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ArrayList<Documents>> call, Throwable t) {
+                            System.out.println("onFailure");
+                        }
+                    });
+                    return null;
+                }
+            }.execute();
+        }
+        else
+        {
+            Snackbar.make(findViewById(android.R.id.content),
+                    "Check Your Internet Connection",Snackbar.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void getDoc(final int id){
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("please wait..");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        new ThreadExecuter().execute(new Runnable() {
+            @Override
+            public void run() {
+                IRegistrasionService apiService =
+                        Util.getClient().create(IRegistrasionService.class);
+                String authenticationString = Util.getToken(HotelDocumentsActivity.this);
+                Call<HotelDocuments> call = apiService.getHotelDocumentsById(authenticationString,id);
+
+                call.enqueue(new Callback<HotelDocuments>() {
+                    @Override
+                    public void onResponse(Call<HotelDocuments> call, Response<HotelDocuments> response) {
+//                List<RouteDTO.Routes> list = new ArrayList<RouteDTO.Routes>();
+                        int statusCode = response.code();
+                        if (statusCode == 200 || statusCode == 201 || statusCode == 203 || statusCode == 204) {
+
+                            if (progressDialog!=null)
+                                progressDialog.dismiss();
+                            list = response.body();
+
+                            if (list!=null) {
+                                //HotelDocuments = list.get(list.size()-1);
+                                // update.setVisibility(View.VISIBLE);
+                                if(status!=null){
+                                    if(status.equalsIgnoreCase("View")){
+                                        doc_num_re.setVisibility(View.GONE);
+                                        doc_name.setEnabled(false);
+                                        doc_type.setEnabled(false);
+                                        doc_name_holder.setEnabled(false);
+                                        doc_num.setEnabled(false);
+                                        submit.setVisibility(View.GONE);
+                                        doc_re_tv.setVisibility(View.GONE);
+                                        update.setVisibility(View.GONE);
+                                        upload_doc.setVisibility(View.GONE);
+                                    }
+                                }else{
+                                    submit.setVisibility(View.GONE);
+                                    update.setVisibility(View.VISIBLE);
+                                }
+
+                                doc_num.setText(list.getDocumentNumber());
+                                doc_name.setText(list.getDocumentName());
+                                doc_type.setText(list.getDocumentType());
+                                doc_name_holder.setText(list.getFrontSidePhoto());
+                                String base=list.getImage();
+                                byte[] imageAsBytes = Base64.decode(base.getBytes(), Base64.DEFAULT);
+                                front_image.setImageBitmap(
+                                        BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
+
+
+                            }
+
+//
+
+
+                        }else {
+                            if (progressDialog!=null)
+                                progressDialog.dismiss();
+                            Toast.makeText(HotelDocumentsActivity.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
+                        }
+//                callGetStartEnd();
+                    }
+
+                    @Override
+                    public void onFailure(Call<HotelDocuments> call, Throwable t) {
+                        // Log error here since request failed
+                        if (progressDialog!=null)
+                            progressDialog.dismiss();
+                        Log.e("TAG", t.toString());
+                    }
+                });
+            }
+
+
+        });
+    }
 }
