@@ -106,6 +106,7 @@ public class BillDetails extends AppCompatActivity {
             mBookingID, mEmail, mOTA,mNet,mNights,mArr;
     TextView mBook, mCID, mCOD;
     Button mSave,mCalculate;
+    ArrayList<Documents> chainsList;
 
     //Databaases
     DataBaseHelper dbHelper;
@@ -125,7 +126,7 @@ public class BillDetails extends AppCompatActivity {
     //pdf
     String property, email, ota, city, location, guest,
             mobile, bdate, cit, cot, rooms, roomNum, count, plans,
-            payment, desc, total, booking, zingo,net,nights,arr;
+            payment, desc, total, booking, zingo,net,nights,arr,cits,cots;
     Document document;
     Paragraph paragraph;
     String propertyN;
@@ -273,8 +274,8 @@ public class BillDetails extends AppCompatActivity {
                 }else{
 
                     //Date Calculation
-                    String from = cit+" 00:00:00";
-                    String to = cot+" 00:00:00";
+                    String from = cits+" 00:00:00";
+                    String to = cots+" 00:00:00";
 
                     SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
@@ -299,11 +300,12 @@ public class BillDetails extends AppCompatActivity {
                     double rooms = Double.parseDouble(mRoomCount.getSelectedItem().toString());
                     if(diffDays!=0){
                         double arrAmt = totals/diffDays;
-                        mArr.setText(""+df.format(arrAmt));
+                        double arrRamt = arrAmt/rooms;
+                        mArr.setText(""+df.format(arrRamt));
                     }else{
-                       // double arrAmt = total/diffDays;
-                        //double arrRamt = totals/rooms;
-                        mArr.setText(""+df.format(totals));
+                        //double arrAmt = total/diffDays;
+                        double arrRamt = totals/rooms;
+                        mArr.setText(""+df.format(arrRamt));
                     }
 
 
@@ -312,6 +314,20 @@ public class BillDetails extends AppCompatActivity {
                     mNet.setText(""+df.format(netAmt));
 
                 }
+
+            }
+        });
+
+
+        mProperty.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                System.out.println("Id=="+chainsList.get(i).getDocumentId());
+                getDoc(chainsList.get(i).getDocumentId());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
@@ -699,17 +715,24 @@ public class BillDetails extends AppCompatActivity {
                         newDate.set(year, monthOfYear, dayOfMonth);
 
 
+
                         String date1 = (monthOfYear + 1) + "/" + dayOfMonth + "/" + year;
 
+                        //String date2 = (monthOfYear + 1) + "/" + dayOfMonth + "/" + year;
+
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy");
 
 
                         if (tv.equals(mBook)) {
 
                             try {
                                 Date fdate = simpleDateFormat.parse(date1);
+                               Date fd = newDate.getTime();
 
-                                from = simpleDateFormat.format(fdate);
+                                //cits = simpleDateFormat.format(fdate);
+                                from = sdf.format(fd);
 
                                 System.out.println("To = " + from);
                                 tv.setText(from);
@@ -723,7 +746,9 @@ public class BillDetails extends AppCompatActivity {
                             //to = date1;
                             try {
                                 Date tdate = simpleDateFormat.parse(date1);
-                                to = simpleDateFormat.format(tdate);
+                                Date fd = newDate.getTime();
+                                cits = simpleDateFormat.format(tdate);
+                                to = sdf.format(fd);
                                 System.out.println("To = " + to);
                                 tv.setText(to);
                             } catch (ParseException e) {
@@ -733,7 +758,9 @@ public class BillDetails extends AppCompatActivity {
                             //to = date1;
                             try {
                                 Date tdate = simpleDateFormat.parse(date1);
-                                to = simpleDateFormat.format(tdate);
+                                Date fd = newDate.getTime();
+                                cots = simpleDateFormat.format(tdate);
+                                to = sdf.format(fd);
                                 System.out.println("To = " + to);
                                 tv.setText(to);
                             } catch (ParseException e) {
@@ -897,7 +924,7 @@ public class BillDetails extends AppCompatActivity {
                         public void onResponse(Call<ArrayList<Documents>> call, Response<ArrayList<Documents>> response) {
                             /*chainsList = new ArrayList<ChainName>();*/
                             /*chainsList.add(new ChainName(0,"----------"));*/
-                            ArrayList<Documents> chainsList = response.body();
+                            chainsList = response.body();
                             /*System.out.println("response code = " + response.code());*/
                             /*System.out.println("response code = " + chainsList.size());*/
                             if (response.code() == 200) {
@@ -936,50 +963,28 @@ public class BillDetails extends AppCompatActivity {
         new ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                IRegistrasionService apiService =
-                        Util.getClient().create(IRegistrasionService.class);
-                String authenticationString = Util.getToken(HotelDocumentsActivity.this);
-                Call<HotelDocuments> call = apiService.getHotelDocumentsById(authenticationString,id);
+                LoginApi apiService =
+                        Util.getClient().create(LoginApi.class);
+                String authenticationString = Util.getToken(BillDetails.this);
+                Call<Documents> call = apiService.getDocumentsById(authenticationString,id);
 
-                call.enqueue(new Callback<HotelDocuments>() {
+                call.enqueue(new Callback<Documents>() {
                     @Override
-                    public void onResponse(Call<HotelDocuments> call, Response<HotelDocuments> response) {
+                    public void onResponse(Call<Documents> call, Response<Documents> response) {
 //                List<RouteDTO.Routes> list = new ArrayList<RouteDTO.Routes>();
                         int statusCode = response.code();
                         if (statusCode == 200 || statusCode == 201 || statusCode == 203 || statusCode == 204) {
 
                             if (progressDialog!=null)
                                 progressDialog.dismiss();
-                            list = response.body();
+                             Documents list = response.body();
 
                             if (list!=null) {
-                                //HotelDocuments = list.get(list.size()-1);
-                                // update.setVisibility(View.VISIBLE);
-                                if(status!=null){
-                                    if(status.equalsIgnoreCase("View")){
-                                        doc_num_re.setVisibility(View.GONE);
-                                        doc_name.setEnabled(false);
-                                        doc_type.setEnabled(false);
-                                        doc_name_holder.setEnabled(false);
-                                        doc_num.setEnabled(false);
-                                        submit.setVisibility(View.GONE);
-                                        doc_re_tv.setVisibility(View.GONE);
-                                        update.setVisibility(View.GONE);
-                                        upload_doc.setVisibility(View.GONE);
-                                    }
-                                }else{
-                                    submit.setVisibility(View.GONE);
-                                    update.setVisibility(View.VISIBLE);
-                                }
 
-                                doc_num.setText(list.getDocumentNumber());
-                                doc_name.setText(list.getDocumentName());
-                                doc_type.setText(list.getDocumentType());
-                                doc_name_holder.setText(list.getFrontSidePhoto());
-                                String base=list.getImage();
-                                byte[] imageAsBytes = Base64.decode(base.getBytes(), Base64.DEFAULT);
-                                front_image.setImageBitmap(
-                                        BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
+
+                                mLocation.setText(list.getDocumentType());
+                                mCity.setText(list.getDocumentNumber());
+                                mEmail.setText(list.getReEnterDocumentNumber());
 
 
                             }
@@ -990,13 +995,13 @@ public class BillDetails extends AppCompatActivity {
                         }else {
                             if (progressDialog!=null)
                                 progressDialog.dismiss();
-                            Toast.makeText(HotelDocumentsActivity.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(BillDetails.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
                         }
 //                callGetStartEnd();
                     }
 
                     @Override
-                    public void onFailure(Call<HotelDocuments> call, Throwable t) {
+                    public void onFailure(Call<Documents> call, Throwable t) {
                         // Log error here since request failed
                         if (progressDialog!=null)
                             progressDialog.dismiss();

@@ -28,7 +28,7 @@ public interface LoginApi {
     Call<Documents> addHotels(@Header("Authorization") String authKey,@Body Documents body);
 
     @GET("Documents/{id}")
-    Call<Documents> getHotelDocumentsById(@Header("Authorization") String authKey,@Path("id") int id);
+    Call<Documents> getDocumentsById(@Header("Authorization") String authKey,@Path("id") int id);
 
 
 

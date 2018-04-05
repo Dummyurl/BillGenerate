@@ -3,6 +3,7 @@ package app.zingo.com.billgenerate;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -66,6 +67,32 @@ public class LoginActivity extends AppCompatActivity {
         input_pass_signup = (EditText) findViewById(R.id.input_pass_signup);
 
         ok_signup = (FlatButton) findViewById(R.id.ok_signup);
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+
+
+                int userId = PreferenceHandler.getInstance(LoginActivity.this).getUserId();
+
+                if (userId!=0) {
+
+
+                    Intent mainActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
+                    mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    startActivity(mainActivityIntent);
+                    LoginActivity.this.finish();
+
+                }
+
+
+
+            }
+        }, 0);
 
 
 
@@ -131,8 +158,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (dto1!=null && dto1.size()!=0) {
                                 dto = dto1.get(0);
 
-                                if(dto.getStatus() != null && dto.getStatus().equalsIgnoreCase("enabled"))
-                                {
+
                                     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
                                     SharedPreferences.Editor spe = sp.edit();
                                     PreferenceHandler.getInstance(LoginActivity.this).setPhoneNumber(dto.getPhoneNumber());
@@ -146,11 +172,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Intent i = new Intent(LoginActivity.this, MainActivity.class);
                                     startActivity(i);
                                     finish();
-                                }
-                                else
-                                {
-                                    Toast.makeText(LoginActivity.this, "Sorry your profile is disabled", Toast.LENGTH_SHORT).show();
-                                }
+
 
 
                             }else{
