@@ -337,7 +337,7 @@ public class BillDetails extends AppCompatActivity {
 
     public void validate() {
 
-        property = mProperty.getSelectedItem().toString();
+        String properties = mProperty.getSelectedItem().toString();
         rooms = mRoomType.getText().toString();
         plans = mRate.getSelectedItem().toString();
         roomNum = mRoomCount.getSelectedItem().toString();
@@ -399,6 +399,7 @@ public class BillDetails extends AppCompatActivity {
         } else {
 
             //createPdf();
+            System.out.println("Property name=="+property);
             boolean isfilecreated=  createPdf();
             System.out.println("oooo"+isfilecreated);
             if(isfilecreated)
@@ -982,6 +983,7 @@ public class BillDetails extends AppCompatActivity {
                             if (list!=null) {
 
 
+                                property = list.getDocumentName();
                                 mLocation.setText(list.getDocumentType());
                                 mCity.setText(list.getDocumentNumber());
                                 mEmail.setText(list.getReEnterDocumentNumber());

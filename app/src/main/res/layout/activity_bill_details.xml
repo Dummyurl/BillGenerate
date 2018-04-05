@@ -258,7 +258,6 @@
                     android:inputType="number"
                     android:paddingLeft="10dp"
                     android:hint="Guest Mobile"
-                    android:maxLength="10"
                     android:layout_weight="1"
                     android:drawablePadding="@dimen/registration_padding_drawable_margin"
                     android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
