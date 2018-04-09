@@ -2,13 +2,19 @@ package app.zingo.com.billgenerate;
 
 import java.util.ArrayList;
 
+import app.zingo.com.billgenerate.Model.Bookings1;
+import app.zingo.com.billgenerate.Model.ContactDetails;
 import app.zingo.com.billgenerate.Model.Documents;
+import app.zingo.com.billgenerate.Model.FireBaseModel;
+import app.zingo.com.billgenerate.Model.HotelDetails;
 import app.zingo.com.billgenerate.Model.Profile1;
+import app.zingo.com.billgenerate.Model.Traveller;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 /**
@@ -30,6 +36,33 @@ public interface LoginApi {
     @GET("Documents/{id}")
     Call<Documents> getDocumentsById(@Header("Authorization") String authKey,@Path("id") int id);
 
+    @GET("Hotels/GetContactsByHotelId/{HotelId}")
+    Call<ArrayList<ContactDetails>> getContactByHotelId(@Header("Authorization") String authKey, @Path("HotelId") int HotelId);
+
+    @GET("Hotels")
+    Call<ArrayList<HotelDetails>> getHotelsList(@Header("Authorization") String authKey);
+
+    @GET("Hotels/{id}")
+    Call<HotelDetails> getHotelsById(@Header("Authorization") String authKey,@Path("id") int id);
+
+    @POST("RoomBookings")
+    Call<Bookings1> postBooking(@Header("Authorization") String authKey, @Body Bookings1 body);
+
+    @POST("Calculation/SendNotificationToDevice")
+    Call<String> addNotification(@Header("Authorization") String authKey, @Body FireBaseModel body);
+
+
+    @POST("Calculation/SendNotificationForMultipleDeviceByHotelId")
+    Call<ArrayList<String>> send(@Header("Authorization") String authKey, @Body FireBaseModel body);
+
+    @GET("Travellers/GetTravellerByPhoneNumber/{PhoneNumber}")
+    Call<ArrayList<Traveller>> fetchTravelerByPhone(@Header("Authorization") String authKey, @Path("PhoneNumber") String PhoneNumber);
+
+    @POST("Travellers")
+    Call<Traveller> addTraveler(@Header("Authorization") String authKey,@Body Traveller body);
+
+    @PUT("Travellers/{id}")
+    Call<Traveller> updateTravellerDetails(@Header("Authorization") String authKey,@Path("id") int id,@Body Traveller body);
 
 
 

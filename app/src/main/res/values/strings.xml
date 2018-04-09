@@ -19,6 +19,15 @@
         <item>PREPAID/ONLINE</item>
     </string-array>
 
+    <array name="OTA_items">
+        <item>MMT</item>
+        <item>YAT</item>
+        <item>EXP</item>
+        <item>BOK</item>
+        <item>GOIBIBO</item>
+        <item>Other</item>
+    </array>
+
     <string-array name="room_plan">
         <item>CP</item>
         <item>EP</item>

@@ -17,9 +17,9 @@ import app.zingo.com.billgenerate.R;
 
 public class PropertyAdapter extends BaseAdapter {
     private Context context;
-    private ArrayList<Documents> mList = new ArrayList<>();
+    private ArrayList<HotelDetails> mList = new ArrayList<>();
 
-    public PropertyAdapter(Context context, ArrayList<Documents> mList)
+    public PropertyAdapter(Context context, ArrayList<HotelDetails> mList)
     {
         this.context = context;
         this.mList = mList;
@@ -52,7 +52,8 @@ public class PropertyAdapter extends BaseAdapter {
         TextView mHotelName = (TextView) view.findViewById(R.id.hotel_name);
 
 
-        mHotelName.setText(mList.get(pos).getDocumentName().toString());
+        mHotelName.setText(mList.get(pos).getHotelDisplayName().toString());
+
 
         return view;
     }
