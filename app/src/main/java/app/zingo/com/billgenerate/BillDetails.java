@@ -386,9 +386,9 @@ public class BillDetails extends AppCompatActivity {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
         } else if (guest == null || guest.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        } else if (mobile == null || mobile.isEmpty()) {
+        }/* else if (mobile == null || mobile.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        } else if (count == null || count.isEmpty()) {
+        }*/ else if (count == null || count.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
         } else if (desc == null || desc.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
@@ -423,7 +423,14 @@ public class BillDetails extends AppCompatActivity {
             System.out.println("oooo" + isfilecreated);
             if (isfilecreated) {
                 //sendEmailattache();
-                getTravelerByPhone(mobile);
+
+
+                if (mobile == null || mobile.isEmpty()) {
+                    //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    addTraveler();
+                }else{
+                    getTravelerByPhone(mobile);
+                }
 
             }
 
@@ -1074,7 +1081,7 @@ public class BillDetails extends AppCompatActivity {
                                 fm.setServerId("AIzaSyA56O6PwNfegBxT9Om8PDWfqfmSU9SUFL8");
                                 fm.setHotelId(hotelId);
                                 fm.setTitle("New Booking from Zingo Hotels");
-                                fm.setMessage("Congrats! You got one new booking.For "+nights +" nights.From "+cit+" to "+cot);
+                                fm.setMessage("Congrats! You got one new booking for "+nights +" nights from "+cit+" to "+cot+"\nBooking Number:"+dto.getBookingNumber());
                                 //registerTokenInDB(fm);
                                 sendNotification(fm);
                                 /*Intent quick = new Intent(BillDetails.this, BillDetails.class);
@@ -1227,7 +1234,12 @@ public class BillDetails extends AppCompatActivity {
 
         final Traveller dto = new Traveller();
         dto.setFirstName(guest);
-        dto.setPhoneNumber(mobile);
+        if (mobile == null || mobile.isEmpty()) {
+            //dto.setPhoneNumber("");
+        }else{
+            dto.setPhoneNumber(mobile);
+        }
+
         dto.setUserRoleId(1);
 
         new ThreadExecuter().execute(new Runnable() {
