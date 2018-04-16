@@ -39,6 +39,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -107,9 +108,10 @@ import retrofit2.Response;
 
 public class BillDetails extends AppCompatActivity {
 
-    Spinner mRoomCount, mPayment, mRate, mDesc, mProperty,mOTA;
+    Spinner mRoomCount, mPayment, mRate, mDesc, mProperty,mOTA,mDataBase;
+    LinearLayout mDataLayout,mOtherLayout;
     EditText mLocation, mCity, mGuest, mMobile, mRoomType,
-            mGuestCount, mTotal, mBooking, mZingo,
+            mGuestCount, mTotal, mBooking, mZingo,mOtherProperty,
             mBookingID, mEmail,  mNet, mNights, mArr;
     TextView mBook, mCID, mCOD;
     Button mSave, mCalculate;
@@ -119,6 +121,7 @@ public class BillDetails extends AppCompatActivity {
     Traveller dtos;
     Bookings1 bookings;
     double commisionAmt;
+    HotelDetails list;
 
     //Databaases
     DataBaseHelper dbHelper;
@@ -178,10 +181,14 @@ public class BillDetails extends AppCompatActivity {
         setContentView(R.layout.activity_bill_details);
 
         mProperty = (Spinner) findViewById(R.id.bill_property_name);
+        mDataBase = (Spinner) findViewById(R.id.bill_data_base);
+        mDataLayout = (LinearLayout)findViewById(R.id.data_property_layout);
+        mOtherLayout = (LinearLayout)findViewById(R.id.other_property_layout);
         mRoomType = (EditText) findViewById(R.id.bill_property_room);
         mRate = (Spinner) findViewById(R.id.bill_property_rate);
         mRoomCount = (Spinner) findViewById(R.id.bill_property_room_num);
         mPayment = (Spinner) findViewById(R.id.bill_property_payment);
+        mOtherProperty = (EditText) findViewById(R.id.bill_property_other);
         mLocation = (EditText) findViewById(R.id.bill_property_location);
         mEmail = (EditText) findViewById(R.id.bill_property_emal);
         mBookingID = (EditText) findViewById(R.id.bill_booking_id);
@@ -232,6 +239,24 @@ public class BillDetails extends AppCompatActivity {
             public void onClick(View v) {
 
                 openDatePicker(mCOD);
+            }
+        });
+
+        mDataBase.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(mDataBase.getSelectedItem().toString().equalsIgnoreCase("OTHERS")){
+                    mDataLayout.setVisibility(View.GONE);
+                    mOtherLayout.setVisibility(View.VISIBLE);
+                }else{
+                    mDataLayout.setVisibility(View.VISIBLE);
+                    mOtherLayout.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
 
@@ -356,6 +381,9 @@ public class BillDetails extends AppCompatActivity {
     public void validate() {
 
         String properties = mProperty.getSelectedItem().toString();
+        String data = mDataBase.getSelectedItem().toString();
+
+
         rooms = mRoomType.getText().toString();
         plans = mRate.getSelectedItem().toString();
         roomNum = mRoomCount.getSelectedItem().toString();
@@ -416,6 +444,17 @@ public class BillDetails extends AppCompatActivity {
             Toast.makeText(BillDetails.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
         } else {
 
+            if(data.equalsIgnoreCase("OTHERS")){
+
+                if(mOtherProperty.getText().toString()==null||mOtherProperty.getText().toString().isEmpty()){
+                    mOtherProperty.setError("Please enter property name");
+                    mOtherProperty.requestFocus();
+                }else{
+                    property = mOtherProperty.getText().toString();
+                }
+            }else{
+                property = list.getHotelDisplayName();
+            }
 
             //createPdf();
             System.out.println("Property name==" + property);
@@ -424,13 +463,18 @@ public class BillDetails extends AppCompatActivity {
             if (isfilecreated) {
                 //sendEmailattache();
 
-
-                if (mobile == null || mobile.isEmpty()) {
-                    //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-                    addTraveler();
+                if(data.equalsIgnoreCase("OTHERS")){
+                    sendEmailattache();
                 }else{
-                    getTravelerByPhone(mobile);
+                    if (mobile == null || mobile.isEmpty()) {
+                        //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                        addTraveler();
+                    }else{
+                        getTravelerByPhone(mobile);
+                    }
                 }
+
+
 
             }
 
@@ -902,12 +946,12 @@ public class BillDetails extends AppCompatActivity {
 
                             if (progressDialog != null)
                                 progressDialog.dismiss();
-                            HotelDetails list = response.body();
+                             list = response.body();
 
                             if (list != null) {
 
 
-                                property = list.getHotelDisplayName();
+
                                 mLocation.setText(list.getLocalty());
                                 mCity.setText(list.getCity());
                                 getContactByHotelId(id);
@@ -1086,6 +1130,8 @@ public class BillDetails extends AppCompatActivity {
                                 sendNotification(fm);
                                 /*Intent quick = new Intent(BillDetails.this, BillDetails.class);
                                 startActivity(quick);*/
+                            }else{
+                                sendEmailattache();
                             }
 
                         } else {
