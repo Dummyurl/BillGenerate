@@ -25,12 +25,14 @@
     </string-array>
 
     <array name="OTA_items">
-        <item>MMT</item>
-        <item>YAT</item>
-        <item>EXP</item>
-        <item>BOK</item>
+        <item>MAKEMY TRIP</item>
+        <item>YATRA/TG</item>
+        <item>EXPEDIA</item>
+        <item>BOOKING.COM</item>
         <item>GOIBIBO</item>
-        <item>Other</item>
+        <item>AGODA</item>
+        <item>CLEARTRIP</item>
+        <item>VIA</item>
     </array>
 
     <string-array name="room_plan">

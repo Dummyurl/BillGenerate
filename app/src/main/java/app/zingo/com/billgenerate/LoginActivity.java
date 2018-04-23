@@ -40,8 +40,6 @@ public class LoginActivity extends AppCompatActivity {
     private String TAG = "LoginActivity";
     private EditText input_num_signup,input_pass_signup;
     private FlatButton ok_signup;
-    private ProgressDialog progressDialog;
-
 
     String enc;
     Profile1 dto;
@@ -54,8 +52,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN|
-                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+/*        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN|
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);*/
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -125,10 +123,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void login( final String username, final String password,final String type){
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("please wait..");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+
         final Profile1 p = new Profile1();
         p.setUserName(username);
         p.setPassword(password);
@@ -150,8 +145,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onResponse(Call<ArrayList<Profile1>> call, Response<ArrayList<Profile1>> response) {
 //                List<RouteDTO.Routes> list = new ArrayList<RouteDTO.Routes>();
                         int statusCode = response.code();
-                        if (progressDialog != null)
-                            progressDialog.dismiss();
+
                         if (statusCode == 200 || statusCode == 201) {
 
                             ArrayList<Profile1> dto1 = response.body();//-------------------should not be list------------
@@ -186,8 +180,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             }
                         }else {
-                            if (progressDialog!=null)
-                                progressDialog.dismiss();
+
                             Toast.makeText(LoginActivity.this, "Login failed due to status code:"+statusCode, Toast.LENGTH_SHORT).show();
                         }
 //                callGetStartEnd();
@@ -196,8 +189,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<ArrayList<Profile1>> call, Throwable t) {
                         // Log error here since request failed
-                        if (progressDialog!=null)
-                            progressDialog.dismiss();
+
                         Log.e("TAG", t.toString());
                     }
                 });

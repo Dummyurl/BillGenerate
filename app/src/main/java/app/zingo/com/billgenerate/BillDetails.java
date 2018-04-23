@@ -1,86 +1,54 @@
 package app.zingo.com.billgenerate;
 
 import android.Manifest;
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
+import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.DisplayMetrics;
+import android.text.Html;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
-import java.io.FileOutputStream;
-import java.util.Date;
-
-import com.itextpdf.text.Anchor;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chapter;
-import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.List;
-import com.itextpdf.text.ListItem;
-import com.itextpdf.text.PageSize;
+
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Section;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -90,13 +58,10 @@ import app.zingo.com.billgenerate.Model.BillDataBase;
 import app.zingo.com.billgenerate.Model.Bookings1;
 import app.zingo.com.billgenerate.Model.ContactDetails;
 import app.zingo.com.billgenerate.Model.DataBaseHelper;
-import app.zingo.com.billgenerate.Model.Documents;
 import app.zingo.com.billgenerate.Model.FireBaseModel;
 import app.zingo.com.billgenerate.Model.HotelDetails;
 import app.zingo.com.billgenerate.Model.PaidStatusSpinnerAdapter;
-import app.zingo.com.billgenerate.Model.Permission;
 import app.zingo.com.billgenerate.Model.PlanDataBase;
-import app.zingo.com.billgenerate.Model.PreferenceHandler;
 import app.zingo.com.billgenerate.Model.PropertyAdapter;
 import app.zingo.com.billgenerate.Model.RoomDataBase;
 import app.zingo.com.billgenerate.Model.ThreadExecuter;
@@ -109,10 +74,11 @@ import retrofit2.Response;
 public class BillDetails extends AppCompatActivity {
 
     Spinner mRoomCount, mPayment, mRate, mDesc, mProperty,mOTA,mDataBase;
-    LinearLayout mDataLayout,mOtherLayout;
+    LinearLayout mDataLayout,mOtherLayout,mAddLayout,mCustomerLayout;
     EditText mLocation, mCity, mGuest, mMobile, mRoomType,
             mGuestCount, mTotal, mBooking, mZingo,mOtherProperty,
-            mBookingID, mEmail,  mNet, mNights, mArr;
+            mBookingID, mEmail,  mNet, mNights, mArr,
+                        mRoomCharge,mExtraCharge,mHotelTaxes,mAdditional,mCustomerPay;
     TextView mBook, mCID, mCOD;
     Button mSave, mCalculate;
     String[] bookingSourceArray;
@@ -141,7 +107,9 @@ public class BillDetails extends AppCompatActivity {
     //pdf
     String property, email, ota, city, location, guest,
             mobile, bdate, cit, cot, rooms, roomNum, count, plans,
-            payment, desc, total, booking, zingo, net, nights, arr, cits, cots;
+            payment, desc, total, booking, zingo, net, nights,
+            arr, cits, cots,roomCharge,extraCharge,hoteltaxes,addtional,customer;
+    double totals,otaAmt,zingoAmt,otaToHotel,addtionalChrg,payCustomer,customerToHotel,otaToHotelPay;
     Document document;
     Paragraph paragraph;
     String propertyN;
@@ -182,6 +150,8 @@ public class BillDetails extends AppCompatActivity {
 
         mProperty = (Spinner) findViewById(R.id.bill_property_name);
         mDataBase = (Spinner) findViewById(R.id.bill_data_base);
+        mAddLayout = (LinearLayout)findViewById(R.id.additional_layout);
+        mCustomerLayout = (LinearLayout)findViewById(R.id.customer_pay_layout);
         mDataLayout = (LinearLayout)findViewById(R.id.data_property_layout);
         mOtherLayout = (LinearLayout)findViewById(R.id.other_property_layout);
         mRoomType = (EditText) findViewById(R.id.bill_property_room);
@@ -197,6 +167,11 @@ public class BillDetails extends AppCompatActivity {
         mMobile = (EditText) findViewById(R.id.bill_guest_mobile);
         mGuestCount = (EditText) findViewById(R.id.bill_property_guest_num);
         mDesc = (Spinner) findViewById(R.id.bill_plan_inclusion);
+        mRoomCharge = (EditText) findViewById(R.id.bill_room_charge);
+        mExtraCharge = (EditText) findViewById(R.id.bill_extra_charge);
+        mHotelTaxes = (EditText) findViewById(R.id.bill_hotel_taxes);
+        mAdditional = (EditText) findViewById(R.id.bill_additional_charge);
+        mCustomerPay = (EditText) findViewById(R.id.bill_customer_pay);
         mTotal = (EditText) findViewById(R.id.bill_property_amount);
         mBooking = (EditText) findViewById(R.id.bill_booking_com);
         mZingo = (EditText) findViewById(R.id.bill_zingo_com);
@@ -248,6 +223,7 @@ public class BillDetails extends AppCompatActivity {
                 if(mDataBase.getSelectedItem().toString().equalsIgnoreCase("OTHERS")){
                     mDataLayout.setVisibility(View.GONE);
                     mOtherLayout.setVisibility(View.VISIBLE);
+
                 }else{
                     mDataLayout.setVisibility(View.VISIBLE);
                     mOtherLayout.setVisibility(View.GONE);
@@ -260,6 +236,24 @@ public class BillDetails extends AppCompatActivity {
             }
         });
 
+        mPayment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+                   mCustomerLayout.setVisibility(View.VISIBLE);
+                    mAddLayout.setVisibility(View.VISIBLE);
+
+                }else{
+                    mCustomerLayout.setVisibility(View.GONE);
+                    mAddLayout.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         //Database call
         dbHelper = new DataBaseHelper(this);
         room = new RoomDataBase(this);
@@ -281,11 +275,17 @@ public class BillDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+
                 cit = mCID.getText().toString();
                 cot = mCOD.getText().toString();
                 total = mTotal.getText().toString();
                 zingo = mZingo.getText().toString();
                 booking = mBooking.getText().toString();
+                roomCharge = mRoomCharge.getText().toString();
+                extraCharge = mExtraCharge.getText().toString();
+                hoteltaxes = mHotelTaxes.getText().toString();
+                addtional = mAdditional.getText().toString();
+                customer = mCustomerPay.getText().toString();
 
                 if (booking == null || booking.isEmpty()) {
                     //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
@@ -312,6 +312,29 @@ public class BillDetails extends AppCompatActivity {
                     mTotal.setError("Should not be Empty");
                     mTotal.requestFocus();
 
+                } else if (roomCharge == null || roomCharge.isEmpty()) {
+                    // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    mTotal.setError("Should not be Empty");
+                    mTotal.requestFocus();
+
+                } else if (extraCharge == null || extraCharge.isEmpty()) {
+                    // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    mTotal.setError("Should not be Empty");
+                    mTotal.requestFocus();
+
+                } else if (hoteltaxes == null || hoteltaxes.isEmpty()) {
+                    // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    mTotal.setError("Should not be Empty");
+                    mTotal.requestFocus();
+
+                } else if (addtional == null || addtional.isEmpty()) {
+                    // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    addtionalChrg = 0;
+
+                } else if (customer == null || customer.isEmpty()) {
+                    // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    payCustomer = 0;
+
                 } else {
 
                     //Date Calculation
@@ -334,10 +357,24 @@ public class BillDetails extends AppCompatActivity {
                     }
 
                     //Net Amount
+
                     DecimalFormat df = new DecimalFormat("#,###.##");
-                    double totals = Double.parseDouble(total);
-                    double otaAmt = Double.parseDouble(booking);
-                    double zingoAmt = Double.parseDouble(zingo);
+                     totals = Double.parseDouble(total);
+                     otaAmt = Double.parseDouble(booking);
+                     zingoAmt = Double.parseDouble(zingo);
+                     if(addtional==null||addtional.isEmpty()){
+                         addtionalChrg = 0;
+                     }else{
+                         addtionalChrg = Double.parseDouble(mAdditional.getText().toString());
+                     }
+
+                    if(customer==null||customer.isEmpty()){
+                        payCustomer = 0;
+                    }else{
+                        payCustomer = Double.parseDouble(mCustomerPay.getText().toString());
+                    }
+
+
                     double rooms = Double.parseDouble(mRoomCount.getSelectedItem().toString());
                     if (diffDays != 0) {
                         double arrAmt = totals / diffDays;
@@ -351,6 +388,10 @@ public class BillDetails extends AppCompatActivity {
 
 
                     commisionAmt = otaAmt + zingoAmt;
+                    otaToHotel = totals-otaAmt;
+                    customerToHotel = (totals+addtionalChrg)-payCustomer;
+                    otaToHotelPay = payCustomer - otaAmt;
+                    //hotelToZingo = otaToHotel-
                     double netAmt = totals - (otaAmt + zingoAmt);
                     mNet.setText("" + df.format(netAmt));
 
@@ -396,6 +437,11 @@ public class BillDetails extends AppCompatActivity {
         email = mEmail.getText().toString();
         count = mGuestCount.getText().toString();
         desc = mDesc.getSelectedItem().toString();
+        roomCharge = mRoomCharge.getText().toString();
+        extraCharge = mExtraCharge.getText().toString();
+        hoteltaxes = mHotelTaxes.getText().toString();
+        addtional = mAdditional.getText().toString();
+        customer = mCustomerPay.getText().toString();
         total = mTotal.getText().toString();
         booking = mBooking.getText().toString();
         zingo = mZingo.getText().toString();
@@ -406,6 +452,7 @@ public class BillDetails extends AppCompatActivity {
         cit = mCID.getText().toString();
         cot = mCOD.getText().toString();
         ota = mOTA.getSelectedItem().toString();
+
         System.out.println("Print" + String.valueOf(path));
 
         if (location == null || location.isEmpty()) {
@@ -442,6 +489,16 @@ public class BillDetails extends AppCompatActivity {
             Toast.makeText(BillDetails.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
         } else if (arr == null || arr.isEmpty()) {
             Toast.makeText(BillDetails.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
+        }else if (roomCharge == null || roomCharge.isEmpty()) {
+            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } /*else if (addtional == null || addtional.isEmpty()) {
+            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else if (customer == null || customer.isEmpty()) {
+            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        }*/else if (extraCharge == null || extraCharge.isEmpty()) {
+            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        }else if (hoteltaxes == null || hoteltaxes.isEmpty()) {
+            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
         } else {
 
             if(data.equalsIgnoreCase("OTHERS")){
@@ -458,13 +515,16 @@ public class BillDetails extends AppCompatActivity {
 
             //createPdf();
             System.out.println("Property name==" + property);
+
+
             boolean isfilecreated = createPdf();
             System.out.println("oooo" + isfilecreated);
             if (isfilecreated) {
                 //sendEmailattache();
 
                 if(data.equalsIgnoreCase("OTHERS")){
-                    sendEmailattache();
+                   // sendEmailattache();
+                    onShareClick();
                 }else{
                     if (mobile == null || mobile.isEmpty()) {
                         //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
@@ -537,25 +597,7 @@ public class BillDetails extends AppCompatActivity {
         updateRoomBooking(bookings);
     }
 
-    private void sendEmailattache() {
-        String[] mailto = {email};
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-        emailIntent.setType("application/pdf");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
-        emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Hotel Partner,\n" +
-                "We Thank you for your continued support in ensuring the highest level of service Standards. \n" +
-                "\n" +
-                "Please find the attached reservation for you.");
-        File root = Environment.getExternalStorageDirectory();
-        String pathToMyAttachedFile = "/BillGenerate/Pdf/" + csvFile;
-        File file = new File(root, pathToMyAttachedFile);
-        if (!file.exists() || !file.canRead()) {
-            return;
-        }
-        Uri uri = Uri.fromFile(file);
-        emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-        startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
-    }
+
 
     private boolean createPdf() {
 
@@ -657,6 +699,15 @@ public class BillDetails extends AppCompatActivity {
             paragraph.add(new Paragraph(text, smallBold));
             addEmptyLine(paragraph, 1);
             createTables(paragraph);
+            addEmptyLine(paragraph, 1);
+            paragraph.add(new Paragraph("Payment Breakup", smallBold));
+            addEmptyLine(paragraph, 1);
+            if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+                createTablesPaymentHotel(paragraph);
+            }else{
+                createTablesPayment(paragraph);
+            }
+
             addEmptyLine(paragraph, 2);
             addChild(new Paragraph(important, subFont));
             addChild(new Paragraph(note, small));
@@ -729,13 +780,123 @@ public class BillDetails extends AppCompatActivity {
         table.addCell(payment);
         table.addCell("INCLUSION");
         table.addCell(desc);
-        table.addCell("TOTAL AMOUNT");
+      /*  table.addCell("TOTAL AMOUNT");
         table.addCell("INR " + total);
         table.addCell("OTA COMMISSION");
         table.addCell("INR " + booking);
         table.addCell("ZINGOHOTELS.COM COMMISION");
         table.addCell("INR " + zingo);
         table.addCell("NET AMOUNT");
+        table.addCell("INR " + net);
+        table.addCell("ARR");
+        table.addCell("INR " + arr);*/
+
+        para.add(table);
+
+    }
+
+    private void createTablesPayment(Paragraph para)
+            throws BadElementException {
+        PdfPTable table = new PdfPTable(2);
+
+        // t.setBorderColor(BaseColor.GRAY);
+        // t.setPadding(4);
+        // t.setSpacing(4);
+        // t.setBorderWidth(1);
+
+        PdfPCell c1 = new PdfPCell(new Phrase("Description", catFontw));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        c1.setBackgroundColor(BaseColor.GRAY);
+        table.addCell(c1);
+
+        c1 = new PdfPCell(new Phrase("Amount", catFontw));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        c1.setBackgroundColor(BaseColor.GRAY);
+        table.addCell(c1);
+        table.setHeaderRows(1);
+
+        /*c1 = new PdfPCell(new Phrase("Table Header 3"));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        table.addCell(c1);
+        table.setHeaderRows(1);*/
+
+        DecimalFormat dfs = new DecimalFormat("#.##");
+
+        table.addCell("(i) ROOM CHARGES\n"+roomNum+" Room, "+nights+" Night");
+        table.addCell("INR " + roomCharge);
+        table.addCell("(ii) EXTRA CHARGES");
+        table.addCell("INR " + extraCharge);
+        table.addCell("(iii) HOTEL TAXES");
+        table.addCell("INR " + hoteltaxes);
+        table.addCell("(A) HOTEL GROSS CHARGES (i+ii+iii)");
+        table.addCell("INR " + total);
+        table.addCell("(B) OTA COMMISSION(Incl GST)");
+        table.addCell("INR " + booking);
+        table.addCell("(C) ZINGOHOTELS.COM COMMISION");
+        table.addCell("INR " + zingo);
+        table.addCell("OTA to Pay Hotel(A-B)");
+        table.addCell("INR " + dfs.format(otaToHotel));
+        table.addCell("Hotel to Pay Zingo(C)");
+        table.addCell("INR " + zingo);
+        table.addCell("NET AMOUNT (A-B-C)");
+        table.addCell("INR " + net);
+        table.addCell("ARR");
+        table.addCell("INR " + arr);
+
+        para.add(table);
+
+    }
+
+    private void createTablesPaymentHotel(Paragraph para)
+            throws BadElementException {
+        PdfPTable table = new PdfPTable(2);
+
+        // t.setBorderColor(BaseColor.GRAY);
+        // t.setPadding(4);
+        // t.setSpacing(4);
+        // t.setBorderWidth(1);
+        DecimalFormat dfs = new DecimalFormat("#.##");
+
+
+        PdfPCell c1 = new PdfPCell(new Phrase("Description", catFontw));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        c1.setBackgroundColor(BaseColor.GRAY);
+        table.addCell(c1);
+
+        c1 = new PdfPCell(new Phrase("Amount", catFontw));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        c1.setBackgroundColor(BaseColor.GRAY);
+        table.addCell(c1);
+        table.setHeaderRows(1);
+
+        /*c1 = new PdfPCell(new Phrase("Table Header 3"));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        table.addCell(c1);
+        table.setHeaderRows(1);*/
+
+        table.addCell("(i) ROOM CHARGES\n"+roomNum+" Room, "+nights+" Night");
+        table.addCell("INR " + roomCharge);
+        table.addCell("(ii) EXTRA CHARGES");
+        table.addCell("INR " + extraCharge);
+        table.addCell("(iii) HOTEL TAXES");
+        table.addCell("INR " + hoteltaxes);
+        table.addCell("(A) HOTEL GROSS CHARGES (i+ii+iii)");
+        table.addCell("INR " + total);
+        table.addCell("(B) OTA COMMISSION(Incl GST)");
+        table.addCell("INR " + booking);
+        table.addCell("(C) ZINGOHOTELS.COM COMMISION");
+        table.addCell("INR " + zingo);
+        table.addCell("(D) Additional Charges");
+        table.addCell("INR " + addtional);
+        table.addCell("(E) Customer payment at OTA\n Customer Pre-Payment includes discount coupons offered by OTA or payments made through Wallet.");
+        table.addCell("INR " + customer);
+        table.addCell("Customer To Pay At Hotel (A + D - E)");
+        table.addCell("INR " + dfs.format(customerToHotel));
+        table.addCell("Amount To Be Paid By OTA (E - B)");
+        table.addCell("INR " + dfs.format(otaToHotelPay));
+        table.addCell("Hotel to Pay Zingo(C)");
+        table.addCell("INR " + zingo);
+        table.addCell("NET AMOUNT (A-B-C)");
         table.addCell("INR " + net);
         table.addCell("ARR");
         table.addCell("INR " + arr);
@@ -952,9 +1113,16 @@ public class BillDetails extends AppCompatActivity {
 
 
 
-                                mLocation.setText(list.getLocalty());
-                                mCity.setText(list.getCity());
-                                getContactByHotelId(id);
+                                if(mDataBase.getSelectedItem().toString().equalsIgnoreCase("OTHERS")){
+                                    mLocation.setText("");
+                                    mCity.setText("");
+                                    mEmail.setText("");
+                                }else{
+                                    mLocation.setText(list.getLocalty());
+                                    mCity.setText(list.getCity());
+                                    getContactByHotelId(id);
+                                }
+
 
 
                             }
@@ -1131,7 +1299,12 @@ public class BillDetails extends AppCompatActivity {
                                 /*Intent quick = new Intent(BillDetails.this, BillDetails.class);
                                 startActivity(quick);*/
                             }else{
-                                sendEmailattache();
+                                String subject=null;
+
+
+
+                                //sendEmailattache();
+                                onShareClick();
                             }
 
                         } else {
@@ -1184,7 +1357,11 @@ public class BillDetails extends AppCompatActivity {
                             ArrayList<String> list = response.body();
 
                             Toast.makeText(BillDetails.this, "Notification Send Successfully", Toast.LENGTH_SHORT).show();
-                           sendEmailattache();
+
+
+
+                           //sendEmailattache();
+                            onShareClick();
 
 
                         } else {
@@ -1401,7 +1578,208 @@ public class BillDetails extends AppCompatActivity {
         return bookNumber;
     }
 
+    public void shareIntentSpecificApps() {
+        Resources resources = getResources();
 
+        String[] mailto = {email};
+
+        Intent emailIntent = new Intent();
+      //  emailIntent.setAction(Intent.ACTION_SEND);
+        // Native email client doesn't currently support HTML, but it doesn't hurt to try in case they fix it
+        emailIntent.setType("text/plain");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
+
+
+        File root = Environment.getExternalStorageDirectory();
+        String pathToMyAttachedFile = "/BillGenerate/Pdf/" + csvFile;
+        File file = new File(root, pathToMyAttachedFile);
+        if (!file.exists() || !file.canRead()) {
+            return;
+        }
+        Uri uri = Uri.fromFile(file);
+        //emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+//        startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
+
+        PackageManager pm = getPackageManager();
+        Intent sendIntent = new Intent(Intent.ACTION_SEND);
+        sendIntent.setType("application/pdf");
+
+
+        Intent openInChooser = Intent.createChooser(emailIntent, "Pick an Email provider");
+
+        List<ResolveInfo> resInfo = pm.queryIntentActivities(sendIntent, 0);
+        List<LabeledIntent> intentList = new ArrayList<LabeledIntent>();
+        for (int i = 0; i < resInfo.size(); i++) {
+            // Extract the label, append it, and repackage it in a LabeledIntent
+            ResolveInfo ri = resInfo.get(i);
+            String packageName = ri.activityInfo.packageName;
+            if(packageName.contains("android.email")) {
+                if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- "+payment+"-"+ota+" voucher - "+property);
+                }else{
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- Confirm Prepaid -"+ota+" voucher - "+property);
+                }
+
+                emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Hotel Partner,\n" +
+                        "We Thank you for your continued support in ensuring the highest level of service Standards. \n" +
+                        "\n" +
+                        "Please find the attached reservation for you.");
+
+                emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+               // startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
+               /* Intent intent = new Intent();
+               // intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
+              //  intent.setAction(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_EMAIL, mailto);
+                if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- "+payment+"-"+ota+" voucher - "+property);
+                }else{
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- Confirm Prepaid -"+ota+" voucher - "+property);
+                }
+
+                intent.putExtra(Intent.EXTRA_TEXT, "Dear Hotel Partner,\n" +
+                        "We Thank you for your continued support in ensuring the highest level of service Standards. \n" +
+                        "\n" +
+                        "Please find the attached reservation for you.");
+
+                File roots = Environment.getExternalStorageDirectory();
+                String pathToMyAttachedFiles = "/BillGenerate/Pdf/" + csvFile;
+                File files = new File(roots, pathToMyAttachedFiles);
+                if (!files.exists() || !files.canRead()) {
+                    return;
+                }
+                Uri uris = Uri.fromFile(files);
+                intent.putExtra(Intent.EXTRA_STREAM, uris);*/
+
+
+               // intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
+            } else {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
+                //intent.setAction(Intent.ACTION_SEND);
+                intent.setType("application/pdf");
+
+                File roots = Environment.getExternalStorageDirectory();
+                String pathToMyAttachedFiles = "/BillGenerate/Pdf/" + csvFile;
+                File files = new File(roots, pathToMyAttachedFiles);
+                if (!files.exists() || !files.canRead()) {
+                    return;
+                }
+                Uri uris = Uri.fromFile(files);
+                intent.putExtra(Intent.EXTRA_STREAM, uris);
+
+
+                intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
+            }
+        }
+
+        // convert intentList to array
+        LabeledIntent[] extraIntents = intentList.toArray( new LabeledIntent[ intentList.size() ]);
+
+        openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
+        startActivity(openInChooser);
+    }
+
+    private void sendEmailattache() {
+        String[] mailto = {email};
+
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setType("text/plain");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
+        if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- "+payment+"-"+ota+" voucher - "+property);
+        }else{
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- Confirm Prepaid -"+ota+" voucher - "+property);
+        }
+
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Hotel Partner,\n" +
+                "We Thank you for your continued support in ensuring the highest level of service Standards. \n" +
+                "\n" +
+                "Please find the attached reservation for you.");
+        File root = Environment.getExternalStorageDirectory();
+        String pathToMyAttachedFile = "/BillGenerate/Pdf/" + csvFile;
+        File file = new File(root, pathToMyAttachedFile);
+        if (!file.exists() || !file.canRead()) {
+            return;
+        }
+        Uri uri = Uri.fromFile(file);
+        emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
+    }
+
+    public void onShareClick() {
+        List<Intent> intentShareList = new ArrayList<Intent>();
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        List<ResolveInfo> resolveInfoList = getPackageManager().queryIntentActivities(shareIntent, 0);
+
+        for (ResolveInfo resInfo : resolveInfoList) {
+            String packageName = resInfo.activityInfo.packageName;
+            String name = resInfo.activityInfo.name;
+
+
+            if (packageName.contains("android.email")||packageName.contains("whatsapp")) {
+
+
+                if(packageName.contains("android.email")){
+                    String[] mailto = {email};
+
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setType("text/plain");
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
+                    if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- "+payment+"-"+ota+" voucher - "+property);
+                    }else{
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- Confirm Prepaid -"+ota+" voucher - "+property);
+                    }
+
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Hotel Partner,\n" +
+                            "We Thank you for your continued support in ensuring the highest level of service Standards. \n" +
+                            "\n" +
+                            "Please find the attached reservation for you.");
+                    File root = Environment.getExternalStorageDirectory();
+                    String pathToMyAttachedFile = "/BillGenerate/Pdf/" + csvFile;
+                    File file = new File(root, pathToMyAttachedFile);
+                    if (!file.exists() || !file.canRead()) {
+                        return;
+                    }
+                    Uri uri = Uri.fromFile(file);
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                    intentShareList.add(emailIntent);
+                }else{
+                    Intent intent = new Intent();
+                    // intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
+                    intent.setAction(Intent.ACTION_SEND);
+                    intent.setType("application/pdf");
+
+                    File roots = Environment.getExternalStorageDirectory();
+                    String pathToMyAttachedFiles = "/BillGenerate/Pdf/" + csvFile;
+                    File files = new File(roots, pathToMyAttachedFiles);
+                    if (!files.exists() || !files.canRead()) {
+                        return;
+                    }
+                    Uri uris = Uri.fromFile(files);
+                    intent.putExtra(Intent.EXTRA_STREAM, uris);
+                    intentShareList.add(intent);
+                }
+
+               // startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
+            }/*else if(packageName.contains("whatsapp")){
+
+               // startActivity(Intent.createChooser(intent, "Pick an Email provider"));
+            }*/
+        }
+
+        if (intentShareList.isEmpty()) {
+            Toast.makeText(BillDetails.this, "No apps to share !", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent chooserIntent = Intent.createChooser(intentShareList.remove(0), "Share via");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentShareList.toArray(new Parcelable[]{}));
+            startActivity(chooserIntent);
+        }
+    }
 }
 
 
