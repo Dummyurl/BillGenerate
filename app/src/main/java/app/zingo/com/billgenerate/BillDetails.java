@@ -313,27 +313,14 @@ public class BillDetails extends AppCompatActivity {
                     mTotal.requestFocus();
 
                 } else if (roomCharge == null || roomCharge.isEmpty()) {
-                    // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-                    mTotal.setError("Should not be Empty");
-                    mTotal.requestFocus();
+                     Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+
 
                 } else if (extraCharge == null || extraCharge.isEmpty()) {
-                    // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-                    mTotal.setError("Should not be Empty");
-                    mTotal.requestFocus();
+                    Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
 
                 } else if (hoteltaxes == null || hoteltaxes.isEmpty()) {
-                    // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-                    mTotal.setError("Should not be Empty");
-                    mTotal.requestFocus();
-
-                } else if (addtional == null || addtional.isEmpty()) {
-                    // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-                    addtionalChrg = 0;
-
-                } else if (customer == null || customer.isEmpty()) {
-                    // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-                    payCustomer = 0;
+                    Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
 
                 } else {
 
