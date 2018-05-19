@@ -7,6 +7,7 @@ import app.zingo.com.billgenerate.Model.ContactDetails;
 import app.zingo.com.billgenerate.Model.Documents;
 import app.zingo.com.billgenerate.Model.FireBaseModel;
 import app.zingo.com.billgenerate.Model.HotelDetails;
+import app.zingo.com.billgenerate.Model.NotificationManager;
 import app.zingo.com.billgenerate.Model.Profile1;
 import app.zingo.com.billgenerate.Model.Traveller;
 import retrofit2.Call;
@@ -63,7 +64,8 @@ public interface LoginApi {
 
     @PUT("Travellers/{id}")
     Call<Traveller> updateTravellerDetails(@Header("Authorization") String authKey,@Path("id") int id,@Body Traveller body);
-
+    @POST("NotificationManagers")
+    Call<NotificationManager> saveNotification(@Header("Authorization") String auth, @Body NotificationManager hotelNotification);
 
 
 }

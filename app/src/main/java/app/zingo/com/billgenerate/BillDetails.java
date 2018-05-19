@@ -2,6 +2,7 @@ package app.zingo.com.billgenerate;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
+
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -60,6 +61,7 @@ import app.zingo.com.billgenerate.Model.ContactDetails;
 import app.zingo.com.billgenerate.Model.DataBaseHelper;
 import app.zingo.com.billgenerate.Model.FireBaseModel;
 import app.zingo.com.billgenerate.Model.HotelDetails;
+import app.zingo.com.billgenerate.Model.NotificationManager;
 import app.zingo.com.billgenerate.Model.PaidStatusSpinnerAdapter;
 import app.zingo.com.billgenerate.Model.PlanDataBase;
 import app.zingo.com.billgenerate.Model.PropertyAdapter;
@@ -74,10 +76,10 @@ import retrofit2.Response;
 public class BillDetails extends AppCompatActivity {
 
     Spinner mRoomCount, mPayment, mRate, mDesc, mProperty,mOTA,mDataBase;
-    LinearLayout mDataLayout,mOtherLayout,mAddLayout,mCustomerLayout;
+    LinearLayout mDataLayout,mOtherLayout,mAddLayout,mCustomerLayout,mOtaService;
     EditText mLocation, mCity, mGuest, mMobile, mRoomType,
             mGuestCount, mTotal, mBooking, mZingo,mOtherProperty,
-            mBookingID, mEmail,  mNet, mNights, mArr,
+            mBookingID, mEmail,  mNet, mNights, mArr,mOtaFee,
                         mRoomCharge,mExtraCharge,mHotelTaxes,mAdditional,mCustomerPay;
     TextView mBook, mCID, mCOD;
     Button mSave, mCalculate;
@@ -95,6 +97,8 @@ public class BillDetails extends AppCompatActivity {
     PlanDataBase plan;
     BillDataBase bill;
 
+    boolean book = false;
+
     public static int REQUEST_PERMISSIONS = 1;
     boolean boolean_permission;
     boolean boolean_save;
@@ -108,8 +112,8 @@ public class BillDetails extends AppCompatActivity {
     String property, email, ota, city, location, guest,
             mobile, bdate, cit, cot, rooms, roomNum, count, plans,
             payment, desc, total, booking, zingo, net, nights,
-            arr, cits, cots,roomCharge,extraCharge,hoteltaxes,addtional,customer;
-    double totals,otaAmt,zingoAmt,otaToHotel,addtionalChrg,payCustomer,customerToHotel,otaToHotelPay;
+            arr, cits, cots,roomCharge,extraCharge,hoteltaxes,addtional,customer,otaFee;
+    double totals,otaAmt,zingoAmt,otaToHotel,addtionalChrg,payCustomer,customerToHotel,otaToHotelPay,otaFeeAmount,gstValue;
     Document document;
     Paragraph paragraph;
     String propertyN;
@@ -151,10 +155,12 @@ public class BillDetails extends AppCompatActivity {
         mProperty = (Spinner) findViewById(R.id.bill_property_name);
         mDataBase = (Spinner) findViewById(R.id.bill_data_base);
         mAddLayout = (LinearLayout)findViewById(R.id.additional_layout);
+        mOtaService = (LinearLayout)findViewById(R.id.ota_service);
         mCustomerLayout = (LinearLayout)findViewById(R.id.customer_pay_layout);
         mDataLayout = (LinearLayout)findViewById(R.id.data_property_layout);
         mOtherLayout = (LinearLayout)findViewById(R.id.other_property_layout);
         mRoomType = (EditText) findViewById(R.id.bill_property_room);
+        mOtaFee = (EditText) findViewById(R.id.bill_booking_com_service);
         mRate = (Spinner) findViewById(R.id.bill_property_rate);
         mRoomCount = (Spinner) findViewById(R.id.bill_property_room_num);
         mPayment = (Spinner) findViewById(R.id.bill_property_payment);
@@ -236,16 +242,35 @@ public class BillDetails extends AppCompatActivity {
             }
         });
 
+        mOTA.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(mOTA.getSelectedItem().toString().equalsIgnoreCase("MAKEMY TRIP")){
+                    mOtaService.setVisibility(View.VISIBLE);
+
+                }else{
+                    mOtaService.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         mPayment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
                    mCustomerLayout.setVisibility(View.VISIBLE);
                     mAddLayout.setVisibility(View.VISIBLE);
+                    mOtaService.setVisibility(View.VISIBLE);
 
                 }else{
                     mCustomerLayout.setVisibility(View.GONE);
                     mAddLayout.setVisibility(View.GONE);
+                    mOtaService.setVisibility(View.GONE);
                 }
             }
 
@@ -286,6 +311,9 @@ public class BillDetails extends AppCompatActivity {
                 hoteltaxes = mHotelTaxes.getText().toString();
                 addtional = mAdditional.getText().toString();
                 customer = mCustomerPay.getText().toString();
+                otaFee = mOtaFee.getText().toString();
+
+                String source = mOTA.getSelectedItem().toString();
 
                 if (booking == null || booking.isEmpty()) {
                     //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
@@ -355,12 +383,19 @@ public class BillDetails extends AppCompatActivity {
                          addtionalChrg = Double.parseDouble(mAdditional.getText().toString());
                      }
 
+                    if(otaFee==null||otaFee.isEmpty()){
+                        otaFeeAmount = 0;
+                    }else{
+                        otaFeeAmount = Double.parseDouble(otaFee);
+                    }
+
                     if(customer==null||customer.isEmpty()){
                         payCustomer = 0;
                     }else{
                         payCustomer = Double.parseDouble(mCustomerPay.getText().toString());
                     }
 
+                    gstValue = Double.parseDouble(hoteltaxes);
 
                     double rooms = Double.parseDouble(mRoomCount.getSelectedItem().toString());
                     if (diffDays != 0) {
@@ -373,14 +408,21 @@ public class BillDetails extends AppCompatActivity {
                         mArr.setText("" + df.format(arrRamt));
                     }
 
-
-                    commisionAmt = otaAmt + zingoAmt;
+                    commisionAmt = otaAmt + zingoAmt+otaFeeAmount;
                     otaToHotel = totals-otaAmt;
-                    customerToHotel = (totals+addtionalChrg)-payCustomer;
-                    otaToHotelPay = payCustomer - otaAmt;
+
+
                     //hotelToZingo = otaToHotel-
                     double netAmt = totals - (otaAmt + zingoAmt);
                     mNet.setText("" + df.format(netAmt));
+
+                    if(source!=null&&source.equalsIgnoreCase("MAKEMY TRIP")){
+                        otaToHotelPay = (payCustomer) - (otaAmt+otaFeeAmount);
+                        customerToHotel = (totals+addtionalChrg+otaFeeAmount)-payCustomer;
+                    }else{
+                        otaToHotelPay = payCustomer - otaAmt;
+                        customerToHotel = (totals+addtionalChrg)-payCustomer;
+                    }
 
                 }
 
@@ -547,6 +589,7 @@ public class BillDetails extends AppCompatActivity {
         bookings.setNoOfAdults(Integer.parseInt(count));
         bookings.setBookingStatus("Quick");
         bookings.setBookingSource("OTA");
+        bookings.setGstAmount((int)gstValue);
         bookings.setCommissionAmount((int) commisionAmt);
         bookings.setDurationOfStay(Integer.parseInt(nights));
         bookings.setTotalAmount((int) Double.parseDouble(total));
@@ -581,7 +624,12 @@ public class BillDetails extends AppCompatActivity {
 
         bookings.setBookingTime(time);
 
-        updateRoomBooking(bookings);
+        if(book){
+            onShareClick();
+        }else{
+            updateRoomBooking(bookings);
+        }
+
     }
 
 
@@ -877,10 +925,40 @@ public class BillDetails extends AppCompatActivity {
         table.addCell("INR " + addtional);
         table.addCell("(E) Customer payment at OTA\n Customer Pre-Payment includes discount coupons offered by OTA or payments made through Wallet.");
         table.addCell("INR " + customer);
-        table.addCell("Customer To Pay At Hotel (A + D - E)");
-        table.addCell("INR " + dfs.format(customerToHotel));
-        table.addCell("Amount To Be Paid By OTA (E - B)");
-        table.addCell("INR " + dfs.format(otaToHotelPay));
+
+        if(mOTA.getSelectedItem().toString().equalsIgnoreCase("MAKEMY TRIP")){
+            table.addCell("(F) MMT SERVICE FEE\n (Including GST)");
+            table.addCell("INR " + otaFeeAmount);
+            if(otaToHotelPay<0){
+                table.addCell("Amount To Be Paid By HOTEL to OTA (E - (B+F))");
+                table.addCell("INR " + dfs.format(Math.abs(otaToHotelPay)));
+            }else{
+                table.addCell("Amount To Be Paid By OTA (E - (B+F))");
+                table.addCell("INR " + dfs.format(otaToHotelPay));
+            }
+        }else{
+            if(otaToHotelPay<0){
+                table.addCell("Amount To Be Paid By  HOTEL to OTA  (E - B)");
+                table.addCell("INR " + dfs.format(Math.abs(otaToHotelPay)));
+            }else{
+                table.addCell("Amount To Be Paid By OTA (E - B)");
+                table.addCell("INR " + dfs.format(otaToHotelPay));
+            }
+        }
+
+
+        if(mOTA.getSelectedItem().toString().equalsIgnoreCase("MAKEMY TRIP")){
+            table.addCell("Customer To Pay At Hotel (A + D + F - E)");
+            table.addCell("INR " + dfs.format(customerToHotel));
+        }else{
+            table.addCell("Customer To Pay At Hotel (A + D - E)");
+            table.addCell("INR " + dfs.format(customerToHotel));
+        }
+
+
+
+
+
         table.addCell("Hotel to Pay Zingo(C)");
         table.addCell("INR " + zingo);
         table.addCell("NET AMOUNT (A-B-C)");
@@ -1272,6 +1350,7 @@ public class BillDetails extends AppCompatActivity {
                                 progressDialog.dismiss();
                             Bookings1 dto = response.body();
                             if (dto != null) {
+                                book = true;
 
                                 Toast.makeText(BillDetails.this, "Booking done successfully", Toast.LENGTH_SHORT).show();
                                 //sendEmailattache();
@@ -1280,7 +1359,7 @@ public class BillDetails extends AppCompatActivity {
                                 fm.setServerId("AIzaSyA56O6PwNfegBxT9Om8PDWfqfmSU9SUFL8");
                                 fm.setHotelId(hotelId);
                                 fm.setTitle("New Booking from Zingo Hotels");
-                                fm.setMessage("Congrats! You got one new booking for "+nights +" nights from "+cit+" to "+cot+"\nBooking Number:"+dto.getBookingNumber());
+                                fm.setMessage("Congrats! "+property+" got one new booking for "+nights +" nights from "+cit+" to "+cot+"\nBooking Number:"+dto.getBookingNumber());
                                 //registerTokenInDB(fm);
                                 sendNotification(fm);
                                 /*Intent quick = new Intent(BillDetails.this, BillDetails.class);
@@ -1348,7 +1427,12 @@ public class BillDetails extends AppCompatActivity {
 
 
                            //sendEmailattache();
-                            onShareClick();
+                            NotificationManager nf = new NotificationManager();
+                            nf.setNotificationText(fireBaseModel.getTitle());
+                            nf.setNotificationFor(fireBaseModel.getMessage());
+                            nf.setHotelId(fireBaseModel.getHotelId());
+                            savenotification(nf);
+
 
 
                         } else {
@@ -1766,6 +1850,60 @@ public class BillDetails extends AppCompatActivity {
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentShareList.toArray(new Parcelable[]{}));
             startActivity(chooserIntent);
         }
+    }
+
+    private void savenotification(final NotificationManager notification) {
+
+        final ProgressDialog dialog = new ProgressDialog(BillDetails.this);
+        dialog.setMessage("Loading");
+        dialog.setCancelable(false);
+        dialog.show();
+
+        new ThreadExecuter().execute(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Hotel id = "+notification.getHotelId());
+                String auth_string = Util.getToken(BillDetails.this);
+                LoginApi travellerApi = Util.getClient().create(LoginApi.class);
+                Call<NotificationManager> response = travellerApi.saveNotification(auth_string,notification);
+
+                response.enqueue(new Callback<NotificationManager>() {
+                    @Override
+                    public void onResponse(Call<NotificationManager> call, Response<NotificationManager> response) {
+
+                        if(dialog != null)
+                        {
+                            dialog.dismiss();
+                        }
+                        System.out.println(response.code());
+                        if(response.code() == 200||response.code() == 201)
+                        {
+                            if(response.body() != null)
+                            {
+                                /*Toast.makeText(BillDetails.this,"Thank you for selecting room. Your request has been sent to hotel. " +
+                                        "Please wait for there reply.",Toast.LENGTH_SHORT).show();*/
+                                //SelectRoom.this.finish();
+                                onShareClick();
+
+                                //Toast.makeText(BillDetails.this, "Save Notification", Toast.LENGTH_SHORT).show();
+
+
+
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<NotificationManager> call, Throwable t) {
+                        if(dialog != null)
+                        {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+            }
+        });
     }
 }
 
