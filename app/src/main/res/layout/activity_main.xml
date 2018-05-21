@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:text="Create Room"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/create_bill"
+            android:layout_below="@+id/cancel_booking"
             />
 
         <Button
@@ -52,6 +52,16 @@
             android:layout_marginTop="10dp"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/create_property"
+            />
+
+        <Button
+            android:id="@+id/cancel_booking"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="Cancel Booking"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/create_bill"
             />
 
 

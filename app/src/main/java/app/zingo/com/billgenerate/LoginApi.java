@@ -67,5 +67,15 @@ public interface LoginApi {
     @POST("NotificationManagers")
     Call<NotificationManager> saveNotification(@Header("Authorization") String auth, @Body NotificationManager hotelNotification);
 
+    @GET("RoomBookings/{id}")
+    Call<Bookings1> getBookingById(@Header("Authorization") String authKey,@Path("id") int id);
+
+    @GET("Travellers/{id}")
+    Call<Traveller> getTravellerDetails(@Header("Authorization") String authKey, @Path("id") int id);
+
+    @PUT("RoomBookings/{id}")
+    Call<String> updateBookingStatus(@Header("Authorization") String authKey,@Path("id") int id, @Body Bookings1 bookings1);
+
+
 
 }

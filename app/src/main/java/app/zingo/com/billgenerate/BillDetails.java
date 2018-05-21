@@ -22,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -88,7 +89,7 @@ public class BillDetails extends AppCompatActivity {
     ArrayList<HotelDetails> chainsList;
     Traveller dtos;
     Bookings1 bookings;
-    double commisionAmt;
+    double commisionAmt,commisionGST;
     HotelDetails list;
 
     //Databaases
@@ -96,6 +97,7 @@ public class BillDetails extends AppCompatActivity {
     RoomDataBase room;
     PlanDataBase plan;
     BillDataBase bill;
+    String zingoBookingId;
 
     boolean book = false;
 
@@ -151,6 +153,10 @@ public class BillDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bill_details);
+
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle("Create Bill");
 
         mProperty = (Spinner) findViewById(R.id.bill_property_name);
         mDataBase = (Spinner) findViewById(R.id.bill_data_base);
@@ -409,6 +415,8 @@ public class BillDetails extends AppCompatActivity {
                     }
 
                     commisionAmt = otaAmt + zingoAmt+otaFeeAmount;
+                    double gst = commisionAmt*18;
+                    commisionGST = gst/100;
                     otaToHotel = totals-otaAmt;
 
 
@@ -546,9 +554,24 @@ public class BillDetails extends AppCompatActivity {
             System.out.println("Property name==" + property);
 
 
-            boolean isfilecreated = createPdf();
-            System.out.println("oooo" + isfilecreated);
-            if (isfilecreated) {
+            if(data.equalsIgnoreCase("OTHERS")){
+                // sendEmailattache();
+                boolean isfilecreated = createPdf();
+                if (isfilecreated) {
+                    onShareClick();
+                }
+            }else{
+                if (mobile == null || mobile.isEmpty()) {
+                    //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    addTraveler();
+                }else{
+                    getTravelerByPhone(mobile);
+                }
+            }
+
+
+            //System.out.println("oooo" + isfilecreated);
+           /* if (isfilecreated) {
                 //sendEmailattache();
 
                 if(data.equalsIgnoreCase("OTHERS")){
@@ -565,7 +588,7 @@ public class BillDetails extends AppCompatActivity {
 
 
 
-            }
+            }*/
 
         }
 
@@ -575,60 +598,102 @@ public class BillDetails extends AppCompatActivity {
 
     public void setData(){
 
-        bookings = new Bookings1();
-        String bookingnumber = randomByDate();
-        bookings.setBookingNumber(bookingnumber);
+        try{
+            bookings = new Bookings1();
+            String bookingnumber = randomByDate();
+            bookings.setBookingNumber(bookingnumber);
 
-        bookings.setTravellerId(travellerIid);
-        bookings.setCheckInDate(cits);
-        bookings.setOptCheckInDate(cits);//----------------change in case of customer app booking-----------
-        bookings.setCheckOutDate(cots);
-        bookings.setOptCheckOutDate(cots);
-        bookings.setHotelId(hotelId);
-        bookings.setBookingSourceType(mOTA.getSelectedItem().toString());
-        bookings.setNoOfAdults(Integer.parseInt(count));
-        bookings.setBookingStatus("Quick");
-        bookings.setBookingSource("OTA");
-        bookings.setGstAmount((int)gstValue);
-        bookings.setCommissionAmount((int) commisionAmt);
-        bookings.setDurationOfStay(Integer.parseInt(nights));
-        bookings.setTotalAmount((int) Double.parseDouble(total));
-        if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
-            bookings.setBalanceAmount((int) Double.parseDouble(total));
-        }else{
-            bookings.setBalanceAmount(0);
-        }
+            bookings.setTravellerId(travellerIid);
+            bookings.setCheckInDate(cits);
+            bookings.setOptCheckInDate(cits);//----------------change in case of customer app booking-----------
+            bookings.setCheckOutDate(cots);
+            bookings.setOptCheckOutDate(cots);
+            bookings.setHotelId(hotelId);
+            bookings.setBookingSourceType(mOTA.getSelectedItem().toString());
+            bookings.setNoOfAdults(Integer.parseInt(count));
+            bookings.setBookingStatus("Quick");
+            bookings.setBookingSource("OTA");
+            bookings.setGstAmount((int)gstValue);
+            DecimalFormat df = new DecimalFormat("##.##");
+            bookings.setCommisionGSTAmount(commisionGST);
+            if(mRoomCharge.getText().toString()==null||mRoomCharge.getText().toString().isEmpty()){
+                bookings.setSellRate(0);
+            }else{
 
-        bookings.setBookingPlan(mRate.getSelectedItem().toString());
-        bookings.setRoomCategory(mRoomType.getText().toString());
+                double sellRate = Double.parseDouble(mRoomCharge.getText().toString());
+                bookings.setSellRate((int) sellRate);
+            }
 
-        if(mRoomCount.getSelectedItem().toString().isEmpty()){
-            bookings.setNoOfRooms(1);
-        }else{
-            bookings.setNoOfRooms(Integer.parseInt(mRoomCount.getSelectedItem().toString()));
-        }
+            if(mExtraCharge.getText().toString()==null||mExtraCharge.getText().toString().isEmpty()){
+                bookings.setExtraCharges(0);
+            }else{
+
+                double sellRate = Double.parseDouble(mExtraCharge.getText().toString());
+                bookings.setExtraCharges((int) sellRate);
+            }
+            bookings.setCommissionAmount((int) commisionAmt);
+            bookings.setDurationOfStay(Integer.parseInt(nights));
+            bookings.setTotalAmount((int) Double.parseDouble(total));
+            if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+                bookings.setBalanceAmount((int) Double.parseDouble(total));
+            }else{
+                bookings.setBalanceAmount(0);
+            }
+
+            bookings.setBookingPlan(mRate.getSelectedItem().toString());
+            bookings.setRoomCategory(mRoomType.getText().toString());
+
+            if(mRoomCount.getSelectedItem().toString().isEmpty()){
+                bookings.setNoOfRooms(1);
+            }else{
+                bookings.setNoOfRooms(Integer.parseInt(mRoomCount.getSelectedItem().toString()));
+            }
 
 
-        //Current time and date for booking
+            //Current time and date for booking
 
-        long date = System.currentTimeMillis();
+            long date = System.currentTimeMillis();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-        String bookingDate = sdf.format(date);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+            SimpleDateFormat sdfs = new SimpleDateFormat("MMM dd,yyyy");
+
+            if(mBook.getText().toString()==null||mBook.getText().toString().isEmpty()){
+                String bookingDate = sdf.format(date);
+                System.out.println("Booking Date==="+bookingDate);
+                bookings.setBookingDate(bookingDate);
+            }else{
+
+                Date date1 = sdfs.parse(mBook.getText().toString());
+                bookings.setBookingDate(sdf.format(date1));
+            }
+
+       /* String bookingDate = sdf.format(date);
         System.out.println("Booking Date==="+bookingDate);
-        bookings.setBookingDate(bookingDate);
+        bookings.setBookingDate(bookingDate);*/
 
-        SimpleDateFormat sdft = new SimpleDateFormat("hh:mm a");
-        Date d = new Date();
-        String time = sdft.format(d);
+            SimpleDateFormat sdft = new SimpleDateFormat("hh:mm a");
+            Date d = new Date();
+            String time = sdft.format(d);
 
-        bookings.setBookingTime(time);
+            bookings.setBookingTime(time);
 
-        if(book){
-            onShareClick();
-        }else{
-            updateRoomBooking(bookings);
+            if(book){
+                boolean fileCreated = createPdf();
+                if(fileCreated){
+                    onShareClick();
+                }else{
+                    Toast.makeText(this, "File not generate but booking happened", Toast.LENGTH_SHORT).show();
+                    createPdf();
+                }
+
+            }else{
+                updateRoomBooking(bookings);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
+
 
     }
 
@@ -730,6 +795,10 @@ public class BillDetails extends AppCompatActivity {
             addEmptyLine(paragraph, 2);
             paragraph.add(new Paragraph("Booking ID: " + bookingID, smallBolds));
             paragraph.add(new Paragraph("Booking Source: " + ota, smallBolds));
+            if(zingoBookingId!=null&&!zingoBookingId.isEmpty()){
+                paragraph.add(new Paragraph("Zingo Booking ID: " + zingoBookingId, smallBolds));
+            }
+
             addEmptyLine(paragraph, 1);
             paragraph.add(new Paragraph(text, smallBold));
             addEmptyLine(paragraph, 1);
@@ -1351,6 +1420,8 @@ public class BillDetails extends AppCompatActivity {
                             Bookings1 dto = response.body();
                             if (dto != null) {
                                 book = true;
+                                zingoBookingId = ""+response.body().getBookingId();
+
 
                                 Toast.makeText(BillDetails.this, "Booking done successfully", Toast.LENGTH_SHORT).show();
                                 //sendEmailattache();
@@ -1883,7 +1954,14 @@ public class BillDetails extends AppCompatActivity {
                                 /*Toast.makeText(BillDetails.this,"Thank you for selecting room. Your request has been sent to hotel. " +
                                         "Please wait for there reply.",Toast.LENGTH_SHORT).show();*/
                                 //SelectRoom.this.finish();
-                                onShareClick();
+                                boolean fileCreated = createPdf();
+                                if(fileCreated){
+                                    onShareClick();
+                                }else{
+                                    Toast.makeText(BillDetails.this, "File not created", Toast.LENGTH_SHORT).show();
+                                    createPdf();
+                                }
+
 
                                 //Toast.makeText(BillDetails.this, "Save Notification", Toast.LENGTH_SHORT).show();
 
@@ -1904,6 +1982,36 @@ public class BillDetails extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        try{
+            switch (item.getItemId()) {
+                case android.R.id.home:
+                    Intent main = new Intent(BillDetails.this,MainActivity.class);
+                    startActivity(main);
+                    this.finish();
+                    return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        try{
+            Intent main = new Intent(BillDetails.this,MainActivity.class);
+            startActivity(main);
+            this.finish();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 }
 

@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -21,16 +21,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PropertyDetail"
+        <activity
+            android:name=".PropertyDetail"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".RoomDetail"
+        <activity
+            android:name=".RoomDetail"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".PlanDetails"
+        <activity
+            android:name=".PlanDetails"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".BillDetails"
+        <activity
+            android:name=".BillDetails"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
 
@@ -44,7 +48,10 @@
                 android:resource="@xml/file_provider_path" />
         </provider>
 
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" />
+        <activity android:name=".CancelOptions" />
+        <activity android:name=".ShowBookingById" />
+        <activity android:name=".ModifyBooking"></activity>
     </application>
 
 </manifest>
