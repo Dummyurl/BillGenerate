@@ -30,7 +30,8 @@ public class CancelOptions extends AppCompatActivity {
             mByHotel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    Intent room = new Intent(CancelOptions.this,GetBookingByHotel.class);
+                    startActivity(room);
                 }
             });
 

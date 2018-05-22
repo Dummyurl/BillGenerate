@@ -9,6 +9,8 @@ import app.zingo.com.billgenerate.Model.FireBaseModel;
 import app.zingo.com.billgenerate.Model.HotelDetails;
 import app.zingo.com.billgenerate.Model.NotificationManager;
 import app.zingo.com.billgenerate.Model.Profile1;
+import app.zingo.com.billgenerate.Model.SearchBook;
+import app.zingo.com.billgenerate.Model.SearchBooking;
 import app.zingo.com.billgenerate.Model.Traveller;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -75,6 +77,9 @@ public interface LoginApi {
 
     @PUT("RoomBookings/{id}")
     Call<String> updateBookingStatus(@Header("Authorization") String authKey,@Path("id") int id, @Body Bookings1 bookings1);
+
+    @POST("RoomBookings/SearchBooking")
+    Call<ArrayList<SearchBook>> getSearchBookings(@Header("Authorization") String authKey, @Body SearchBooking jsonObject);
 
 
 

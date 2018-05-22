@@ -1288,6 +1288,11 @@ public class BillDetails extends AppCompatActivity {
 
     private void getHotels() {
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("please wait..");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
 
         new ThreadExecuter().execute(new Runnable() {
             @Override
@@ -1301,6 +1306,9 @@ public class BillDetails extends AppCompatActivity {
                     public void onResponse(Call<ArrayList<HotelDetails>> call, Response<ArrayList<HotelDetails>> response) {
                         System.out.println("GetHotelByProfileId = " + response.code());
                         chainsList = response.body();
+
+                        if (progressDialog != null)
+                            progressDialog.dismiss();
 
                         if (response.code() == 200) {
                             if (chainsList != null && chainsList.size() != 0) {
@@ -1325,7 +1333,8 @@ public class BillDetails extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<ArrayList<HotelDetails>> call, Throwable t) {
                         System.out.println("Failed");
-
+                        if (progressDialog != null)
+                            progressDialog.dismiss();
 
                         Toast.makeText(BillDetails.this, "Check your internet connection or please try after some time",
                                 Toast.LENGTH_LONG).show();
