@@ -1436,7 +1436,7 @@ public class BillDetails extends AppCompatActivity {
                                 //sendEmailattache();
                                 FireBaseModel fm = new FireBaseModel();
                                 fm.setSenderId("415720091200");
-                                fm.setServerId("AIzaSyA56O6PwNfegBxT9Om8PDWfqfmSU9SUFL8");
+                                fm.setServerId("AIzaSyBFdghUu7AgQVnu27xkKKLHJ6oSz9AnQ8M");
                                 fm.setHotelId(hotelId);
                                 fm.setTitle("New Booking from Zingo Hotels");
                                 fm.setMessage("Congrats! "+property+" got one new booking for "+nights +" nights from "+cit+" to "+cot+"\nBooking Number:"+dto.getBookingNumber());

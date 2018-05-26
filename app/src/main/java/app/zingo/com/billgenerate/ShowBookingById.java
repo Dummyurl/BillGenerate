@@ -204,7 +204,7 @@ public class ShowBookingById extends AppCompatActivity {
 
                                 FireBaseModel fm = new FireBaseModel();
                                 fm.setSenderId("415720091200");
-                                fm.setServerId("AIzaSyA56O6PwNfegBxT9Om8PDWfqfmSU9SUFL8");
+                                fm.setServerId("AIzaSyBFdghUu7AgQVnu27xkKKLHJ6oSz9AnQ8M");
                                 fm.setHotelId(updateBooking.getHotelId());
                                 fm.setTitle("Cancelled Booking");
                                 fm.setMessage("Sorry! "+property+" got one cancel booking for "+nights +" nights from "+cit+" to "+cot+"\nBooking Number:"+updateBooking.getBookingNumber());
