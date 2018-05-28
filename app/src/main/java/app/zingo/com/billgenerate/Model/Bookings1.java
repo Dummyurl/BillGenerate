@@ -166,12 +166,142 @@ public class Bookings1 implements Serializable {
     @SerializedName("room")
     private String room;
 
-
-
     @SerializedName("netAmount")
     private String netAmount;
 
-  /*  @SerializedName("travellerDocument")
+    @SerializedName("OTACommissionAmount")
+    private double OTACommissionAmount;
+
+    @SerializedName("OTACommissionGSTAmount")
+    private double OTACommissionGSTAmount;
+
+    @SerializedName("OTATotalCommissionAmount")
+    private double OTATotalCommissionAmount;
+
+    @SerializedName("OTAServiceFees")
+    private double OTAServiceFees;
+
+    @SerializedName("OTAToPayHotel")
+    private double OTAToPayHotel;
+
+    @SerializedName("HotelToPayOTA")
+    private double HotelToPayOTA;
+
+    @SerializedName("ZingoToHotel")
+    private double ZingoToHotel;
+
+    @SerializedName("HotelToZingo")
+    private double HotelToZingo;
+
+    @SerializedName("ZingoCommision")
+    private double ZingoCommision;
+
+    @SerializedName("CustomerPaymentAtOTA")
+    private double CustomerPaymentAtOTA;
+
+    @SerializedName("AdditionalCharges")
+    private double AdditionalCharges;
+
+    @SerializedName("OTABookingID")
+    private String OTABookingID;
+
+    public double getOTACommissionAmount() {
+        return OTACommissionAmount;
+    }
+
+    public void setOTACommissionAmount(double OTACommissionAmount) {
+        this.OTACommissionAmount = OTACommissionAmount;
+    }
+
+    public double getOTACommissionGSTAmount() {
+        return OTACommissionGSTAmount;
+    }
+
+    public void setOTACommissionGSTAmount(double OTACommissionGSTAmount) {
+        this.OTACommissionGSTAmount = OTACommissionGSTAmount;
+    }
+
+    public double getOTATotalCommissionAmount() {
+        return OTATotalCommissionAmount;
+    }
+
+    public void setOTATotalCommissionAmount(double OTATotalCommissionAmount) {
+        this.OTATotalCommissionAmount = OTATotalCommissionAmount;
+    }
+
+    public double getOTAServiceFees() {
+        return OTAServiceFees;
+    }
+
+    public void setOTAServiceFees(double OTAServiceFees) {
+        this.OTAServiceFees = OTAServiceFees;
+    }
+
+    public double getOTAToPayHotel() {
+        return OTAToPayHotel;
+    }
+
+    public void setOTAToPayHotel(double OTAToPayHotel) {
+        this.OTAToPayHotel = OTAToPayHotel;
+    }
+
+    public double getHotelToPayOTA() {
+        return HotelToPayOTA;
+    }
+
+    public void setHotelToPayOTA(double hotelToPayOTA) {
+        HotelToPayOTA = hotelToPayOTA;
+    }
+
+    public double getZingoToHotel() {
+        return ZingoToHotel;
+    }
+
+    public void setZingoToHotel(double zingoToHotel) {
+        ZingoToHotel = zingoToHotel;
+    }
+
+    public double getHotelToZingo() {
+        return HotelToZingo;
+    }
+
+    public void setHotelToZingo(double hotelToZingo) {
+        HotelToZingo = hotelToZingo;
+    }
+
+    public double getZingoCommision() {
+        return ZingoCommision;
+    }
+
+    public void setZingoCommision(double zingoCommision) {
+        ZingoCommision = zingoCommision;
+    }
+
+    public double getCustomerPaymentAtOTA() {
+        return CustomerPaymentAtOTA;
+    }
+
+    public void setCustomerPaymentAtOTA(double customerPaymentAtOTA) {
+        CustomerPaymentAtOTA = customerPaymentAtOTA;
+    }
+
+    public double getAdditionalCharges() {
+        return AdditionalCharges;
+    }
+
+    public void setAdditionalCharges(double additionalCharges) {
+        AdditionalCharges = additionalCharges;
+    }
+
+    public String getOTABookingID() {
+        return OTABookingID;
+    }
+
+    public void setOTABookingID(String OTABookingID) {
+        this.OTABookingID = OTABookingID;
+    }
+
+    /*  @SerializedName("travellerDocument")
     private ArrayList<TravellerDocuments> travellerDocument;*/
 
     public int getHourlyCharges() {

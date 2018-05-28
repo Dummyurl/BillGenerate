@@ -81,7 +81,7 @@ public class BillDetails extends AppCompatActivity {
     EditText mLocation, mCity, mGuest, mMobile, mRoomType,
             mGuestCount, mTotal, mBooking, mZingo,mOtherProperty,
             mBookingID, mEmail,  mNet, mNights, mArr,mOtaFee,
-                        mRoomCharge,mExtraCharge,mHotelTaxes,mAdditional,mCustomerPay;
+                        mRoomCharge,mExtraCharge,mHotelTaxes,mAdditional,mCustomerPay,mOTACommison,mOTAGST;
     TextView mBook, mCID, mCOD;
     Button mSave, mCalculate;
     String[] bookingSourceArray;
@@ -114,8 +114,9 @@ public class BillDetails extends AppCompatActivity {
     String property, email, ota, city, location, guest,
             mobile, bdate, cit, cot, rooms, roomNum, count, plans,
             payment, desc, total, booking, zingo, net, nights,
-            arr, cits, cots,roomCharge,extraCharge,hoteltaxes,addtional,customer,otaFee;
-    double totals,otaAmt,zingoAmt,otaToHotel,addtionalChrg,payCustomer,customerToHotel,otaToHotelPay,otaFeeAmount,gstValue;
+            arr, cits, cots,roomCharge,extraCharge,hoteltaxes,addtional,customer,otaFee,otaCommission,otaGST;
+    double totals,otaAmt,zingoAmt,otaToHotel,addtionalChrg,payCustomer,
+            customerToHotel,otaToHotelPay,otaFeeAmount,gstValue,otaComAmount,otaGstAmount;
     Document document;
     Paragraph paragraph;
     String propertyN;
@@ -186,6 +187,8 @@ public class BillDetails extends AppCompatActivity {
         mCustomerPay = (EditText) findViewById(R.id.bill_customer_pay);
         mTotal = (EditText) findViewById(R.id.bill_property_amount);
         mBooking = (EditText) findViewById(R.id.bill_booking_com);
+        mOTACommison = (EditText) findViewById(R.id.bill_booking_com_amount);
+        mOTAGST = (EditText) findViewById(R.id.bill_booking_com_gst);
         mZingo = (EditText) findViewById(R.id.bill_zingo_com);
         mOTA = (Spinner) findViewById(R.id.bill_booking_ota);
         mNet = (EditText) findViewById(R.id.bill_net_amount);
@@ -318,6 +321,8 @@ public class BillDetails extends AppCompatActivity {
                 addtional = mAdditional.getText().toString();
                 customer = mCustomerPay.getText().toString();
                 otaFee = mOtaFee.getText().toString();
+                otaCommission = mOTACommison.getText().toString();
+                otaGST = mOTAGST.getText().toString();
 
                 String source = mOTA.getSelectedItem().toString();
 
@@ -375,6 +380,18 @@ public class BillDetails extends AppCompatActivity {
                         mNights.setText(String.valueOf(diffDays));
                     } catch (Exception e) {
                         e.printStackTrace();
+                    }
+
+                    if(otaCommission==null||otaCommission.isEmpty()){
+                        otaComAmount = 0;
+                    }else{
+                        otaComAmount = Double.parseDouble(otaCommission);
+                    }
+
+                    if(otaGST==null||otaGST.isEmpty()){
+                        otaGstAmount = 0;
+                    }else{
+                        otaGstAmount = Double.parseDouble(otaGST);
                     }
 
                     //Net Amount
@@ -564,6 +581,8 @@ public class BillDetails extends AppCompatActivity {
                 if (mobile == null || mobile.isEmpty()) {
                     //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
                     addTraveler();
+                }else if(mobile.equalsIgnoreCase("0")){
+                    addTraveler();
                 }else{
                     getTravelerByPhone(mobile);
                 }
@@ -613,6 +632,21 @@ public class BillDetails extends AppCompatActivity {
             bookings.setNoOfAdults(Integer.parseInt(count));
             bookings.setBookingStatus("Quick");
             bookings.setBookingSource("OTA");
+            bookings.setOTACommissionGSTAmount(otaGstAmount);
+            bookings.setOTACommissionAmount(otaComAmount);
+            bookings.setOTATotalCommissionAmount(otaAmt);
+            bookings.setOTAServiceFees(otaFeeAmount);
+            if(otaToHotelPay<0){
+                bookings.setOTAToPayHotel(0);
+                bookings.setHotelToPayOTA(Math.abs(otaToHotelPay));
+            }else{
+                bookings.setOTAToPayHotel(Math.abs(otaToHotelPay));
+                bookings.setHotelToPayOTA(0);
+            }
+            bookings.setZingoCommision(zingoAmt);
+            bookings.setCustomerPaymentAtOTA(payCustomer);
+            bookings.setAdditionalCharges(addtionalChrg);
+            bookings.setOTABookingID(bookingID);
             bookings.setGstAmount((int)gstValue);
             DecimalFormat df = new DecimalFormat("##.##");
             bookings.setCommisionGSTAmount(commisionGST);
@@ -934,6 +968,10 @@ public class BillDetails extends AppCompatActivity {
         table.addCell("INR " + hoteltaxes);
         table.addCell("(A) HOTEL GROSS CHARGES (i+ii+iii)");
         table.addCell("INR " + total);
+        table.addCell("OTA Commission");
+        table.addCell("INR " + otaComAmount);
+        table.addCell("OTA GST @ 18 %\n(Incl IGST/CGST/SGST)");
+        table.addCell("INR " + otaGstAmount);
         table.addCell("(B) OTA COMMISSION(Incl GST)");
         table.addCell("INR " + booking);
         table.addCell("(C) ZINGOHOTELS.COM COMMISION");
@@ -986,6 +1024,10 @@ public class BillDetails extends AppCompatActivity {
         table.addCell("INR " + hoteltaxes);
         table.addCell("(A) HOTEL GROSS CHARGES (i+ii+iii)");
         table.addCell("INR " + total);
+        table.addCell("OTA Commission");
+        table.addCell("INR " + otaComAmount);
+        table.addCell("OTA GST @ 18 %\n(Incl IGST/CGST/SGST)");
+        table.addCell("INR " + otaGstAmount);
         table.addCell("(B) OTA COMMISSION(Incl GST)");
         table.addCell("INR " + booking);
         table.addCell("(C) ZINGOHOTELS.COM COMMISION");

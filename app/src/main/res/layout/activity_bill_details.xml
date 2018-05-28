@@ -727,6 +727,7 @@
 
             </LinearLayout>
 
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -735,7 +736,70 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="OTA Commission"
+                    android:text="OTA Commission Amount"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_booking_com_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="OTA Commission Amount"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="OTA GST"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_booking_com_gst"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="OTA GST"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="OTA Commission (Incl GST)"
                     android:layout_weight="2"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
@@ -746,7 +810,7 @@
                     android:layout_height="50dp"
                     android:inputType="numberDecimal"
                     android:paddingLeft="10dp"
-                    android:hint="OTA Commission"
+                    android:hint="OTA Commission(Incl GST)"
                     android:layout_weight="1"
                     android:textColor="#000000"
                     android:textStyle="bold"

@@ -273,33 +273,33 @@ public class ShowBookingById extends AppCompatActivity {
     {
         LoginApi api = Util.getClient().create(LoginApi.class);
         String authenticationString = Util.getToken(ShowBookingById.this);
-        Call<Bookings1> getBooking = api.getBookingById(authenticationString,bookingId);
+        Call<ArrayList<Bookings1>> getBooking = api.getBookingByOTAId(authenticationString,bookingId);
 
-        getBooking.enqueue(new Callback<Bookings1>() {
+        getBooking.enqueue(new Callback<ArrayList<Bookings1>>() {
             @Override
-            public void onResponse(Call<Bookings1> call, Response<Bookings1> response) {
+            public void onResponse(Call<ArrayList<Bookings1>> call, Response<ArrayList<Bookings1>> response) {
                 if(response.code() == 200)
                 {
                     try{
 
-                        updateBooking = response.body();
+
                         if(response.body() != null)
                         {
-
-                            mBookedDate.setText("Booked On: "+getBookedOnDateFormate(response.body().getBookingDate()));
-                            if(response.body().getCheckInDate()!=null && !response.body().getCheckInDate().isEmpty()&&response.body().getCheckOutDate()!=null && !response.body().getCheckOutDate().isEmpty()){
-                                mBookingDates.setText(getBookingDateFormate(response.body().getCheckInDate())
-                                        +" To "+getBookingDateFormate(response.body().getCheckOutDate()));
+                            updateBooking = response.body().get(0);
+                            mBookedDate.setText("Booked On: "+getBookedOnDateFormate(response.body().get(0).getBookingDate()));
+                            if(response.body().get(0).getCheckInDate()!=null && !response.body().get(0).getCheckInDate().isEmpty()&&response.body().get(0).getCheckOutDate()!=null && !response.body().get(0).getCheckOutDate().isEmpty()){
+                                mBookingDates.setText(getBookingDateFormate(response.body().get(0).getCheckInDate())
+                                        +" To "+getBookingDateFormate(response.body().get(0).getCheckOutDate()));
                             }
-                            mNetAmount.setText("Net Amount: ₹ "+response.body().getTotalAmount());
-                            if(response.body().getBookingSourceType() != null)
+                            mNetAmount.setText("Net Amount: ₹ "+response.body().get(0).getTotalAmount());
+                            if(response.body().get(0).getBookingSourceType() != null)
                             {
-                                mBookingSourceType.setText(response.body().getBookingSourceType());
+                                mBookingSourceType.setText(response.body().get(0).getBookingSourceType());
                             }
 
-                            mNoofRooms.setText((long)getDays(response.body().getCheckInDate(),response.body().getCheckOutDate())+" Night(s)");
-                            getTravellerDetails(response.body().getTravellerId());
-                            getHotelName(response.body().getHotelId());
+                            mNoofRooms.setText((long)getDays(response.body().get(0).getCheckInDate(),response.body().get(0).getCheckOutDate())+" Night(s)");
+                            getTravellerDetails(response.body().get(0).getTravellerId());
+                            getHotelName(response.body().get(0).getHotelId());
 
                         }
 
@@ -316,7 +316,7 @@ public class ShowBookingById extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Bookings1> call, Throwable t) {
+            public void onFailure(Call<ArrayList<Bookings1>> call, Throwable t) {
                 System.out.println(t.getMessage());
             }
         });

@@ -72,6 +72,10 @@ public interface LoginApi {
     @GET("RoomBookings/{id}")
     Call<Bookings1> getBookingById(@Header("Authorization") String authKey,@Path("id") int id);
 
+    @GET("RoomBookings/GetRoomBookingsByOTABookingId/{OTABookingId}")
+    Call<ArrayList<Bookings1>> getBookingByOTAId(@Header("Authorization") String authKey,@Path("OTABookingId") int id);
+
+
     @GET("Travellers/{id}")
     Call<Traveller> getTravellerDetails(@Header("Authorization") String authKey, @Path("id") int id);
 
