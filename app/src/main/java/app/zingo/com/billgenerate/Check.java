@@ -74,14 +74,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class BillDetails extends AppCompatActivity {
+public class Check extends AppCompatActivity {
 
     Spinner mRoomCount, mPayment, mRate, mDesc, mProperty,mOTA,mDataBase;
     LinearLayout mDataLayout,mOtherLayout,mAddLayout,mCustomerLayout,mOtaService;
     EditText mLocation, mCity, mGuest, mMobile, mRoomType,
             mGuestCount, mTotal, mBooking, mZingo,mOtherProperty,
             mBookingID, mEmail,  mNet, mNights, mArr,mOtaFee,
-                        mRoomCharge,mExtraCharge,mHotelTaxes,mAdditional,mCustomerPay,mOTACommison,mOTAGST;
+            mRoomCharge,mExtraCharge,mHotelTaxes,mAdditional,mCustomerPay;
     TextView mBook, mCID, mCOD;
     Button mSave, mCalculate;
     String[] bookingSourceArray;
@@ -114,9 +114,8 @@ public class BillDetails extends AppCompatActivity {
     String property, email, ota, city, location, guest,
             mobile, bdate, cit, cot, rooms, roomNum, count, plans,
             payment, desc, total, booking, zingo, net, nights,
-            arr, cits, cots,roomCharge,extraCharge,hoteltaxes,addtional,customer,otaFee,otaCommission,otaGST;
-    double totals,otaAmt,zingoAmt,otaToHotel,addtionalChrg,payCustomer,
-            customerToHotel,otaToHotelPay,otaFeeAmount,gstValue,otaComAmount,otaGstAmount;
+            arr, cits, cots,roomCharge,extraCharge,hoteltaxes,addtional,customer,otaFee;
+    double totals,otaAmt,zingoAmt,otaToHotel,addtionalChrg,payCustomer,customerToHotel,otaToHotelPay,otaFeeAmount,gstValue;
     Document document;
     Paragraph paragraph;
     String propertyN;
@@ -153,500 +152,476 @@ public class BillDetails extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try{
-            setContentView(R.layout.activity_bill_details);
+        setContentView(R.layout.activity_bill_details);
 
-            getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            setTitle("Create Bill");
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle("Create Bill");
 
-            mProperty = (Spinner) findViewById(R.id.bill_property_name);
-            mDataBase = (Spinner) findViewById(R.id.bill_data_base);
-            mAddLayout = (LinearLayout)findViewById(R.id.additional_layout);
-            mOtaService = (LinearLayout)findViewById(R.id.ota_service);
-            mCustomerLayout = (LinearLayout)findViewById(R.id.customer_pay_layout);
-            mDataLayout = (LinearLayout)findViewById(R.id.data_property_layout);
-            mOtherLayout = (LinearLayout)findViewById(R.id.other_property_layout);
-            mRoomType = (EditText) findViewById(R.id.bill_property_room);
-            mOtaFee = (EditText) findViewById(R.id.bill_booking_com_service);
-            mRate = (Spinner) findViewById(R.id.bill_property_rate);
-            mRoomCount = (Spinner) findViewById(R.id.bill_property_room_num);
-            mPayment = (Spinner) findViewById(R.id.bill_property_payment);
-            mOtherProperty = (EditText) findViewById(R.id.bill_property_other);
-            mLocation = (EditText) findViewById(R.id.bill_property_location);
-            mEmail = (EditText) findViewById(R.id.bill_property_emal);
-            mBookingID = (EditText) findViewById(R.id.bill_booking_id);
-            mCity = (EditText) findViewById(R.id.bill_property_city);
-            mGuest = (EditText) findViewById(R.id.bill_guest_name);
-            mMobile = (EditText) findViewById(R.id.bill_guest_mobile);
-            mGuestCount = (EditText) findViewById(R.id.bill_property_guest_num);
-            mDesc = (Spinner) findViewById(R.id.bill_plan_inclusion);
-            mRoomCharge = (EditText) findViewById(R.id.bill_room_charge);
-            mExtraCharge = (EditText) findViewById(R.id.bill_extra_charge);
-            mHotelTaxes = (EditText) findViewById(R.id.bill_hotel_taxes);
-            mAdditional = (EditText) findViewById(R.id.bill_additional_charge);
-            mCustomerPay = (EditText) findViewById(R.id.bill_customer_pay);
-            mTotal = (EditText) findViewById(R.id.bill_property_amount);
-            mBooking = (EditText) findViewById(R.id.bill_booking_com);
-            mOTACommison = (EditText) findViewById(R.id.bill_booking_com_amount);
-            mOTAGST = (EditText) findViewById(R.id.bill_booking_com_gst);
-            mZingo = (EditText) findViewById(R.id.bill_zingo_com);
-            mOTA = (Spinner) findViewById(R.id.bill_booking_ota);
-            mNet = (EditText) findViewById(R.id.bill_net_amount);
-            mNights = (EditText) findViewById(R.id.bill_total_nights);
-            mArr = (EditText) findViewById(R.id.bill_arr);
-            mBook = (TextView) findViewById(R.id.bill_property_booking);
-            mCID = (TextView) findViewById(R.id.bill_property_checkiin);
-            mCOD = (TextView) findViewById(R.id.bill_property_checkout);
-            mSave = (Button) findViewById(R.id.send_email);
-            mCalculate = (Button) findViewById(R.id.bill_calculate);
+        mProperty = (Spinner) findViewById(R.id.bill_property_name);
+        mDataBase = (Spinner) findViewById(R.id.bill_data_base);
+        mAddLayout = (LinearLayout)findViewById(R.id.additional_layout);
+        mOtaService = (LinearLayout)findViewById(R.id.ota_service);
+        mCustomerLayout = (LinearLayout)findViewById(R.id.customer_pay_layout);
+        mDataLayout = (LinearLayout)findViewById(R.id.data_property_layout);
+        mOtherLayout = (LinearLayout)findViewById(R.id.other_property_layout);
+        mRoomType = (EditText) findViewById(R.id.bill_property_room);
+        mOtaFee = (EditText) findViewById(R.id.bill_booking_com_service);
+        mRate = (Spinner) findViewById(R.id.bill_property_rate);
+        mRoomCount = (Spinner) findViewById(R.id.bill_property_room_num);
+        mPayment = (Spinner) findViewById(R.id.bill_property_payment);
+        mOtherProperty = (EditText) findViewById(R.id.bill_property_other);
+        mLocation = (EditText) findViewById(R.id.bill_property_location);
+        mEmail = (EditText) findViewById(R.id.bill_property_emal);
+        mBookingID = (EditText) findViewById(R.id.bill_booking_id);
+        mCity = (EditText) findViewById(R.id.bill_property_city);
+        mGuest = (EditText) findViewById(R.id.bill_guest_name);
+        mMobile = (EditText) findViewById(R.id.bill_guest_mobile);
+        mGuestCount = (EditText) findViewById(R.id.bill_property_guest_num);
+        mDesc = (Spinner) findViewById(R.id.bill_plan_inclusion);
+        mRoomCharge = (EditText) findViewById(R.id.bill_room_charge);
+        mExtraCharge = (EditText) findViewById(R.id.bill_extra_charge);
+        mHotelTaxes = (EditText) findViewById(R.id.bill_hotel_taxes);
+        mAdditional = (EditText) findViewById(R.id.bill_additional_charge);
+        mCustomerPay = (EditText) findViewById(R.id.bill_customer_pay);
+        mTotal = (EditText) findViewById(R.id.bill_property_amount);
+        mBooking = (EditText) findViewById(R.id.bill_booking_com);
+        mZingo = (EditText) findViewById(R.id.bill_zingo_com);
+        mOTA = (Spinner) findViewById(R.id.bill_booking_ota);
+        mNet = (EditText) findViewById(R.id.bill_net_amount);
+        mNights = (EditText) findViewById(R.id.bill_total_nights);
+        mArr = (EditText) findViewById(R.id.bill_arr);
+        mBook = (TextView) findViewById(R.id.bill_property_booking);
+        mCID = (TextView) findViewById(R.id.bill_property_checkiin);
+        mCOD = (TextView) findViewById(R.id.bill_property_checkout);
+        mSave = (Button) findViewById(R.id.send_email);
+        mCalculate = (Button) findViewById(R.id.bill_calculate);
 
-            bookingSourceArray = getResources().getStringArray(R.array.OTA_items);
-            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
-            mOTA.setAdapter(spinneradapter);
+        bookingSourceArray = getResources().getStringArray(R.array.OTA_items);
+        PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(Check.this,bookingSourceArray);
+        mOTA.setAdapter(spinneradapter);
 
-            bill = new BillDataBase(this);
+        bill = new BillDataBase(this);
 
-           // getHotels();
+        //getHotels();
 
-            mBook.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        mBook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                    openDatePicker(mBook);
+                openDatePicker(mBook);
+            }
+        });
+
+        mCID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                openDatePicker(mCID);
+            }
+        });
+
+        mCOD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                openDatePicker(mCOD);
+            }
+        });
+
+        mGuest.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    String mobi = mMobile.getText().toString();
+                    if(mobi != null && !mobi.isEmpty() && mobi.length() >= 10)
+                    {
+                        getTravelerByPhone(mobi);
+                    }
+                    else
+                    {
+                        //mMobile.requestFocus();
+                        mGuest.setText("");
+                    }
+                } else {
+
                 }
-            });
+            }
+        });
 
-            mCID.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        mDataBase.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(mDataBase.getSelectedItem().toString().equalsIgnoreCase("OTHERS")){
+                    mDataLayout.setVisibility(View.GONE);
+                    mOtherLayout.setVisibility(View.VISIBLE);
+                    mLocation.setText("");
+                    mCity.setText("");
+                    mEmail.setText("");
 
-                    openDatePicker(mCID);
+                }else{
+                    mDataLayout.setVisibility(View.VISIBLE);
+                    mOtherLayout.setVisibility(View.GONE);
+                    getHotels();
                 }
-            });
+            }
 
-            mCOD.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
-                    openDatePicker(mCOD);
+            }
+        });
+
+        mOTA.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(mOTA.getSelectedItem().toString().equalsIgnoreCase("MAKEMY TRIP")){
+                    mOtaService.setVisibility(View.VISIBLE);
+
+                }else{
+                    mOtaService.setVisibility(View.GONE);
                 }
-            });
+            }
 
-            mGuest.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View view, boolean hasFocus) {
-                    if (hasFocus) {
-                        String mobi = mMobile.getText().toString();
-                        if(mobi != null && !mobi.isEmpty() && mobi.length() >= 10)
-                        {
-                            getTravelerByPhone(mobi);
-                        }
-                        else
-                        {
-                            //mMobile.requestFocus();
-                            mGuest.setText("");
-                        }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        mPayment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+                    mCustomerLayout.setVisibility(View.VISIBLE);
+                    mAddLayout.setVisibility(View.VISIBLE);
+                    mOtaService.setVisibility(View.VISIBLE);
+
+                }else{
+                    mCustomerLayout.setVisibility(View.GONE);
+                    mAddLayout.setVisibility(View.GONE);
+                    mOtaService.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        //Database call
+        dbHelper = new DataBaseHelper(this);
+        room = new RoomDataBase(this);
+        plan = new PlanDataBase(this);
+
+
+        fn_permission();
+
+
+        mSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                validate();
+            }
+        });
+
+        mCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                cit = mCID.getText().toString();
+                cot = mCOD.getText().toString();
+                total = mTotal.getText().toString();
+                zingo = mZingo.getText().toString();
+                booking = mBooking.getText().toString();
+                roomCharge = mRoomCharge.getText().toString();
+                extraCharge = mExtraCharge.getText().toString();
+                hoteltaxes = mHotelTaxes.getText().toString();
+                addtional = mAdditional.getText().toString();
+                customer = mCustomerPay.getText().toString();
+                otaFee = mOtaFee.getText().toString();
+
+                String source = mOTA.getSelectedItem().toString();
+
+                if (booking == null || booking.isEmpty()) {
+                    //Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    mBooking.setError("Should not be Empty");
+                    mBooking.requestFocus();
+
+                } else if (zingo == null || zingo.isEmpty()) {
+                    //Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    mZingo.setError("Should not be Empty");
+                    mZingo.requestFocus();
+
+                } else if (cit == null || cit.isEmpty()) {
+                    //Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    mCID.setError("Should not be Empty");
+                    mCID.requestFocus();
+
+                } else if (cot == null || cot.isEmpty()) {
+                    // Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    mCOD.setError("Should not be Empty");
+                    mCOD.requestFocus();
+
+                } else if (total == null || total.isEmpty()) {
+                    // Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    mTotal.setError("Should not be Empty");
+                    mTotal.requestFocus();
+
+                } else if (roomCharge == null || roomCharge.isEmpty()) {
+                    Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+
+
+                } else if (extraCharge == null || extraCharge.isEmpty()) {
+                    Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+
+                } else if (hoteltaxes == null || hoteltaxes.isEmpty()) {
+                    Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+
+                } else {
+
+                    //Date Calculation
+                    String from = cits + " 00:00:00";
+                    String to = cots + " 00:00:00";
+
+                    SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
+                    Date d1 = null;
+                    Date d2 = null;
+                    long diffDays = 0;
+                    try {
+                        d1 = format.parse(from);
+                        d2 = format.parse(to);
+                        long diff = d2.getTime() - d1.getTime();
+                        diffDays = diff / (24 * 60 * 60 * 1000);
+                        mNights.setText(String.valueOf(diffDays));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    //Net Amount
+
+                    DecimalFormat df = new DecimalFormat("#,###.##");
+                    totals = Double.parseDouble(total);
+                    otaAmt = Double.parseDouble(booking);
+                    zingoAmt = Double.parseDouble(zingo);
+                    if(addtional==null||addtional.isEmpty()){
+                        addtionalChrg = 0;
+                    }else{
+                        addtionalChrg = Double.parseDouble(mAdditional.getText().toString());
+                    }
+
+                    if(otaFee==null||otaFee.isEmpty()){
+                        otaFeeAmount = 0;
+                    }else{
+                        otaFeeAmount = Double.parseDouble(otaFee);
+                    }
+
+                    if(customer==null||customer.isEmpty()){
+                        payCustomer = 0;
+                    }else{
+                        payCustomer = Double.parseDouble(mCustomerPay.getText().toString());
+                    }
+
+                    gstValue = Double.parseDouble(hoteltaxes);
+
+                    double rooms = Double.parseDouble(mRoomCount.getSelectedItem().toString());
+                    if (diffDays != 0) {
+                        double arrAmt = totals / diffDays;
+                        double arrRamt = arrAmt / rooms;
+                        mArr.setText("" + df.format(arrRamt));
                     } else {
-
+                        //double arrAmt = total/diffDays;
+                        double arrRamt = totals / rooms;
+                        mArr.setText("" + df.format(arrRamt));
                     }
-                }
-            });
 
-            mDataBase.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    if(mDataBase.getSelectedItem().toString().equalsIgnoreCase("OTHERS")){
-                        mDataLayout.setVisibility(View.GONE);
-                        mOtherLayout.setVisibility(View.VISIBLE);
-                        mLocation.setText("");
-                        mCity.setText("");
-                        mEmail.setText("");
+                    commisionAmt = otaAmt + zingoAmt+otaFeeAmount;
+                    double gst = commisionAmt*18;
+                    commisionGST = gst/100;
+                    otaToHotel = totals-otaAmt;
 
+
+                    //hotelToZingo = otaToHotel-
+                    double netAmt = totals - (otaAmt + zingoAmt);
+                    mNet.setText("" + df.format(netAmt));
+
+                    if(source!=null&&source.equalsIgnoreCase("MAKEMY TRIP")){
+                        otaToHotelPay = (payCustomer) - (otaAmt+otaFeeAmount);
+                        customerToHotel = (totals+addtionalChrg+otaFeeAmount)-payCustomer;
                     }else{
-                        mDataLayout.setVisibility(View.VISIBLE);
-                        mOtherLayout.setVisibility(View.GONE);
-                        getHotels();
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-
-
-            mOTA.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    if(mOTA.getSelectedItem().toString().equalsIgnoreCase("MAKEMY TRIP")){
-                        mOtaService.setVisibility(View.VISIBLE);
-
-                    }else{
-                        mOtaService.setVisibility(View.GONE);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-
-            mPayment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
-                        mCustomerLayout.setVisibility(View.VISIBLE);
-                        mAddLayout.setVisibility(View.VISIBLE);
-                        mOtaService.setVisibility(View.VISIBLE);
-
-                    }else{
-                        mCustomerLayout.setVisibility(View.GONE);
-                        mAddLayout.setVisibility(View.GONE);
-                        mOtaService.setVisibility(View.GONE);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-            //Database call
-            dbHelper = new DataBaseHelper(this);
-            room = new RoomDataBase(this);
-            plan = new PlanDataBase(this);
-
-
-            fn_permission();
-
-
-            mSave.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    validate();
-                }
-            });
-
-            mCalculate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-
-                    cit = mCID.getText().toString();
-                    cot = mCOD.getText().toString();
-                    total = mTotal.getText().toString();
-                    zingo = mZingo.getText().toString();
-                    booking = mBooking.getText().toString();
-                    roomCharge = mRoomCharge.getText().toString();
-                    extraCharge = mExtraCharge.getText().toString();
-                    hoteltaxes = mHotelTaxes.getText().toString();
-                    addtional = mAdditional.getText().toString();
-                    customer = mCustomerPay.getText().toString();
-                    otaFee = mOtaFee.getText().toString();
-                    otaCommission = mOTACommison.getText().toString();
-                    otaGST = mOTAGST.getText().toString();
-
-                    String source = mOTA.getSelectedItem().toString();
-
-                    if (booking == null || booking.isEmpty()) {
-                        //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-                        mBooking.setError("Should not be Empty");
-                        mBooking.requestFocus();
-
-                    } else if (zingo == null || zingo.isEmpty()) {
-                        //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-                        mZingo.setError("Should not be Empty");
-                        mZingo.requestFocus();
-
-                    } else if (cit == null || cit.isEmpty()) {
-                        //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-                        mCID.setError("Should not be Empty");
-                        mCID.requestFocus();
-
-                    } else if (cot == null || cot.isEmpty()) {
-                        // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-                        mCOD.setError("Should not be Empty");
-                        mCOD.requestFocus();
-
-                    } else if (total == null || total.isEmpty()) {
-                        // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-                        mTotal.setError("Should not be Empty");
-                        mTotal.requestFocus();
-
-                    } else if (roomCharge == null || roomCharge.isEmpty()) {
-                        Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-
-
-                    } else if (extraCharge == null || extraCharge.isEmpty()) {
-                        Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-
-                    } else if (hoteltaxes == null || hoteltaxes.isEmpty()) {
-                        Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-
-                    } else {
-
-                        //Date Calculation
-                        String from = cits + " 00:00:00";
-                        String to = cots + " 00:00:00";
-
-                        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-
-                        Date d1 = null;
-                        Date d2 = null;
-                        long diffDays = 0;
-                        try {
-                            d1 = format.parse(from);
-                            d2 = format.parse(to);
-                            long diff = d2.getTime() - d1.getTime();
-                            diffDays = diff / (24 * 60 * 60 * 1000);
-                            mNights.setText(String.valueOf(diffDays));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        if(otaCommission==null||otaCommission.isEmpty()){
-                            otaComAmount = 0;
-                        }else{
-                            otaComAmount = Double.parseDouble(otaCommission);
-                        }
-
-                        if(otaGST==null||otaGST.isEmpty()){
-                            otaGstAmount = 0;
-                        }else{
-                            otaGstAmount = Double.parseDouble(otaGST);
-                        }
-
-                        //Net Amount
-
-                        DecimalFormat df = new DecimalFormat("#,###.##");
-                        totals = Double.parseDouble(total);
-                        otaAmt = Double.parseDouble(booking);
-                        zingoAmt = Double.parseDouble(zingo);
-                        if(addtional==null||addtional.isEmpty()){
-                            addtionalChrg = 0;
-                        }else{
-                            addtionalChrg = Double.parseDouble(mAdditional.getText().toString());
-                        }
-
-                        if(otaFee==null||otaFee.isEmpty()){
-                            otaFeeAmount = 0;
-                        }else{
-                            otaFeeAmount = Double.parseDouble(otaFee);
-                        }
-
-                        if(customer==null||customer.isEmpty()){
-                            payCustomer = 0;
-                        }else{
-                            payCustomer = Double.parseDouble(mCustomerPay.getText().toString());
-                        }
-
-                        gstValue = Double.parseDouble(hoteltaxes);
-
-                        double rooms = Double.parseDouble(mRoomCount.getSelectedItem().toString());
-                        if (diffDays != 0) {
-                            double arrAmt = totals / diffDays;
-                            double arrRamt = arrAmt / rooms;
-                            mArr.setText("" + df.format(arrRamt));
-                        } else {
-                            //double arrAmt = total/diffDays;
-                            double arrRamt = totals / rooms;
-                            mArr.setText("" + df.format(arrRamt));
-                        }
-
-                        commisionAmt = otaAmt + zingoAmt+otaFeeAmount;
-                        double gst = commisionAmt*18;
-                        commisionGST = gst/100;
-                        otaToHotel = totals-otaAmt;
-
-
-                        //hotelToZingo = otaToHotel-
-                        double netAmt = totals - (otaAmt + zingoAmt);
-                        mNet.setText("" + df.format(netAmt));
-
-                        if(source!=null&&source.equalsIgnoreCase("MAKEMY TRIP")){
-                            otaToHotelPay = (payCustomer) - (otaAmt+otaFeeAmount);
-                            customerToHotel = (totals+addtionalChrg+otaFeeAmount)-payCustomer;
-                        }else{
-                            otaToHotelPay = payCustomer - otaAmt;
-                            customerToHotel = (totals+addtionalChrg)-payCustomer;
-                        }
-
+                        otaToHotelPay = payCustomer - otaAmt;
+                        customerToHotel = (totals+addtionalChrg)-payCustomer;
                     }
 
                 }
-            });
+
+            }
+        });
 
 
-            mProperty.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        mProperty.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                /* System.out.println("Id=="+chainsList.get(i).getDocumentId());
                 getDoc(chainsList.get(i).getDocumentId());*/
-                    //getHotelName(chainsList.get(i).getHotelId());
-                    hotelId = chainsList.get(i).getHotelId();
-                    property = chainsList.get(i).getHotelDisplayName();
+                //getHotelName(chainsList.get(i).getHotelId());
+                hotelId = chainsList.get(i).getHotelId();
+                property = chainsList.get(i).getHotelDisplayName();
                 /*System.out.println(chainsList.get(i).getHotelId());
                 System.out.println(chainsList.get(i).getHotelDisplayName());
                 System.out.println(chainsList.get(i).getHotelStreetAddress());
                 System.out.println(chainsList.get(i).getLocalty());*/
-                    mLocation.setText(chainsList.get(i).getLocalty());
-                    mCity.setText(chainsList.get(i).getCity());
-                    getContactByHotelId(chainsList.get(i).getHotelId());
-                }
+                mLocation.setText(chainsList.get(i).getLocalty());
+                mCity.setText(chainsList.get(i).getCity());
+                getContactByHotelId(chainsList.get(i).getHotelId());
+            }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
-                }
-            });
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+            }
+        });
 
 
     }
 
     public void validate() {
 
-//        String properties = mProperty.getSelectedItem().toString();
-        try{
-            String data = mDataBase.getSelectedItem().toString();
+        String properties = mProperty.getSelectedItem().toString();
+        String data = mDataBase.getSelectedItem().toString();
 
 
-            rooms = mRoomType.getText().toString();
-            plans = mRate.getSelectedItem().toString();
-            roomNum = mRoomCount.getSelectedItem().toString();
-            payment = mPayment.getSelectedItem().toString();
-            bookingID = mBookingID.getText().toString();
-            location = mLocation.getText().toString();
-            city = mCity.getText().toString();
-            guest = mGuest.getText().toString();
-            mobile = mMobile.getText().toString();
-            email = mEmail.getText().toString();
-            count = mGuestCount.getText().toString();
-            desc = mDesc.getSelectedItem().toString();
-            roomCharge = mRoomCharge.getText().toString();
-            extraCharge = mExtraCharge.getText().toString();
-            hoteltaxes = mHotelTaxes.getText().toString();
-            addtional = mAdditional.getText().toString();
-            customer = mCustomerPay.getText().toString();
-            total = mTotal.getText().toString();
-            booking = mBooking.getText().toString();
-            zingo = mZingo.getText().toString();
-            nights = mNights.getText().toString();
-            net = mNet.getText().toString();
-            arr = mArr.getText().toString();
-            bdate = mBook.getText().toString();
-            cit = mCID.getText().toString();
-            cot = mCOD.getText().toString();
-            ota = mOTA.getSelectedItem().toString();
+        rooms = mRoomType.getText().toString();
+        plans = mRate.getSelectedItem().toString();
+        roomNum = mRoomCount.getSelectedItem().toString();
+        payment = mPayment.getSelectedItem().toString();
+        bookingID = mBookingID.getText().toString();
+        location = mLocation.getText().toString();
+        city = mCity.getText().toString();
+        guest = mGuest.getText().toString();
+        mobile = mMobile.getText().toString();
+        email = mEmail.getText().toString();
+        count = mGuestCount.getText().toString();
+        desc = mDesc.getSelectedItem().toString();
+        roomCharge = mRoomCharge.getText().toString();
+        extraCharge = mExtraCharge.getText().toString();
+        hoteltaxes = mHotelTaxes.getText().toString();
+        addtional = mAdditional.getText().toString();
+        customer = mCustomerPay.getText().toString();
+        total = mTotal.getText().toString();
+        booking = mBooking.getText().toString();
+        zingo = mZingo.getText().toString();
+        nights = mNights.getText().toString();
+        net = mNet.getText().toString();
+        arr = mArr.getText().toString();
+        bdate = mBook.getText().toString();
+        cit = mCID.getText().toString();
+        cot = mCOD.getText().toString();
+        ota = mOTA.getSelectedItem().toString();
 
-            System.out.println("Print" + String.valueOf(path));
+        System.out.println("Print" + String.valueOf(path));
 
-            if (location == null || location.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } else if (city == null || city.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } else if (guest == null || guest.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            }/* else if (mobile == null || mobile.isEmpty()) {
-            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        if (location == null || location.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else if (city == null || city.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else if (guest == null || guest.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        }/* else if (mobile == null || mobile.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
         }*/ else if (count == null || count.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } else if (desc == null || desc.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } else if (total == null || total.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } else if (booking == null || booking.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } else if (zingo == null || zingo.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } else if (bdate == null || bdate.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } else if (cit == null || cit.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } else if (cot == null || cot.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } else if (email == null || email.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } else if (ota == null || ota.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } else if (net == null || net.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
-            } else if (nights == null || nights.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
-            } else if (arr == null || arr.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
-            }else if (roomCharge == null || roomCharge.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } /*else if (addtional == null || addtional.isEmpty()) {
-            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else if (desc == null || desc.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else if (total == null || total.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else if (booking == null || booking.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else if (zingo == null || zingo.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else if (bdate == null || bdate.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else if (cit == null || cit.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else if (cot == null || cot.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else if (email == null || email.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else if (ota == null || ota.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else if (net == null || net.isEmpty()) {
+            Toast.makeText(Check.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
+        } else if (nights == null || nights.isEmpty()) {
+            Toast.makeText(Check.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
+        } else if (arr == null || arr.isEmpty()) {
+            Toast.makeText(Check.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
+        }else if (roomCharge == null || roomCharge.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } /*else if (addtional == null || addtional.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
         } else if (customer == null || customer.isEmpty()) {
-            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
         }*/else if (extraCharge == null || extraCharge.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            }else if (hoteltaxes == null || hoteltaxes.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } else {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        }else if (hoteltaxes == null || hoteltaxes.isEmpty()) {
+            Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+        } else {
 
-                if(data.equalsIgnoreCase("OTHERS")){
+            if(data.equalsIgnoreCase("OTHERS")){
 
-                    if(mOtherProperty.getText().toString()==null||mOtherProperty.getText().toString().isEmpty()){
-                        mOtherProperty.setError("Please enter property name");
-                        mOtherProperty.requestFocus();
-                    }else{
-                        property = mOtherProperty.getText().toString();
-                    }
+                if(mOtherProperty.getText().toString()==null||mOtherProperty.getText().toString().isEmpty()){
+                    mOtherProperty.setError("Please enter property name");
+                    mOtherProperty.requestFocus();
                 }else{
-                    property = chainsList.get(mProperty.getSelectedItemPosition()).getHotelDisplayName();
+                    property = mOtherProperty.getText().toString();
                 }
+            }else{
+                property = chainsList.get(mProperty.getSelectedItemPosition()).getHotelDisplayName();
+            }
 
-                //createPdf();
-                System.out.println("Property name==" + property);
+            //createPdf();
+            System.out.println("Property name==" + property);
 
 
-                if(data.equalsIgnoreCase("OTHERS")){
-                    // sendEmailattache();
-                    boolean isfilecreated = createPdf();
-                    if (isfilecreated) {
-                        onShareClick();
-                    }
+            if(data.equalsIgnoreCase("OTHERS")){
+                // sendEmailattache();
+                boolean isfilecreated = createPdf();
+                if (isfilecreated) {
+                    onShareClick();
+                }
+            }else{
+                /*if (mobile == null || mobile.isEmpty()) {
+                    //Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                    addTraveler();
+                }else if(mobile.equalsIgnoreCase("0")){
+                    addTraveler();
                 }else{
-                    /*if (mobile == null || mobile.isEmpty()) {
-                        //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-                        addTraveler();
-                    }else if(mobile.equalsIgnoreCase("0")){
-                        addTraveler();
-                    }else{
-                        getTravelerByPhone(mobile);
-                    }*/
-
-                    if(dtos != null && mobile.length() >= 10)
+                    getTravelerByPhone(mobile);
+                }*/
+                if(dtos != null && mobile.length() >= 10)
+                {
+                    //Toast.makeText(Check.this,"not null",Toast.LENGTH_SHORT).show();
+                    if(mobile.equalsIgnoreCase(dtos.getPhoneNumber()))
                     {
-                        //Toast.makeText(Check.this,"not null",Toast.LENGTH_SHORT).show();
-                        if(mobile.equalsIgnoreCase(dtos.getPhoneNumber()))
-                        {
-                            updateTraveller(dtos.getTravellerId());
-                        }
-                        else
-                        {
-                            addTraveler();
-                        }
+                        updateTraveller(dtos.getTravellerId());
                     }
                     else
                     {
-                        //Toast.makeText(Check.this," null",Toast.LENGTH_SHORT).show();
                         addTraveler();
                     }
                 }
+                else
+                {
+                    //Toast.makeText(Check.this," null",Toast.LENGTH_SHORT).show();
+                    addTraveler();
+                }
+            }
 
 
-                //System.out.println("oooo" + isfilecreated);
+            //System.out.println("oooo" + isfilecreated);
            /* if (isfilecreated) {
                 //sendEmailattache();
 
@@ -655,7 +630,7 @@ public class BillDetails extends AppCompatActivity {
                     onShareClick();
                 }else{
                     if (mobile == null || mobile.isEmpty()) {
-                        //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(Check.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
                         addTraveler();
                     }else{
                         getTravelerByPhone(mobile);
@@ -666,10 +641,6 @@ public class BillDetails extends AppCompatActivity {
 
             }*/
 
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
         }
 
 
@@ -688,26 +659,11 @@ public class BillDetails extends AppCompatActivity {
             bookings.setOptCheckInDate(cits);//----------------change in case of customer app booking-----------
             bookings.setCheckOutDate(cots);
             bookings.setOptCheckOutDate(cots);
-            bookings.setHotelId(hotelId);
+            bookings.setHotelId(chainsList.get(mProperty.getSelectedItemPosition()).getHotelId());
             bookings.setBookingSourceType(mOTA.getSelectedItem().toString());
             bookings.setNoOfAdults(Integer.parseInt(count));
             bookings.setBookingStatus("Quick");
             bookings.setBookingSource("OTA");
-            bookings.setOTACommissionGSTAmount(otaGstAmount);
-            bookings.setOTACommissionAmount(otaComAmount);
-            bookings.setOTATotalCommissionAmount(otaAmt);
-            bookings.setOTAServiceFees(otaFeeAmount);
-            if(otaToHotelPay<0){
-                bookings.setOTAToPayHotel(0);
-                bookings.setHotelToPayOTA(Math.abs(otaToHotelPay));
-            }else{
-                bookings.setOTAToPayHotel(Math.abs(otaToHotelPay));
-                bookings.setHotelToPayOTA(0);
-            }
-            bookings.setZingoCommision(zingoAmt);
-            bookings.setCustomerPaymentAtOTA(payCustomer);
-            bookings.setAdditionalCharges(addtionalChrg);
-            bookings.setOTABookingID(bookingID);
             bookings.setGstAmount((int)gstValue);
             DecimalFormat df = new DecimalFormat("##.##");
             bookings.setCommisionGSTAmount(commisionGST);
@@ -770,6 +726,7 @@ public class BillDetails extends AppCompatActivity {
             Date d = new Date();
             String time = sdft.format(d);
 
+            System.out.println(chainsList.get(mProperty.getSelectedItemPosition()).getHotelId());
             bookings.setBookingTime(time);
 
             if(book){
@@ -1029,10 +986,6 @@ public class BillDetails extends AppCompatActivity {
         table.addCell("INR " + hoteltaxes);
         table.addCell("(A) HOTEL GROSS CHARGES (i+ii+iii)");
         table.addCell("INR " + total);
-        table.addCell("OTA Commission");
-        table.addCell("INR " + otaComAmount);
-        table.addCell("OTA GST @ 18 %\n(Incl IGST/CGST/SGST)");
-        table.addCell("INR " + otaGstAmount);
         table.addCell("(B) OTA COMMISSION(Incl GST)");
         table.addCell("INR " + booking);
         table.addCell("(C) ZINGOHOTELS.COM COMMISION");
@@ -1085,10 +1038,6 @@ public class BillDetails extends AppCompatActivity {
         table.addCell("INR " + hoteltaxes);
         table.addCell("(A) HOTEL GROSS CHARGES (i+ii+iii)");
         table.addCell("INR " + total);
-        table.addCell("OTA Commission");
-        table.addCell("INR " + otaComAmount);
-        table.addCell("OTA GST @ 18 %\n(Incl IGST/CGST/SGST)");
-        table.addCell("INR " + otaGstAmount);
         table.addCell("(B) OTA COMMISSION(Incl GST)");
         table.addCell("INR " + booking);
         table.addCell("(C) ZINGOHOTELS.COM COMMISION");
@@ -1153,16 +1102,16 @@ public class BillDetails extends AppCompatActivity {
         if ((ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) ||
                 (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
 
-            if ((ActivityCompat.shouldShowRequestPermissionRationale(BillDetails.this, android.Manifest.permission.READ_EXTERNAL_STORAGE))) {
+            if ((ActivityCompat.shouldShowRequestPermissionRationale(Check.this, android.Manifest.permission.READ_EXTERNAL_STORAGE))) {
             } else {
-                ActivityCompat.requestPermissions(BillDetails.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                ActivityCompat.requestPermissions(Check.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
                         REQUEST_PERMISSIONS);
 
             }
 
-            if ((ActivityCompat.shouldShowRequestPermissionRationale(BillDetails.this, Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
+            if ((ActivityCompat.shouldShowRequestPermissionRationale(Check.this, Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
             } else {
-                ActivityCompat.requestPermissions(BillDetails.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                ActivityCompat.requestPermissions(Check.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         REQUEST_PERMISSIONS);
 
             }
@@ -1197,87 +1146,81 @@ public class BillDetails extends AppCompatActivity {
 
     public void openDatePicker(final TextView tv) {
         // Get Current Date
-        try{
-            final Calendar c = Calendar.getInstance();
-            int mYear = c.get(Calendar.YEAR);
-            int mMonth = c.get(Calendar.MONTH);
-            int mDay = c.get(Calendar.DAY_OF_MONTH);
-            //launch datepicker modal
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                    new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        final Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+        //launch datepicker modal
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
-                            String from, to;
-                            Log.d("Date", "DATE SELECTED " + dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                        String from, to;
+                        Log.d("Date", "DATE SELECTED " + dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
 
-                            Calendar newDate = Calendar.getInstance();
-                            newDate.set(year, monthOfYear, dayOfMonth);
-
-
-                            String date1 = (monthOfYear + 1) + "/" + dayOfMonth + "/" + year;
-
-                            //String date2 = (monthOfYear + 1) + "/" + dayOfMonth + "/" + year;
-
-                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
-
-                            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy");
+                        Calendar newDate = Calendar.getInstance();
+                        newDate.set(year, monthOfYear, dayOfMonth);
 
 
-                            if (tv.equals(mBook)) {
+                        String date1 = (monthOfYear + 1) + "/" + dayOfMonth + "/" + year;
 
-                                try {
-                                    Date fdate = simpleDateFormat.parse(date1);
-                                    Date fd = newDate.getTime();
+                        //String date2 = (monthOfYear + 1) + "/" + dayOfMonth + "/" + year;
 
-                                    //cits = simpleDateFormat.format(fdate);
-                                    from = sdf.format(fd);
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
-                                    System.out.println("To = " + from);
-                                    tv.setText(from);
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
-                                //
+                        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy");
 
 
-                            } else if (tv.equals(mCID)) {
-                                //to = date1;
-                                try {
-                                    Date tdate = simpleDateFormat.parse(date1);
-                                    Date fd = newDate.getTime();
-                                    cits = simpleDateFormat.format(tdate);
-                                    to = sdf.format(fd);
-                                    System.out.println("To = " + to);
-                                    tv.setText(to);
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
-                            } else if (tv.equals(mCOD)) {
-                                //to = date1;
-                                try {
-                                    Date tdate = simpleDateFormat.parse(date1);
-                                    Date fd = newDate.getTime();
-                                    cots = simpleDateFormat.format(tdate);
-                                    to = sdf.format(fd);
-                                    System.out.println("To = " + to);
-                                    tv.setText(to);
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
+                        if (tv.equals(mBook)) {
+
+                            try {
+                                Date fdate = simpleDateFormat.parse(date1);
+                                Date fd = newDate.getTime();
+
+                                //cits = simpleDateFormat.format(fdate);
+                                from = sdf.format(fd);
+
+                                System.out.println("To = " + from);
+                                tv.setText(from);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
                             }
+                            //
 
 
+                        } else if (tv.equals(mCID)) {
+                            //to = date1;
+                            try {
+                                Date tdate = simpleDateFormat.parse(date1);
+                                Date fd = newDate.getTime();
+                                cits = simpleDateFormat.format(tdate);
+                                to = sdf.format(fd);
+                                System.out.println("To = " + to);
+                                tv.setText(to);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        } else if (tv.equals(mCOD)) {
+                            //to = date1;
+                            try {
+                                Date tdate = simpleDateFormat.parse(date1);
+                                Date fd = newDate.getTime();
+                                cots = simpleDateFormat.format(tdate);
+                                to = sdf.format(fd);
+                                System.out.println("To = " + to);
+                                tv.setText(to);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }, mYear, mMonth, mDay);
 
 
-            datePickerDialog.show();
+                    }
+                }, mYear, mMonth, mDay);
 
-        }catch (Exception e){
-            e.printStackTrace();
-        }
 
+        datePickerDialog.show();
 
     }
 
@@ -1338,7 +1281,7 @@ public class BillDetails extends AppCompatActivity {
             public void run() {
                 LoginApi apiService =
                         Util.getClient().create(LoginApi.class);
-                String authenticationString = Util.getToken(BillDetails.this);
+                String authenticationString = Util.getToken(Check.this);
                 Call<HotelDetails> call = apiService.getHotelsById(authenticationString, id);
 
                 call.enqueue(new Callback<HotelDetails>() {
@@ -1350,7 +1293,7 @@ public class BillDetails extends AppCompatActivity {
 
                             if (progressDialog != null)
                                 progressDialog.dismiss();
-                             list = response.body();
+                            list = response.body();
 
                             if (list != null) {
 
@@ -1376,7 +1319,7 @@ public class BillDetails extends AppCompatActivity {
                         } else {
                             if (progressDialog != null)
                                 progressDialog.dismiss();
-                            Toast.makeText(BillDetails.this, " failed due to : " + response.message(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Check.this, " failed due to : " + response.message(), Toast.LENGTH_SHORT).show();
                         }
 //                callGetStartEnd();
                     }
@@ -1406,7 +1349,7 @@ public class BillDetails extends AppCompatActivity {
         new ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = Util.getToken(BillDetails.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
+                String auth_string = Util.getToken(Check.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
                 LoginApi hotelOperation = Util.getClient().create(LoginApi.class);
                 Call<ArrayList<HotelDetails>> response = hotelOperation.getHotelsList(auth_string/*userId*/);
 
@@ -1418,28 +1361,23 @@ public class BillDetails extends AppCompatActivity {
 
                         if (progressDialog != null)
                             progressDialog.dismiss();
-                        try{
-                            if (response.code() == 200) {
-                                if (chainsList != null && chainsList.size() != 0) {
-                                    PropertyAdapter chainAdapter = new PropertyAdapter(BillDetails.this, chainsList);
-                                    mProperty.setAdapter(chainAdapter);
+
+                        if (response.code() == 200) {
+                            if (chainsList != null && chainsList.size() != 0) {
+                                PropertyAdapter chainAdapter = new PropertyAdapter(Check.this, chainsList);
+                                mProperty.setAdapter(chainAdapter);
 //
 
 
-                                } else {
-                                    Toast.makeText(BillDetails.this, "No Hotels", Toast.LENGTH_SHORT).show();
-                                /*Intent intent = new Intent(BillDetails.this,AddHotelActivity.class);
-                                startActivity(intent);*/
-                                }
                             } else {
-                                Toast.makeText(BillDetails.this, "Check your internet connection or please try after some time",
-                                        Toast.LENGTH_LONG).show();
+                                Toast.makeText(Check.this, "No Hotels", Toast.LENGTH_SHORT).show();
+                                /*Intent intent = new Intent(Check.this,AddHotelActivity.class);
+                                startActivity(intent);*/
                             }
-
-                        }catch (Exception e){
-                            e.printStackTrace();
+                        } else {
+                            Toast.makeText(Check.this, "Check your internet connection or please try after some time",
+                                    Toast.LENGTH_LONG).show();
                         }
-
 
 
                     }
@@ -1450,7 +1388,7 @@ public class BillDetails extends AppCompatActivity {
                         if (progressDialog != null)
                             progressDialog.dismiss();
 
-                        Toast.makeText(BillDetails.this, "Check your internet connection or please try after some time",
+                        Toast.makeText(Check.this, "Check your internet connection or please try after some time",
                                 Toast.LENGTH_LONG).show();
 
                     }
@@ -1460,15 +1398,15 @@ public class BillDetails extends AppCompatActivity {
     }
 
     public void getContactByHotelId(final int id) {
-      /* final ProgressDialog dialog = new ProgressDialog(BillDetails.this);
-        dialog.setMessage("Please wait");
+       /* final ProgressDialog dialog = new ProgressDialog(Check.this);
+        dialog.setMessage(getResources().getString(R.string.loader_message));
         dialog.setCancelable(false);
         dialog.show();*/
 
         new ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String authenticationString = Util.getToken(BillDetails.this);
+                String authenticationString = Util.getToken(Check.this);
                 LoginApi operations = Util.getClient().create(LoginApi.class);
                 Call<ArrayList<ContactDetails>> getContactResponse = operations.getContactByHotelId(authenticationString, id);
 
@@ -1476,35 +1414,25 @@ public class BillDetails extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<ArrayList<ContactDetails>> call, Response<ArrayList<ContactDetails>> response) {
                         System.out.println("Code  = " + response.code());
-                      /*  if(dialog != null && dialog.isShowing())
+
+                        ArrayList<ContactDetails> contactResponse = response.body();
+                       /* if(dialog != null && dialog.isShowing())
                         {
                             dialog.dismiss();
                         }*/
-                        try{
-                            ArrayList<ContactDetails> contactResponse = response.body();
-
-                            if (response.code() == 200 && contactResponse != null && contactResponse.size() != 0) {
-                                final ContactDetails contactInfo = contactResponse.get(contactResponse.size() - 1);
+                        if (response.code() == 200 && contactResponse != null && contactResponse.size() != 0) {
+                            final ContactDetails contactInfo = contactResponse.get(contactResponse.size() - 1);
 
 
-                                mEmail.setText(contactInfo.getHotelEmail());
+                            mEmail.setText(contactInfo.getHotelEmail());
 
 
-                            } else {
+                        } else {
                            /* hotelMob =  "No Mobile";
                             hotelPhone =  "No Phone";
                             hotelEmail =  "No Email";*/
-                                mEmail.setText("");
-                            }
-
-                        }catch (Exception e){
-                           /* if(dialog != null && dialog.isShowing())
-                            {
-                                dialog.dismiss();
-                            }*/
-                            e.printStackTrace();
+                            mEmail.setText("");
                         }
-
 
 
                     }
@@ -1512,8 +1440,8 @@ public class BillDetails extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<ArrayList<ContactDetails>> call, Throwable t) {
                         System.out.println("Contact failed");
-                        Toast.makeText(BillDetails.this, "Failed Due to: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                       /* if(dialog != null && dialog.isShowing())
+                        Toast.makeText(Check.this, "Failed Due to: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                      /*  if(dialog != null && dialog.isShowing())
                         {
                             dialog.dismiss();
                         }*/
@@ -1527,7 +1455,7 @@ public class BillDetails extends AppCompatActivity {
 //Do bookings
     private void updateRoomBooking(final Bookings1 bookings) {
 
-        final ProgressDialog progressDialog = new ProgressDialog(BillDetails.this);
+        final ProgressDialog progressDialog = new ProgressDialog(Check.this);
         progressDialog.setTitle("please wait..");
         progressDialog.setCancelable(false);
         progressDialog.show();
@@ -1536,7 +1464,7 @@ public class BillDetails extends AppCompatActivity {
         new ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = Util.getToken(BillDetails.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
+                String auth_string = Util.getToken(Check.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
                 LoginApi apiService =
                         Util.getClient().create(LoginApi.class);
                 Call<Bookings1> call = apiService.postBooking(auth_string, bookings);
@@ -1546,48 +1474,43 @@ public class BillDetails extends AppCompatActivity {
                     public void onResponse(Call<Bookings1> call, Response<Bookings1> response) {
 
                         int statusCode = response.code();
-                        try{
-                            if (statusCode == 200 || statusCode == 201 || statusCode == 203 || statusCode == 204) {
+                        if (statusCode == 200 || statusCode == 201 || statusCode == 203 || statusCode == 204) {
 
-                                if (progressDialog != null)
-                                    progressDialog.dismiss();
-                                Bookings1 dto = response.body();
-                                if (dto != null) {
-                                    book = true;
-                                    zingoBookingId = ""+response.body().getBookingId();
+                            if (progressDialog != null)
+                                progressDialog.dismiss();
+                            Bookings1 dto = response.body();
+                            if (dto != null) {
+                                book = true;
+                                zingoBookingId = ""+response.body().getBookingId();
 
 
-                                    Toast.makeText(BillDetails.this, "Booking done successfully", Toast.LENGTH_SHORT).show();
-                                    //sendEmailattache();
-                                    FireBaseModel fm = new FireBaseModel();
-                                    fm.setSenderId("415720091200");
-                                    fm.setServerId("AIzaSyBFdghUu7AgQVnu27xkKKLHJ6oSz9AnQ8M");
-                                    fm.setHotelId(hotelId);
-                                    fm.setTitle("New Booking from Zingo Hotels");
-                                    fm.setMessage("Congrats! "+property+" got one new booking for "+nights +" nights from "+cit+" to "+cot+"\nBooking Number:"+dto.getBookingNumber());
-                                    //registerTokenInDB(fm);
-                                    sendNotification(fm);
-                                /*Intent quick = new Intent(BillDetails.this, BillDetails.class);
+                                Toast.makeText(Check.this, "Booking done successfully", Toast.LENGTH_SHORT).show();
+                                //sendEmailattache();
+                                FireBaseModel fm = new FireBaseModel();
+                                fm.setSenderId("415720091200");
+                                fm.setServerId("AIzaSyBFdghUu7AgQVnu27xkKKLHJ6oSz9AnQ8M");
+                                fm.setHotelId(hotelId);
+                                fm.setTitle("New Booking from Zingo Hotels");
+                                fm.setMessage("Congrats! "+property+" got one new booking for "+nights +" nights from "+cit+" to "+cot+"\nBooking Number:"+dto.getBookingNumber());
+                                //registerTokenInDB(fm);
+                                sendNotification(fm);
+                                /*Intent quick = new Intent(Check.this, Check.class);
                                 startActivity(quick);*/
-                                }else{
-                                    String subject=null;
+                            }else{
+                                String subject=null;
 
 
 
-                                    //sendEmailattache();
-                                    onShareClick();
-                                }
-
-                            } else {
-                                if (progressDialog != null)
-                                    progressDialog.dismiss();
-
-                                Toast.makeText(BillDetails.this, " failed due to : " + response.message(), Toast.LENGTH_SHORT).show();
+                                //sendEmailattache();
+                                onShareClick();
                             }
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
 
+                        } else {
+                            if (progressDialog != null)
+                                progressDialog.dismiss();
+
+                            Toast.makeText(Check.this, " failed due to : " + response.message(), Toast.LENGTH_SHORT).show();
+                        }
 
                     }
 
@@ -1597,7 +1520,7 @@ public class BillDetails extends AppCompatActivity {
                         if (progressDialog != null)
                             progressDialog.dismiss();
                         Log.e("TAG", t.toString());
-                        Toast.makeText(BillDetails.this, " failed due to : " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Check.this, " failed due to : " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -1613,7 +1536,7 @@ public class BillDetails extends AppCompatActivity {
         new ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = Util.getToken(BillDetails.this);
+                String auth_string = Util.getToken(Check.this);
                 LoginApi apiService =
                         Util.getClient().create(LoginApi.class);
 
@@ -1626,33 +1549,28 @@ public class BillDetails extends AppCompatActivity {
                     public void onResponse(Call<ArrayList<String>> call, retrofit2.Response<ArrayList<String>> response) {
 //                List<RouteDTO.Routes> list = new ArrayList<RouteDTO.Routes>();
                         int statusCode = response.code();
-                        try{
-                            if (statusCode == 200) {
 
-                                ArrayList<String> list = response.body();
+                        if (statusCode == 200) {
 
-                                Toast.makeText(BillDetails.this, "Notification Send Successfully", Toast.LENGTH_SHORT).show();
+                            ArrayList<String> list = response.body();
 
-
-
-                                //sendEmailattache();
-                                NotificationManager nf = new NotificationManager();
-                                nf.setNotificationText(fireBaseModel.getTitle());
-                                nf.setNotificationFor(fireBaseModel.getMessage());
-                                nf.setHotelId(fireBaseModel.getHotelId());
-                                savenotification(nf);
+                            Toast.makeText(Check.this, "Notification Send Successfully", Toast.LENGTH_SHORT).show();
 
 
 
-                            } else {
+                            //sendEmailattache();
+                            NotificationManager nf = new NotificationManager();
+                            nf.setNotificationText(fireBaseModel.getTitle());
+                            nf.setNotificationFor(fireBaseModel.getMessage());
+                            nf.setHotelId(fireBaseModel.getHotelId());
+                            savenotification(nf);
 
-                                Toast.makeText(BillDetails.this, " failed due to status code:" + statusCode, Toast.LENGTH_SHORT).show();
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
+
+
+                        } else {
+
+                            Toast.makeText(Check.this, " failed due to status code:" + statusCode, Toast.LENGTH_SHORT).show();
                         }
-
-
 //                callGetStartEnd();
                     }
 
@@ -1673,14 +1591,14 @@ public class BillDetails extends AppCompatActivity {
     private void getTravelerByPhone(final String dto){
 
         progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("please wait..");
+        progressDialog.setTitle("please wait we are fetching traveller details..");
         progressDialog.setCancelable(false);
         progressDialog.show();
 
         new ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = Util.getToken(BillDetails.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
+                String auth_string = Util.getToken(Check.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
                 LoginApi apiService =
                         Util.getClient().create(LoginApi.class);
                 Call<ArrayList<Traveller>> call = apiService.fetchTravelerByPhone(auth_string,dto);
@@ -1689,39 +1607,36 @@ public class BillDetails extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<ArrayList<Traveller>> call, Response<ArrayList<Traveller>> response) {
 //                List<RouteDTO.Routes> list = new ArrayList<RouteDTO.Routes>();
-                        try{
-                            int statusCode = response.code();
-                            if (statusCode == 200 || statusCode == 201 || statusCode == 203 || statusCode == 204) {
+                        int statusCode = response.code();
+                        if (statusCode == 200 || statusCode == 201 || statusCode == 203 || statusCode == 204) {
 
-                                if (progressDialog!=null)
-                                    progressDialog.dismiss();
-                                ArrayList<Traveller> list = response.body();
+                            if (progressDialog!=null)
+                                progressDialog.dismiss();
+                            ArrayList<Traveller> list = response.body();
 
-                                if (list.size()!=0) {
-                                    dtos = list.get(0);
+                            if (list.size()!=0) {
+                                dtos = list.get(0);
 
-                                    if (dtos != null) {
-                                        travellerIid = dtos.getTravellerId();
-                                        updateTraveller(travellerIid);
-
-                                    }
-                                }else{
-                                    //travellerIid = 0;
-                                    addTraveler();
+                                if (dtos != null) {
+                                    travellerIid = dtos.getTravellerId();
+                                    mGuest.setText(dtos.getFirstName());
+                                    //updateTraveller(travellerIid);
 
                                 }
+                            }else{
+                                //travellerIid = 0;
+                                //addTraveler();
+                                mGuest.setText("");
 
-
-                            }else {
-                                if (progressDialog!=null)
-                                    progressDialog.dismiss();
-                                Toast.makeText(BillDetails.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
                             }
-//                callGetStartEnd();
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
 
+
+                        }else {
+                            if (progressDialog!=null)
+                                progressDialog.dismiss();
+                            Toast.makeText(Check.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
+                        }
+//                callGetStartEnd();
                     }
 
                     @Override
@@ -1747,18 +1662,19 @@ public class BillDetails extends AppCompatActivity {
 
         final Traveller dto = new Traveller();
         dto.setFirstName(guest);
-        if (mobile == null || mobile.isEmpty()) {
+        if (mobile != null && !mobile.isEmpty()) {
             //dto.setPhoneNumber("");
-        }else{
             dto.setPhoneNumber(mobile);
+        }else{
+
         }
 
-        dto.setUserRoleId(1);
+        dto.setUserRoleId(6);
 
         new ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = Util.getToken(BillDetails.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
+                String auth_string = Util.getToken(Check.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
                 LoginApi apiService =
                         Util.getClient().create(LoginApi.class);
                 Call<Traveller> call = apiService.addTraveler(auth_string,dto);
@@ -1767,18 +1683,20 @@ public class BillDetails extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<Traveller> call, Response<Traveller> response) {
 //                List<RouteDTO.Routes> list = new ArrayList<RouteDTO.Routes>();
-                        int statusCode = response.code();
-                        try{
+                        try
+                        {
+                            int statusCode = response.code();
                             if (statusCode == 200 || statusCode == 201 || statusCode == 203 || statusCode == 204) {
 
                                 if (progressDialog!=null)
                                     progressDialog.dismiss();
 
                                 Traveller dto = response.body();
-                                System.out.println("Response Traveller==="+response.body());
+                                System.out.println("Response Traveller==="+response.body().getTravellerId());
 
                                 if (dto != null) {
                                     travellerIid  = dto.getTravellerId();
+                                    //Toast.makeText(Check.this, " added"+response.message(), Toast.LENGTH_SHORT).show();
                                     setData(dto.getTravellerId());
 
                                 }
@@ -1788,12 +1706,13 @@ public class BillDetails extends AppCompatActivity {
                             }else {
                                 if (progressDialog!=null)
                                     progressDialog.dismiss();
-                                Toast.makeText(BillDetails.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Check.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
                             }
-                        }catch (Exception e){
-                            e.printStackTrace();
                         }
-
+                        catch (Exception ex)
+                        {
+                            ex.printStackTrace();
+                        }
 //                callGetStartEnd();
                     }
 
@@ -1815,14 +1734,18 @@ public class BillDetails extends AppCompatActivity {
         final Traveller dto = dtos;
 
         dto.setTravellerId(travellerIid);
-        dto.setPhoneNumber(mobile);
+        if(mobile != null && !mobile.isEmpty())
+        {
+            dto.setPhoneNumber(mobile);
+        }
+
         dto.setFirstName(guest);
-        dto.setUserRoleId(1);
+        dto.setUserRoleId(6);
 
         new ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = Util.getToken(BillDetails.this);
+                String auth_string = Util.getToken(Check.this);
                 LoginApi apiService =
                         Util.getClient().create(LoginApi.class);
                 Call<Traveller> call = apiService.updateTravellerDetails(auth_string,travellerIid,dto);
@@ -1832,28 +1755,23 @@ public class BillDetails extends AppCompatActivity {
                     public void onResponse(Call<Traveller> call, Response<Traveller> response) {
 //                List<RouteDTO.Routes> list = new ArrayList<RouteDTO.Routes>();
                         int statusCode = response.code();
-                        try{
-                            if (statusCode == 200 || statusCode == 201 || statusCode == 203 || statusCode == 204) {
+                        if (statusCode == 200 || statusCode == 201 || statusCode == 203 || statusCode == 204) {
 
-                                if (progressDialog!=null)
-                                    progressDialog.dismiss();
+                            if (progressDialog!=null)
+                                progressDialog.dismiss();
 
-                                Traveller dto = response.body();
-                                System.out.println("Response Traveller==="+response.body());
+                            Traveller dto = response.body();
+                            System.out.println("Response Traveller==="+response.body().getTravellerId());
 
-                                if (dto != null) {
-
-                                    setData(dto.getTravellerId());
-                                }
-                            }else {
-                                if (progressDialog!=null)
-                                    progressDialog.dismiss();
-                                Toast.makeText(BillDetails.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
+                            if (dto != null) {
+                                //Toast.makeText(Check.this, " updated"+response.message(), Toast.LENGTH_SHORT).show();
+                                setData(dto.getTravellerId());
                             }
-                        }catch (Exception e){
-                            e.printStackTrace();
+                        }else {
+                            if (progressDialog!=null)
+                                progressDialog.dismiss();
+                            Toast.makeText(Check.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
                         }
-
                     }
 
                     @Override
@@ -1872,7 +1790,7 @@ public class BillDetails extends AppCompatActivity {
 
     public String randomByDate(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmss");
-         Date random = new Date();
+        Date random = new Date();
         String bookNumber = dateFormat.format(random);
         System.out.println("Z"+bookNumber);
         return bookNumber;
@@ -1884,7 +1802,7 @@ public class BillDetails extends AppCompatActivity {
         String[] mailto = {email};
 
         Intent emailIntent = new Intent();
-      //  emailIntent.setAction(Intent.ACTION_SEND);
+        //  emailIntent.setAction(Intent.ACTION_SEND);
         // Native email client doesn't currently support HTML, but it doesn't hurt to try in case they fix it
         emailIntent.setType("text/plain");
         emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
@@ -1926,7 +1844,7 @@ public class BillDetails extends AppCompatActivity {
                         "Please find the attached reservation for you.");
 
                 emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-               // startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
+                // startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
                /* Intent intent = new Intent();
                // intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
               //  intent.setAction(Intent.ACTION_SEND);
@@ -1953,7 +1871,7 @@ public class BillDetails extends AppCompatActivity {
                 intent.putExtra(Intent.EXTRA_STREAM, uris);*/
 
 
-               // intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
+                // intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
             } else {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
@@ -2009,87 +1927,81 @@ public class BillDetails extends AppCompatActivity {
     }
 
     public void onShareClick() {
+        List<Intent> intentShareList = new ArrayList<Intent>();
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        List<ResolveInfo> resolveInfoList = getPackageManager().queryIntentActivities(shareIntent, 0);
 
-        try{
-            List<Intent> intentShareList = new ArrayList<Intent>();
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-            List<ResolveInfo> resolveInfoList = getPackageManager().queryIntentActivities(shareIntent, 0);
-
-            for (ResolveInfo resInfo : resolveInfoList) {
-                String packageName = resInfo.activityInfo.packageName;
-                String name = resInfo.activityInfo.name;
+        for (ResolveInfo resInfo : resolveInfoList) {
+            String packageName = resInfo.activityInfo.packageName;
+            String name = resInfo.activityInfo.name;
 
 
-                if (packageName.contains("android.email")||packageName.contains("whatsapp")) {
+            if (packageName.contains("android.email")||packageName.contains("whatsapp")) {
 
 
-                    if(packageName.contains("android.email")){
-                        String[] mailto = {email};
+                if(packageName.contains("android.email")){
+                    String[] mailto = {email};
 
-                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                        emailIntent.setType("text/plain");
-                        emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
-                        if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
-                            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- "+payment+"-"+ota+" voucher - "+property);
-                        }else{
-                            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- Confirm Prepaid -"+ota+" voucher - "+property);
-                        }
-
-                        emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Hotel Partner,\n" +
-                                "We Thank you for your continued support in ensuring the highest level of service Standards. \n" +
-                                "\n" +
-                                "Please find the attached reservation for you.");
-                        File root = Environment.getExternalStorageDirectory();
-                        String pathToMyAttachedFile = "/BillGenerate/Pdf/" + csvFile;
-                        File file = new File(root, pathToMyAttachedFile);
-                        if (!file.exists() || !file.canRead()) {
-                            return;
-                        }
-                        Uri uri = Uri.fromFile(file);
-                        emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                        intentShareList.add(emailIntent);
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setType("text/plain");
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
+                    if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- "+payment+"-"+ota+" voucher - "+property);
                     }else{
-                        Intent intent = new Intent();
-                        // intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
-                        intent.setAction(Intent.ACTION_SEND);
-                        intent.setType("application/pdf");
-
-                        File roots = Environment.getExternalStorageDirectory();
-                        String pathToMyAttachedFiles = "/BillGenerate/Pdf/" + csvFile;
-                        File files = new File(roots, pathToMyAttachedFiles);
-                        if (!files.exists() || !files.canRead()) {
-                            return;
-                        }
-                        Uri uris = Uri.fromFile(files);
-                        intent.putExtra(Intent.EXTRA_STREAM, uris);
-                        intentShareList.add(intent);
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- Confirm Prepaid -"+ota+" voucher - "+property);
                     }
 
-                    // startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
-                }/*else if(packageName.contains("whatsapp")){
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Hotel Partner,\n" +
+                            "We Thank you for your continued support in ensuring the highest level of service Standards. \n" +
+                            "\n" +
+                            "Please find the attached reservation for you.");
+                    File root = Environment.getExternalStorageDirectory();
+                    String pathToMyAttachedFile = "/BillGenerate/Pdf/" + csvFile;
+                    File file = new File(root, pathToMyAttachedFile);
+                    if (!file.exists() || !file.canRead()) {
+                        return;
+                    }
+                    Uri uri = Uri.fromFile(file);
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                    intentShareList.add(emailIntent);
+                }else{
+                    Intent intent = new Intent();
+                    // intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
+                    intent.setAction(Intent.ACTION_SEND);
+                    intent.setType("application/pdf");
+
+                    File roots = Environment.getExternalStorageDirectory();
+                    String pathToMyAttachedFiles = "/BillGenerate/Pdf/" + csvFile;
+                    File files = new File(roots, pathToMyAttachedFiles);
+                    if (!files.exists() || !files.canRead()) {
+                        return;
+                    }
+                    Uri uris = Uri.fromFile(files);
+                    intent.putExtra(Intent.EXTRA_STREAM, uris);
+                    intentShareList.add(intent);
+                }
+
+                // startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
+            }/*else if(packageName.contains("whatsapp")){
 
                // startActivity(Intent.createChooser(intent, "Pick an Email provider"));
             }*/
-            }
-
-            if (intentShareList.isEmpty()) {
-                Toast.makeText(BillDetails.this, "No apps to share !", Toast.LENGTH_SHORT).show();
-            } else {
-                Intent chooserIntent = Intent.createChooser(intentShareList.remove(0), "Share via");
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentShareList.toArray(new Parcelable[]{}));
-                startActivity(chooserIntent);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
         }
 
+        if (intentShareList.isEmpty()) {
+            Toast.makeText(Check.this, "No apps to share !", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent chooserIntent = Intent.createChooser(intentShareList.remove(0), "Share via");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentShareList.toArray(new Parcelable[]{}));
+            startActivity(chooserIntent);
+        }
     }
 
     private void savenotification(final NotificationManager notification) {
 
-        final ProgressDialog dialog = new ProgressDialog(BillDetails.this);
+        final ProgressDialog dialog = new ProgressDialog(Check.this);
         dialog.setMessage("Loading");
         dialog.setCancelable(false);
         dialog.show();
@@ -2098,7 +2010,7 @@ public class BillDetails extends AppCompatActivity {
             @Override
             public void run() {
                 System.out.println("Hotel id = "+notification.getHotelId());
-                String auth_string = Util.getToken(BillDetails.this);
+                String auth_string = Util.getToken(Check.this);
                 LoginApi travellerApi = Util.getClient().create(LoginApi.class);
                 Call<NotificationManager> response = travellerApi.saveNotification(auth_string,notification);
 
@@ -2110,35 +2022,30 @@ public class BillDetails extends AppCompatActivity {
                         {
                             dialog.dismiss();
                         }
-                        try{
-                            System.out.println(response.code());
-                            if(response.code() == 200||response.code() == 201)
+                        System.out.println(response.code());
+                        if(response.code() == 200||response.code() == 201)
+                        {
+                            if(response.body() != null)
                             {
-                                if(response.body() != null)
-                                {
-                                /*Toast.makeText(BillDetails.this,"Thank you for selecting room. Your request has been sent to hotel. " +
+                                /*Toast.makeText(Check.this,"Thank you for selecting room. Your request has been sent to hotel. " +
                                         "Please wait for there reply.",Toast.LENGTH_SHORT).show();*/
-                                    //SelectRoom.this.finish();
-                                    boolean fileCreated = createPdf();
-                                    if(fileCreated){
-                                        onShareClick();
-                                    }else{
-                                        Toast.makeText(BillDetails.this, "File not created", Toast.LENGTH_SHORT).show();
-                                        createPdf();
-                                    }
-
-
-                                    //Toast.makeText(BillDetails.this, "Save Notification", Toast.LENGTH_SHORT).show();
-
-
-
-
+                                //SelectRoom.this.finish();
+                                boolean fileCreated = createPdf();
+                                if(fileCreated){
+                                    onShareClick();
+                                }else{
+                                    Toast.makeText(Check.this, "File not created", Toast.LENGTH_SHORT).show();
+                                    createPdf();
                                 }
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
 
+
+                                //Toast.makeText(Check.this, "Save Notification", Toast.LENGTH_SHORT).show();
+
+
+
+
+                            }
+                        }
                     }
 
                     @Override
@@ -2158,7 +2065,7 @@ public class BillDetails extends AppCompatActivity {
         try{
             switch (item.getItemId()) {
                 case android.R.id.home:
-                    Intent main = new Intent(BillDetails.this,MainActivity.class);
+                    Intent main = new Intent(Check.this,MainActivity.class);
                     startActivity(main);
                     this.finish();
                     return true;
@@ -2174,7 +2081,7 @@ public class BillDetails extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         try{
-            Intent main = new Intent(BillDetails.this,MainActivity.class);
+            Intent main = new Intent(Check.this,MainActivity.class);
             startActivity(main);
             this.finish();
         }catch (Exception e){

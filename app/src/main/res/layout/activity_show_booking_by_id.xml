@@ -38,7 +38,7 @@
                     android:id="@+id/bill_booking_id"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:inputType="number"
+                    android:inputType="text"
                     android:paddingLeft="10dp"
                     android:hint="Booking ID"
                     android:layout_weight="1"

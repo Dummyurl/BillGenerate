@@ -281,34 +281,7 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="5dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Name of Guest"
-                    android:layout_weight="2"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#000000"/>
-                <EditText
-                    android:id="@+id/bill_guest_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:inputType="text"
-                    android:paddingLeft="10dp"
-                    android:hint="Guest Name"
-                    android:layout_weight="1"
-                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
-                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                    android:background="@drawable/spinner_background"/>
 
-
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -330,6 +303,35 @@
                     android:inputType="number"
                     android:paddingLeft="10dp"
                     android:hint="Guest Mobile"
+                    android:layout_weight="1"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Name of Guest"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_guest_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="text"
+                    android:paddingLeft="10dp"
+                    android:hint="Guest Name"
                     android:layout_weight="1"
                     android:drawablePadding="@dimen/registration_padding_drawable_margin"
                     android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"

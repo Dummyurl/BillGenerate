@@ -89,8 +89,8 @@ public class ShowBookingById extends AppCompatActivity {
                         mBookingID.setError("Should not be Empty");
                         mBookingID.requestFocus();
                     }else{
-                        bookingId = Integer.parseInt(id);
-                        getBookings(bookingId);
+                        //bookingId = Integer.parseInt(id);
+                        getBookings(id);
                     }
                 }
             });
@@ -269,7 +269,7 @@ public class ShowBookingById extends AppCompatActivity {
         }
     }
 
-    public  void getBookings(final int bookingId)
+    public  void getBookings(final String bookingId)
     {
         LoginApi api = Util.getClient().create(LoginApi.class);
         String authenticationString = Util.getToken(ShowBookingById.this);
@@ -409,12 +409,7 @@ public class ShowBookingById extends AppCompatActivity {
                             try{
                                 Traveller traveller = response.body();
 
-                                if(traveller.getPhoneNumber().equalsIgnoreCase("0")){
 
-                                    mBookedPersonName.setText("ZINGO GUEST");
-                                    mShortName.setText("ZG");
-
-                                }else{
                                     if(traveller.getFirstName() != null && !traveller.getFirstName().isEmpty())
                                     {
 
@@ -431,7 +426,7 @@ public class ShowBookingById extends AppCompatActivity {
                                             mShortName.setText(ab[0].charAt(0)+"");
                                         }
                                     }
-                                }
+
 
                             }catch (Exception e){
                                 e.printStackTrace();
