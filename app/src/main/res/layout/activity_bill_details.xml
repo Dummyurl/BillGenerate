@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/bill_details_layout"
     tools:context=".BillDetails">
     <com.dd.processbutton.FlatButton
         android:id="@+id/send_email"
@@ -325,7 +326,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
                     android:textColor="#000000"/>
-                <EditText
+                <app.zingo.com.billgenerate.CustomAutoCompleteView
                     android:id="@+id/bill_guest_name"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
