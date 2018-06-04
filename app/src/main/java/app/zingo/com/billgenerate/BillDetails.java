@@ -18,9 +18,12 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -80,11 +83,11 @@ import retrofit2.Response;
 public class BillDetails extends AppCompatActivity {
 
     Spinner mRoomCount, mPayment, mRate, mDesc, mProperty,mOTA,mDataBase;
-    LinearLayout mDataLayout,mOtherLayout,mAddLayout,mCustomerLayout,mOtaService;
+    LinearLayout mDataLayout,mOtherLayout,mAddLayout,mCustomerLayout,mOtaService,mOtaGSTLay,mOTAComLay,mOTAPER;
     EditText mLocation, mCity, mMobile, mRoomType,
             mGuestCount, mTotal, mBooking, mZingo,mOtherProperty,
             mBookingID, mEmail,  mNet, mNights, mArr,mOtaFee,
-            mRoomCharge,mExtraCharge,mHotelTaxes,mAdditional,mCustomerPay,
+            mRoomCharge,mExtraCharge,mHotelTaxes,mAdditional,mCustomerPay,mOTAPerce,
             mOTACommison,mOTAGST;
     TextView mBook, mCID, mCOD;
     CustomAutoCompleteView mGuest;
@@ -171,8 +174,12 @@ public class BillDetails extends AppCompatActivity {
             mAddLayout = (LinearLayout)findViewById(R.id.additional_layout);
             mOtaService = (LinearLayout)findViewById(R.id.ota_service);
             mCustomerLayout = (LinearLayout)findViewById(R.id.customer_pay_layout);
+            mOTAComLay = (LinearLayout)findViewById(R.id.ota_commision_amt_layout);
+            mOTAPER = (LinearLayout)findViewById(R.id.ota_commision_per_layout);
+            mOtaGSTLay = (LinearLayout)findViewById(R.id.ota_gst_layout);
             mDataLayout = (LinearLayout)findViewById(R.id.data_property_layout);
             mOtherLayout = (LinearLayout)findViewById(R.id.other_property_layout);
+            mOTAPerce = (EditText) findViewById(R.id.bill_booking_com_percentage);
             mRoomType = (EditText) findViewById(R.id.bill_property_room);
             mOtaFee = (EditText) findViewById(R.id.bill_booking_com_service);
             mRate = (Spinner) findViewById(R.id.bill_property_rate);
@@ -267,6 +274,39 @@ public class BillDetails extends AppCompatActivity {
                 }
             });
 
+            mOTAPerce.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    try {
+                       String room = mRoomCharge.getText().toString();
+                       String pere = mOTAPerce.getText().toString();
+
+                       if(room!=null && !room.isEmpty()){
+                           double roomCharge = Double.parseDouble(room);
+                           double percentage = Double.parseDouble(pere);
+                           double value = roomCharge * percentage;
+                           double amount = value/100;
+                           mBooking.setText(""+amount);
+                       }
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.printStackTrace();
+                    }
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
             mDataBase.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -296,9 +336,29 @@ public class BillDetails extends AppCompatActivity {
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                     if(mOTA.getSelectedItem().toString().equalsIgnoreCase("MAKEMY TRIP")){
                         mOtaService.setVisibility(View.VISIBLE);
+                        mOTAComLay.setVisibility(View.VISIBLE);
+                        mOtaGSTLay.setVisibility(View.VISIBLE);
+                        mCustomerLayout.setVisibility(View.VISIBLE);
+                        mOTAPER.setVisibility(View.GONE);
 
-                    }else{
+                    }else if(mOTA.getSelectedItem().toString().equalsIgnoreCase("BOOKING.COM")||mOTA.getSelectedItem().toString().equalsIgnoreCase("EXPEDIA")){
                         mOtaService.setVisibility(View.GONE);
+                        mOTAComLay.setVisibility(View.GONE);
+                        mOtaGSTLay.setVisibility(View.GONE);
+                        mCustomerLayout.setVisibility(View.GONE);
+
+                        if(mOTA.getSelectedItem().toString().equalsIgnoreCase("EXPEDIA")){
+                            mOTAPER.setVisibility(View.VISIBLE);
+                        }else{
+                            mOTAPER.setVisibility(View.GONE);
+                        }
+
+                    } else{
+                        mOtaService.setVisibility(View.GONE);
+                        mOTAComLay.setVisibility(View.VISIBLE);
+                        mOtaGSTLay.setVisibility(View.VISIBLE);
+                        mCustomerLayout.setVisibility(View.VISIBLE);
+                        mOTAPER.setVisibility(View.GONE);
                     }
                 }
 
@@ -490,7 +550,7 @@ public class BillDetails extends AppCompatActivity {
 
 
                         //hotelToZingo = otaToHotel-
-                        double netAmt = totals - (otaAmt + zingoAmt);
+                        double netAmt = totals - (commisionAmt);
                         mNet.setText("" + df.format(netAmt));
 
                         if(source!=null&&source.equalsIgnoreCase("MAKEMY TRIP")){
@@ -1106,18 +1166,31 @@ public class BillDetails extends AppCompatActivity {
         table.addCell("INR " + hoteltaxes);
         table.addCell("(A) HOTEL GROSS CHARGES (i+ii+iii)");
         table.addCell("INR " + total);
-        table.addCell("OTA Commission");
-        table.addCell("INR " + otaComAmount);
-        table.addCell("OTA GST @ 18 %\n(Incl IGST/CGST/SGST)");
-        table.addCell("INR " + otaGstAmount);
+        if(!mOTA.getSelectedItem().toString().equalsIgnoreCase("BOOKING.COM")&&!mOTA.getSelectedItem().toString().equalsIgnoreCase("EXPEDIA")){
+            table.addCell("OTA Commission");
+            table.addCell("INR " + otaComAmount);
+            table.addCell("OTA GST @ 18 %\n(Incl IGST/CGST/SGST)");
+            table.addCell("INR " + otaGstAmount);
+        }
+
         table.addCell("(B) OTA COMMISSION(Incl GST)");
         table.addCell("INR " + booking);
         table.addCell("(C) ZINGOHOTELS.COM COMMISION");
         table.addCell("INR " + zingo);
         table.addCell("(D) Additional Charges");
         table.addCell("INR " + addtional);
-        table.addCell("(E) Customer payment at OTA\n Customer Pre-Payment includes discount coupons offered by OTA or payments made through Wallet.");
-        table.addCell("INR " + customer);
+        if(!mOTA.getSelectedItem().toString().equalsIgnoreCase("BOOKING.COM")&&!mOTA.getSelectedItem().toString().equalsIgnoreCase("EXPEDIA")){
+            table.addCell("(E) Customer payment at OTA\n Customer Pre-Payment includes discount coupons offered by OTA or payments made through Wallet.");
+            table.addCell("INR " + customer);
+        }
+
+
+       /* else{
+            mOtaService.setVisibility(View.GONE);
+            mOTACommison.setVisibility(View.VISIBLE);
+            mOTAGST.setVisibility(View.VISIBLE);
+            mCustomerPay.setVisibility(View.VISIBLE);
+        }*/
 
         if(mOTA.getSelectedItem().toString().equalsIgnoreCase("MAKEMY TRIP")){
             table.addCell("(F) MMT SERVICE FEE\n (Including GST)");
@@ -1131,8 +1204,14 @@ public class BillDetails extends AppCompatActivity {
             }
         }else{
             if(otaToHotelPay<0){
-                table.addCell("Amount To Be Paid By  HOTEL to OTA  (E - B)");
-                table.addCell("INR " + dfs.format(Math.abs(otaToHotelPay)));
+                if(!mOTA.getSelectedItem().toString().equalsIgnoreCase("BOOKING.COM")&& !mOTA.getSelectedItem().toString().equalsIgnoreCase("EXPEDIA")){
+                    table.addCell("Amount To Be Paid By  HOTEL to OTA  (E - B)");
+                    table.addCell("INR " + dfs.format(Math.abs(otaToHotelPay)));
+                }else{
+                    table.addCell("Amount To Be Paid By  HOTEL to OTA  (B)");
+                    table.addCell("INR " + dfs.format(Math.abs(otaToHotelPay)));
+                }
+
             }else{
                 table.addCell("Amount To Be Paid By OTA (E - B)");
                 table.addCell("INR " + dfs.format(otaToHotelPay));
@@ -1144,8 +1223,15 @@ public class BillDetails extends AppCompatActivity {
             table.addCell("Customer To Pay At Hotel (A + D + F - E)");
             table.addCell("INR " + dfs.format(customerToHotel));
         }else{
-            table.addCell("Customer To Pay At Hotel (A + D - E)");
-            table.addCell("INR " + dfs.format(customerToHotel));
+            if(mOTA.getSelectedItem().toString().equalsIgnoreCase("BOOKING.COM")||mOTA.getSelectedItem().toString().equalsIgnoreCase("EXPEDIA")){
+                table.addCell("Customer To Pay At Hotel (A + D)");
+                table.addCell("INR " + dfs.format(customerToHotel));
+            }else{
+                table.addCell("Customer To Pay At Hotel (A + D - E)");
+                table.addCell("INR " + dfs.format(customerToHotel));
+
+            }
+
         }
 
 
@@ -2056,6 +2142,7 @@ public class BillDetails extends AppCompatActivity {
                         Intent emailIntent = new Intent(Intent.ACTION_SEND);
                         emailIntent.setType("text/plain");
                         emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
+                        emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
                             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- "+payment+"-"+ota+" voucher - "+property);
                         }else{
@@ -2072,14 +2159,27 @@ public class BillDetails extends AppCompatActivity {
                         if (!file.exists() || !file.canRead()) {
                             return;
                         }
-                        Uri uri = Uri.fromFile(file);
-                        emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                        Uri uri = null;
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                            uri = FileProvider.getUriForFile(this, "app.zingo.com.billgenerate.fileprovider", file);
+                        }else{
+                            uri = Uri.fromFile(file);
+                        }
+
+                        //Uri uri = Uri.fromFile(file);
+                        if(uri!=null){
+                            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                        }else{
+                            Toast.makeText(this, "File cannot access", Toast.LENGTH_SHORT).show();
+                        }
+
                         intentShareList.add(emailIntent);
                     }else{
                         Intent intent = new Intent();
                         // intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
                         intent.setAction(Intent.ACTION_SEND);
                         intent.setType("application/pdf");
+                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                         File roots = Environment.getExternalStorageDirectory();
                         String pathToMyAttachedFiles = "/BillGenerate/Pdf/" + csvFile;
@@ -2088,7 +2188,21 @@ public class BillDetails extends AppCompatActivity {
                             return;
                         }
                         Uri uris = Uri.fromFile(files);
-                        intent.putExtra(Intent.EXTRA_STREAM, uris);
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+                            uris = FileProvider.getUriForFile(this, "app.zingo.com.billgenerate.fileprovider", files);
+
+                        }else{
+                            uris = Uri.fromFile(files);
+                        }
+
+                        if(uris!=null){
+                            intent.putExtra(Intent.EXTRA_STREAM, uris);
+                        }else{
+                            Toast.makeText(this, "File cannot access", Toast.LENGTH_SHORT).show();
+                        }
+
+
                         intentShareList.add(intent);
                     }
 

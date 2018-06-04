@@ -52,7 +52,8 @@
         <activity android:name=".CancelOptions" />
         <activity android:name=".ShowBookingById" />
         <activity android:name=".ModifyBooking" />
-        <activity android:name=".GetBookingByHotel"></activity>
+        <activity android:name=".GetBookingByHotel" />
+        <activity android:name=".BilllDetails"></activity>
     </application>
 
 </manifest>
