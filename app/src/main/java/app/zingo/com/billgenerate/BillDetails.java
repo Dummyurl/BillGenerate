@@ -2351,6 +2351,7 @@ public class BillDetails extends AppCompatActivity {
            bookings = null;
            commisionAmt = 0.0;
            commisionGST = 0.0;
+	   travellerIid= 0;
 
             if(tlist != null)
             {
