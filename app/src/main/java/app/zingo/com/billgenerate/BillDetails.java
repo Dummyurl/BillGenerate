@@ -82,13 +82,13 @@ import retrofit2.Response;
 
 public class BillDetails extends AppCompatActivity {
 
-    Spinner mRoomCount, mPayment, mRate, mDesc, mProperty,mOTA,mDataBase;
+    Spinner mRoomCount, mPayment, mRate, mDesc, mProperty,mOTA,mDataBase,mSourceType;
     LinearLayout mDataLayout,mOtherLayout,mAddLayout,mCustomerLayout,mOtaService,mOtaGSTLay,mOTAComLay,mOTAPER;
     EditText mLocation, mCity, mMobile, mRoomType,
             mGuestCount, mTotal, mBooking, mZingo,mOtherProperty,
             mBookingID, mEmail,  mNet, mNights, mArr,mOtaFee,
             mRoomCharge,mExtraCharge,mHotelTaxes,mAdditional,mCustomerPay,mOTAPerce,
-            mOTACommison,mOTAGST;
+            mOTACommison,mOTAGST,mOtherbookingSource;
     TextView mBook, mCID, mCOD;
     CustomAutoCompleteView mGuest;
     Button mSave, mCalculate;
@@ -100,6 +100,7 @@ public class BillDetails extends AppCompatActivity {
     double commisionAmt,commisionGST;
     HotelDetails list;
     ArrayList<Traveller> tlist;
+    String[] bookingSourceTitleStringArray;
 
     //Databaases
     DataBaseHelper dbHelper;
@@ -205,6 +206,7 @@ public class BillDetails extends AppCompatActivity {
             mOTAGST = (EditText) findViewById(R.id.bill_booking_com_gst);
             mZingo = (EditText) findViewById(R.id.bill_zingo_com);
             mOTA = (Spinner) findViewById(R.id.bill_booking_ota);
+            mSourceType = (Spinner) findViewById(R.id.bill_booking_source);
             mNet = (EditText) findViewById(R.id.bill_net_amount);
             mNights = (EditText) findViewById(R.id.bill_total_nights);
             mArr = (EditText) findViewById(R.id.bill_arr);
@@ -213,10 +215,79 @@ public class BillDetails extends AppCompatActivity {
             mCOD = (TextView) findViewById(R.id.bill_property_checkout);
             mSave = (Button) findViewById(R.id.send_email);
             mCalculate = (Button) findViewById(R.id.bill_calculate);
+            mOtherbookingSource = (EditText) findViewById(R.id.other_booking_source);
 
-            bookingSourceArray = getResources().getStringArray(R.array.OTA_items);
-            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
-            mOTA.setAdapter(spinneradapter);
+            bookingSourceTitleStringArray = getResources().getStringArray(R.array.booking_source_title);
+
+            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceTitleStringArray);
+            mSourceType.setAdapter(spinneradapter);
+
+            mSourceType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    try {
+                        if(bookingSourceTitleStringArray[position].equals("OTA"))
+                        {
+                            String[] bookingSourceArray = getResources().getStringArray(R.array.OTA_items);
+
+                            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
+                            mOTA.setAdapter(spinneradapter);
+                        }
+                        else if(bookingSourceTitleStringArray[position].equals("B2B"))
+                        {
+                            String[] bookingSourceArray = getResources().getStringArray(R.array.B2B_items);
+
+                            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
+                            mOTA.setAdapter(spinneradapter);
+                        }
+                        else if(bookingSourceTitleStringArray[position].equals("Offline"))
+                        {
+                            String[] bookingSourceArray = getResources().getStringArray(R.array.Offline_items);
+
+                            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
+                            mOTA.setAdapter(spinneradapter);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
+            //bookingSourceArray = getResources().getStringArray(R.array.OTA_items);
+            /*PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
+            mOTA.setAdapter(spinneradapter);*/
+
+            mOTA.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    try {
+                        if(mOTA.getSelectedItem().toString().equals("Other"))
+                        {
+                            mOtherbookingSource.setVisibility(View.VISIBLE);
+                        }else{
+                            mOtherbookingSource.setVisibility(View.GONE);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.printStackTrace();
+                    }
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
 
             bill = new BillDataBase(this);
 
@@ -770,10 +841,10 @@ public class BillDetails extends AppCompatActivity {
             bookings.setCheckOutDate(cots);
             bookings.setOptCheckOutDate(cots);
             bookings.setHotelId(hotelId);
-            bookings.setBookingSourceType(mOTA.getSelectedItem().toString());
+            bookings.setBookingSourceType(mSourceType.getSelectedItem().toString());
             bookings.setNoOfAdults(Integer.parseInt(count));
             bookings.setBookingStatus("Quick");
-            bookings.setBookingSource("OTA");
+            bookings.setBookingSource(mOTA.getSelectedItem().toString());
             bookings.setOTACommissionGSTAmount(otaGstAmount);
             bookings.setOTACommissionAmount(otaComAmount);
             bookings.setOTATotalCommissionAmount(otaAmt);
@@ -812,8 +883,10 @@ public class BillDetails extends AppCompatActivity {
             bookings.setTotalAmount((int) Double.parseDouble(total));
             if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
                 bookings.setBalanceAmount((int) Double.parseDouble(total));
+                bookings.setHotelToZingo(zingoAmt);
             }else{
                 bookings.setBalanceAmount(0);
+                bookings.setZingoToHotel(zingoAmt);
             }
 
             bookings.setBookingPlan(mRate.getSelectedItem().toString());
@@ -1857,7 +1930,7 @@ public class BillDetails extends AppCompatActivity {
         progressDialog.show();
 
         final Traveller dto = new Traveller();
-        dto.setFirstName(guest);
+        dto.setFirstName(guest.trim());
         if (mobile == null || mobile.isEmpty()) {
             //dto.setPhoneNumber("");
         }else{
@@ -2351,7 +2424,12 @@ public class BillDetails extends AppCompatActivity {
            bookings = null;
            commisionAmt = 0.0;
            commisionGST = 0.0;
-	   travellerIid= 0;
+           travellerIid= 0;
+            mProperty.setSelection(0);
+            mRoomCount.setSelection(0);
+            mPayment.setSelection(0);
+            mRate.setSelection(0);
+            mDesc.setSelection(0);
 
             if(tlist != null)
             {
@@ -2361,6 +2439,43 @@ public class BillDetails extends AppCompatActivity {
             if(view instanceof ViewGroup && (((ViewGroup)view).getChildCount() > 0))
                 clearForm((ViewGroup)view);
         }
+       /* mBookingID.setText("");
+        mMobile.setText("");
+        mGuest.setText("");
+        mBook.setText("");
+        mCID.setText("");
+        mCOD.setText("");
+        mRoomType.setText("");
+        mRoomCount.setSelection(0);
+        mPayment.setSelection(0);
+        mRate.setSelection(0);
+        mGuestCount.setText("");
+        mDesc.setSelection(0);
+        mProperty.setSelection(0);
+        mRoomCharge.setText("");
+        mExtraCharge.setText("");
+        mHotelTaxes.setText("");
+        mTotal.setText("");
+        mOtaFee.setText("");
+        mBooking.setText("");
+        mZingo.setText("");
+        mAdditional.setText("");
+        mCustomerPay.setText("");
+        mNights.setText("");
+        mNet.setText("");
+        mArr.setText("");
+        book = false;
+        zingoBookingId = "";
+        dtos = null;
+        bookings = null;
+        commisionAmt = 0.0;
+        commisionGST = 0.0;
+        travellerIid = 0;
+
+        if(tlist != null)
+        {
+            tlist.clear();
+        }*/
     }
 
     private boolean isexist(ArrayList<Traveller> travellers) {

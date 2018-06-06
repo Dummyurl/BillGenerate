@@ -2151,6 +2151,7 @@ public class BilllDetails extends AppCompatActivity {
         mRate.setSelection(0);
         mGuestCount.setText("");
         mDesc.setSelection(0);
+        mProperty.setSelection(0);
         mRoomCharge.setText("");
         mExtraCharge.setText("");
         mHotelTaxes.setText("");
@@ -2169,6 +2170,7 @@ public class BilllDetails extends AppCompatActivity {
         bookings = null;
         commisionAmt = 0.0;
         commisionGST = 0.0;
+        travellerIid = 0;
 
         if(tlist != null)
         {

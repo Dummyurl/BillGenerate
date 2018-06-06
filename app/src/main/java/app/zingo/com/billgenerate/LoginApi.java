@@ -42,7 +42,7 @@ public interface LoginApi {
     @GET("Hotels/GetContactsByHotelId/{HotelId}")
     Call<ArrayList<ContactDetails>> getContactByHotelId(@Header("Authorization") String authKey, @Path("HotelId") int HotelId);
 
-    @GET("Hotels")
+    @GET("Hotels/GetAllHotelsWithoutImages")
     Call<ArrayList<HotelDetails>> getHotelsList(@Header("Authorization") String authKey);
 
     @GET("Hotels/{id}")

@@ -24,6 +24,12 @@
         <item>OTHERS</item>
     </string-array>
 
+    <array name="booking_source_title">
+        <item>OTA</item>
+        <item>B2B</item>
+        <item>Offline</item>
+    </array>
+
     <array name="OTA_items">
         <item>MAKEMY TRIP</item>
         <item>YATRA/TG</item>
@@ -33,6 +39,20 @@
         <item>AGODA</item>
         <item>CLEARTRIP</item>
         <item>VIA</item>
+    </array>
+
+    <array name="B2B_items">
+        <item>COR</item>
+        <item>BOSH</item>
+        <item>TA</item>
+        <item>Other</item>
+    </array>
+
+    <array name="Offline_items">
+        <item>WAL</item>
+        <item>DIR</item>
+        <item>AGT</item>
+        <item>Other</item>
     </array>
 
     <string-array name="room_plan">
