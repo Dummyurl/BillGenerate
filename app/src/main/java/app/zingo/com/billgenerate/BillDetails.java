@@ -1667,7 +1667,7 @@ public class BillDetails extends AppCompatActivity {
                                 final ContactDetails contactInfo = contactResponse.get(contactResponse.size() - 1);
 
 
-                                mEmail.setText(contactInfo.getHotelEmail());
+                                mEmail.setText(contactInfo.getEmailList());
 
 
                             } else {
