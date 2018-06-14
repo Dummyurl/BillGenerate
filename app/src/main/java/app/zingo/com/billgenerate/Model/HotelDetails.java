@@ -20,7 +20,7 @@ public class HotelDetails implements Serializable{
    /* @SerializedName("AccountsInfo")
     private ArrayList<BankDetails> accountsInfo;*/
     @SerializedName("room")
-    private ArrayList rooms;
+    private ArrayList<Rooms> rooms;
     @SerializedName("DisplayName")
     private String hotelDisplayName;
     @SerializedName("HotelType")

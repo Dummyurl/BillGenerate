@@ -71,8 +71,13 @@ import app.zingo.com.billgenerate.Model.HotelDetails;
 import app.zingo.com.billgenerate.Model.NotificationManager;
 import app.zingo.com.billgenerate.Model.PaidStatusSpinnerAdapter;
 import app.zingo.com.billgenerate.Model.PlanDataBase;
+import app.zingo.com.billgenerate.Model.PreferenceHandler;
 import app.zingo.com.billgenerate.Model.PropertyAdapter;
+import app.zingo.com.billgenerate.Model.RoomAdapter;
+import app.zingo.com.billgenerate.Model.RoomCategories;
+import app.zingo.com.billgenerate.Model.RoomCategorySpinnerAdapter;
 import app.zingo.com.billgenerate.Model.RoomDataBase;
+import app.zingo.com.billgenerate.Model.Rooms;
 import app.zingo.com.billgenerate.Model.ThreadExecuter;
 import app.zingo.com.billgenerate.Model.Traveller;
 import app.zingo.com.billgenerate.Model.Util;
@@ -82,8 +87,9 @@ import retrofit2.Response;
 
 public class BillDetails extends AppCompatActivity {
 
-    Spinner mRoomCount, mPayment, mRate, mDesc, mProperty,mOTA,mDataBase,mSourceType;
-    LinearLayout mDataLayout,mOtherLayout,mAddLayout,mCustomerLayout,mOtaService,mOtaGSTLay,mOTAComLay,mOTAPER;
+    Spinner mRoomCount, mPayment, mRate, mDesc, mProperty,mOTA,mDataBase,
+            mSourceType,room_category_spinner,mRoom;
+    LinearLayout mDataLayout,mOtherLayout,mAddLayout,mCustomerLayout,mOtaService,mOtaGSTLay,mOTAComLay,mOTAPER,mRoomLay;
     EditText mLocation, mCity, mMobile, mRoomType,
             mGuestCount, mTotal, mBooking, mZingo,mOtherProperty,
             mBookingID, mEmail,  mNet, mNights, mArr,mOtaFee,
@@ -93,7 +99,7 @@ public class BillDetails extends AppCompatActivity {
     CustomAutoCompleteView mGuest;
     Button mSave, mCalculate;
     String[] bookingSourceArray;
-    int hotelId,travellerIid;
+    int hotelId,travellerIid,roomId=0;
     ArrayList<HotelDetails> chainsList;
     Traveller dtos;
     Bookings1 bookings;
@@ -159,6 +165,11 @@ public class BillDetails extends AppCompatActivity {
     private int STORAGE_PERMISSION_CODE = 23;
     private String csvFile;
 
+    private ArrayList<RoomCategories> roomCategories;
+     ArrayList<Rooms> roomsArrayList;
+    ArrayList<Rooms> roomList;
+    Rooms roomObject = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,6 +188,7 @@ public class BillDetails extends AppCompatActivity {
             mCustomerLayout = (LinearLayout)findViewById(R.id.customer_pay_layout);
             mOTAComLay = (LinearLayout)findViewById(R.id.ota_commision_amt_layout);
             mOTAPER = (LinearLayout)findViewById(R.id.ota_commision_per_layout);
+            mRoomLay = (LinearLayout)findViewById(R.id.room_layout);
             mOtaGSTLay = (LinearLayout)findViewById(R.id.ota_gst_layout);
             mDataLayout = (LinearLayout)findViewById(R.id.data_property_layout);
             mOtherLayout = (LinearLayout)findViewById(R.id.other_property_layout);
@@ -216,6 +228,8 @@ public class BillDetails extends AppCompatActivity {
             mSave = (Button) findViewById(R.id.send_email);
             mCalculate = (Button) findViewById(R.id.bill_calculate);
             mOtherbookingSource = (EditText) findViewById(R.id.other_booking_source);
+            room_category_spinner = (Spinner) findViewById(R.id.room_category_spinner);
+            mRoom = (Spinner) findViewById(R.id.room_spinner);
 
             bookingSourceTitleStringArray = getResources().getStringArray(R.array.booking_source_title);
 
@@ -387,6 +401,7 @@ public class BillDetails extends AppCompatActivity {
                         mLocation.setText("");
                         mCity.setText("");
                         mEmail.setText("");
+
 
                     }else{
                         mDataLayout.setVisibility(View.VISIBLE);
@@ -641,18 +656,75 @@ public class BillDetails extends AppCompatActivity {
             mProperty.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-               /* System.out.println("Id=="+chainsList.get(i).getDocumentId());
-                getDoc(chainsList.get(i).getDocumentId());*/
-                    //getHotelName(chainsList.get(i).getHotelId());
+
                     hotelId = chainsList.get(i).getHotelId();
                     property = chainsList.get(i).getHotelDisplayName();
-                /*System.out.println(chainsList.get(i).getHotelId());
-                System.out.println(chainsList.get(i).getHotelDisplayName());
-                System.out.println(chainsList.get(i).getHotelStreetAddress());
-                System.out.println(chainsList.get(i).getLocalty());*/
+
                     mLocation.setText(chainsList.get(i).getLocalty());
                     mCity.setText(chainsList.get(i).getCity());
+                    roomsArrayList = (ArrayList<Rooms>)chainsList.get(i).getRooms();
                     getContactByHotelId(chainsList.get(i).getHotelId());
+                    mRoomType.setVisibility(View.GONE);
+                    room_category_spinner.setVisibility(View.VISIBLE);
+                    loadRoomCategoriesSpinner(chainsList.get(i).getHotelId());
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+
+            room_category_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    rooms = roomCategories.get(i).getCategoryName();
+                    mRoomType.setText(rooms);
+                    roomList = new ArrayList<>();
+                    System.out.println("Before Room SIze=="+roomsArrayList.size());
+                    if(roomsArrayList!=null&&roomsArrayList.size()!=0){
+                        for(int j=0;j<roomsArrayList.size();j++){
+
+                            /*System.out.println("Room Category id=="+roomCategories.get(i).getRoomCategoryId());
+                            System.out.println("Rooms Category id=="+roomsArrayList.get(j).getRoomNo());*/
+                            if((roomCategories.get(i).getRoomCategoryId()==roomsArrayList.get(j).getRoomCategoryId())&&roomsArrayList.get(j).getStatus().equalsIgnoreCase("Available")){
+                                roomList.add(roomsArrayList.get(j));
+                            }
+                        }
+
+                        if(roomList!=null&&roomList.size()!=0){
+                           // roomsArrayList = new ArrayList<>();
+                            System.out.println("After Room SIze=="+roomsArrayList.size());
+                            mRoomLay.setVisibility(View.VISIBLE);
+
+                            loadRoomSpinner(roomList);
+                        }else{
+                            roomId =0;
+                            Toast.makeText(BillDetails.this, "No available rooms in this hotel", Toast.LENGTH_SHORT).show();
+                            mRoomLay.setVisibility(View.GONE);
+                        }
+                    }else{
+                        roomId =0;
+                        Toast.makeText(BillDetails.this, "There is no rooms in this hotel", Toast.LENGTH_SHORT).show();
+                        mRoomLay.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+
+            mRoom.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    roomId = roomList.get(i).getRoomId();
+                    roomObject = roomList.get(i);
+                    System.out.println("Room Id Selected=="+roomId);
+                    System.out.println("Room Id Selected Object=="+roomObject.getRoomNo());
                 }
 
                 @Override
@@ -849,6 +921,14 @@ public class BillDetails extends AppCompatActivity {
             bookings.setOTACommissionAmount(otaComAmount);
             bookings.setOTATotalCommissionAmount(otaAmt);
             bookings.setOTAServiceFees(otaFeeAmount);
+
+            double roomCount = Double.parseDouble(mRoomCount.getSelectedItem().toString());
+            if(roomCount>1){
+                bookings.setRoomId(0);
+            }else{
+                bookings.setRoomId(roomId);
+            }
+
             if(otaToHotelPay<0){
                 bookings.setOTAToPayHotel(0);
                 bookings.setHotelToPayOTA(Math.abs(otaToHotelPay));
@@ -1747,8 +1827,21 @@ public class BillDetails extends AppCompatActivity {
                                     fm.setMessage("Congrats! "+property+" got one new booking for "+nights +" nights from "+cit+" to "+cot+"\nBooking Number:"+dto.getBookingNumber());
                                     //registerTokenInDB(fm);
                                     sendNotification(fm);
-                                /*Intent quick = new Intent(BillDetails.this, BillDetails.class);
-                                startActivity(quick);*/
+                                    double roomCount = Double.parseDouble(mRoomCount.getSelectedItem().toString());
+                                    if(roomCount>1){
+
+                                        Toast.makeText(BillDetails.this, "Please Allocate Room from Hotel Main App", Toast.LENGTH_SHORT).show();
+
+                                    }else{
+                                        if(roomObject!=null&&roomId!=0){
+
+                                            bookedRoom();
+                                        }
+                                    }
+
+
+
+
                                 }else{
                                     String subject=null;
 
@@ -2430,6 +2523,8 @@ public class BillDetails extends AppCompatActivity {
             mPayment.setSelection(0);
             mRate.setSelection(0);
             mDesc.setSelection(0);
+            roomId =0;
+            roomObject = null;
 
             if(tlist != null)
             {
@@ -2504,6 +2599,138 @@ public class BillDetails extends AppCompatActivity {
         }
         return false;
     }
+
+    public void loadRoomCategoriesSpinner(final int hotelId)
+    {
+        final ProgressDialog dialog = new ProgressDialog(BillDetails.this);
+        dialog.setMessage("Loading..");
+        dialog.setCancelable(false);
+        dialog.show();
+
+        new ThreadExecuter().execute(new Runnable() {
+            @Override
+            public void run() {
+
+                final LoginApi getRoomCategories = Util.getClient().create(LoginApi.class);
+
+
+                String authenticationString = Util.getToken(BillDetails.this);
+                Call<ArrayList<RoomCategories>> getRoomCategoriesResponse = getRoomCategories.fetchRoomCategoriesByHotelId(authenticationString, hotelId);
+
+
+
+                getRoomCategoriesResponse.enqueue(new Callback<ArrayList<RoomCategories>>() {
+                    @Override
+                    public void onResponse(Call<ArrayList<RoomCategories>> call, Response<ArrayList<RoomCategories>> response) {
+
+                        try
+                        {
+                            if(dialog != null)
+                            {
+                                dialog.dismiss();
+                            }
+                            if(response.code() == 200)
+                            {
+                                if(response.body() != null && response.body().size() != 0)
+                                {
+                                    roomCategories = response.body();
+                                    RoomCategorySpinnerAdapter adapter = new RoomCategorySpinnerAdapter(BillDetails.this,roomCategories);
+                                    room_category_spinner.setAdapter(adapter);
+
+
+
+                                }
+                                else
+                                {
+                                    mRoomType.setVisibility(View.VISIBLE);
+                                    room_category_spinner.setVisibility(View.GONE);
+                                }
+//                            loadRoomCategoriesSpinner();
+                            }else{
+                                mRoomType.setVisibility(View.VISIBLE);
+                                room_category_spinner.setVisibility(View.GONE);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            ex.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ArrayList<RoomCategories>> call, Throwable t) {
+                        if(dialog != null)
+                        {
+                            dialog.dismiss();
+                        }
+                        Toast.makeText(BillDetails.this,t.getMessage(),Toast.LENGTH_SHORT).show();
+                        mRoomType.setVisibility(View.VISIBLE);
+                        room_category_spinner.setVisibility(View.GONE);
+                    }
+                });
+
+
+            }
+        });
+    }
+
+    public void loadRoomSpinner(ArrayList<Rooms> rooms)
+    {
+
+
+        RoomAdapter adapter = new RoomAdapter(BillDetails.this,rooms);
+        mRoom.setAdapter(adapter);
+
+    }
+
+    private void bookedRoom() throws  Exception{
+
+
+            final Rooms room = roomObject;
+
+            room.setStatus("Quick");
+
+            new ThreadExecuter().execute(new Runnable() {
+                @Override
+                public void run() {
+                    String auth_string = Util.getToken(BillDetails.this);
+                    LoginApi api = Util.getClient().create(LoginApi.class);
+                    Call<Rooms> response = api.updateRoom(auth_string,room.getRoomId(), room);
+
+                    response.enqueue(new Callback<Rooms>() {
+                        @Override
+                        public void onResponse(Call<Rooms> call, Response<Rooms> response) {
+
+                            try
+                            {
+                                int code = response.code();
+                                if (code == 200||code ==204 ||code==201) {
+                                    Rooms roomresponse = response.body();
+                                    if (roomresponse != null) {
+
+
+                                        Toast.makeText(BillDetails.this, "Room Updated", Toast.LENGTH_SHORT).show();
+
+
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                ex.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Rooms> call, Throwable t) {
+
+                        }
+                    });
+                }
+            });
+
+    }
+
 
 }
 

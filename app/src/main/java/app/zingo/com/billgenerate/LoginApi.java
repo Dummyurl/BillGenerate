@@ -9,6 +9,8 @@ import app.zingo.com.billgenerate.Model.FireBaseModel;
 import app.zingo.com.billgenerate.Model.HotelDetails;
 import app.zingo.com.billgenerate.Model.NotificationManager;
 import app.zingo.com.billgenerate.Model.Profile1;
+import app.zingo.com.billgenerate.Model.RoomCategories;
+import app.zingo.com.billgenerate.Model.Rooms;
 import app.zingo.com.billgenerate.Model.SearchBook;
 import app.zingo.com.billgenerate.Model.SearchBooking;
 import app.zingo.com.billgenerate.Model.Traveller;
@@ -84,6 +86,12 @@ public interface LoginApi {
 
     @POST("RoomBookings/SearchBooking")
     Call<ArrayList<SearchBook>> getSearchBookings(@Header("Authorization") String authKey, @Body SearchBooking jsonObject);
+
+    @GET("RoomCategories/GetRoomCategoriesByHotelId/{HotelId}")
+    Call<ArrayList<RoomCategories>> fetchRoomCategoriesByHotelId(@Header("Authorization") String authKey, @Path("HotelId") int HotelId);
+
+    @PUT("Rooms/UpdateRooms/{id}")
+    Call<Rooms> updateRoom(@Header("Authorization") String authKey, @Path("id") int id, @Body Rooms rooms);
 
 
 
