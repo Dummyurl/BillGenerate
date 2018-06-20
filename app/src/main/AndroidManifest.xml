@@ -48,12 +48,30 @@
                 android:resource="@xml/file_provider_path" />
         </provider>
 
+        <service android:name=".Model.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".Model.MyFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity android:name=".MainActivity" />
         <activity android:name=".CancelOptions" />
         <activity android:name=".ShowBookingById" />
         <activity android:name=".ModifyBooking" />
         <activity android:name=".GetBookingByHotel" />
-        <activity android:name=".BilllDetails"></activity>
+        <activity android:name=".BilllDetails" />
+        <activity android:name=".InventoryOptionsActivity" />
+        <activity android:name=".OneHotelInventoryActivity" />
+        <activity android:name=".NotificationListActivity" />
+        <activity android:name=".InventoryCategoryDetailsActivity"></activity>
     </application>
 
 </manifest>

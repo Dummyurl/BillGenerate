@@ -7,6 +7,7 @@ import app.zingo.com.billgenerate.Model.ContactDetails;
 import app.zingo.com.billgenerate.Model.Documents;
 import app.zingo.com.billgenerate.Model.FireBaseModel;
 import app.zingo.com.billgenerate.Model.HotelDetails;
+import app.zingo.com.billgenerate.Model.HotelMap;
 import app.zingo.com.billgenerate.Model.NotificationManager;
 import app.zingo.com.billgenerate.Model.Profile1;
 import app.zingo.com.billgenerate.Model.RoomCategories;
@@ -93,6 +94,11 @@ public interface LoginApi {
     @PUT("Rooms/UpdateRooms/{id}")
     Call<Rooms> updateRoom(@Header("Authorization") String authKey, @Path("id") int id, @Body Rooms rooms);
 
+    @POST("ProfileDeviceMappings")
+    Call<HotelMap> addHotelMap(@Body HotelMap body);
+
+    @GET("NotificationManagers")
+    Call<ArrayList<NotificationManager>> getNotification(@Header("Authorization") String authKey);
 
 
 }

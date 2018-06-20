@@ -75,6 +75,25 @@ public class PreferenceHandler {
         return sh.getString("user_phonenumber","");
     }
 
+    public void setInventory(String inventoryKey,String inventoryCount )
+    {
+        sh.edit().putString(inventoryKey,inventoryCount).apply();
+    }
+
+    public String getInventory(String inventoryKey)
+    {
+        return sh.getString(inventoryKey,"");
+    }
+
+    public void setInventoryTime(String inventoryTimeKey,long inventoryTime )
+    {
+        sh.edit().putLong(inventoryTimeKey,inventoryTime).apply();
+    }
+
+    public long getInventoryTime(String inventoryTimeKey)
+    {
+        return sh.getLong(inventoryTimeKey,0);
+    }
 
 
     public void clear(){

@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent property = new Intent(MainActivity.this,PropertyDetail.class);
                 startActivity(property);
+                MainActivity.this.finish();
             }
         });
 
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent bill = new Intent(MainActivity.this,BillDetails.class);
                 startActivity(bill);
+                MainActivity.this.finish();
             }
         });
 
@@ -47,15 +49,16 @@ public class MainActivity extends AppCompatActivity {
                 log.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 log.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(log);
-                finish();
+                MainActivity.this.finish();
             }
         });
 
         mRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent room = new Intent(MainActivity.this,RoomDetail.class);
+                Intent room = new Intent(MainActivity.this,InventoryOptionsActivity.class);
                 startActivity(room);
+                MainActivity.this.finish();
             }
         });
 
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent room = new Intent(MainActivity.this,CancelOptions.class);
                 startActivity(room);
+                MainActivity.this.finish();
             }
         });
 

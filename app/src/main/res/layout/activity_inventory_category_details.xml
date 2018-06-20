@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="app.zingo.com.billgenerate.InventoryCategoryDetailsActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="#000000"
+        android:gravity="left"
+
+        android:layout_margin="5dp"
+        android:text="Hotel Name"
+        android:textStyle="bold"
+
+        android:id="@+id/brief_detail_hotel_name"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textColor="#000000"
+        android:gravity="left"
+
+        android:layout_margin="5dp"
+        android:text="Hotel Name"
+        android:textStyle="bold"
+        android:layout_below="@+id/brief_detail_hotel_name"
+        android:id="@+id/date_time"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/notification_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/date_time"
+        android:clickable="true"
+        android:layout_margin="8dp"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="10dp"
+        android:layout_alignParentBottom="true"
+        android:text="Update Inventory"
+        android:id="@+id/update_inventory"/>
+
+
+</RelativeLayout>

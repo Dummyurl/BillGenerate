@@ -27,8 +27,11 @@ import java.util.concurrent.TimeUnit;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
+import app.zingo.com.billgenerate.Model.HotelDetails;
+import app.zingo.com.billgenerate.Model.HotelMap;
 import app.zingo.com.billgenerate.Model.PreferenceHandler;
 import app.zingo.com.billgenerate.Model.Profile1;
+import app.zingo.com.billgenerate.Model.SharedPrefManager;
 import app.zingo.com.billgenerate.Model.ThreadExecuter;
 import app.zingo.com.billgenerate.Model.Util;
 import retrofit2.Call;
@@ -153,6 +156,7 @@ public class LoginActivity extends AppCompatActivity {
                                 dto = dto1.get(0);
 
 
+                                    String token = SharedPrefManager.getInstance(LoginActivity.this).getDeviceToken();
                                     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
                                     SharedPreferences.Editor spe = sp.edit();
                                     PreferenceHandler.getInstance(LoginActivity.this).setPhoneNumber(dto.getPhoneNumber());
@@ -161,11 +165,13 @@ public class LoginActivity extends AppCompatActivity {
 
                                     spe.apply();
 
+                                HotelMap hm = new HotelMap();
+                                hm.setProfileId(dto.getProfileId());
+                                hm.setDeviceId(token);
+                                addDeviceId(hm);
 
-                                    Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                    startActivity(i);
-                                    finish();
+
+
 
 
 
@@ -243,5 +249,100 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public void addDeviceId(final HotelMap hm)
+    {
+        final ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
+        dialog.setMessage("Loading..");
+        dialog.setCancelable(false);
+        dialog.show();
+        new ThreadExecuter().execute(new Runnable() {
+            @Override
+            public void run() {
+
+
+                String authenticationString = Util.getToken(LoginActivity.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
+                LoginApi hotelOperation = Util.getClient().create(LoginApi.class);
+                Call<HotelMap> response = hotelOperation.addHotelMap(hm);
+
+                response.enqueue(new Callback<HotelMap>() {
+                    @Override
+                    public void onResponse(Call<HotelMap> call, Response<HotelMap> response) {
+                        System.out.println("GetHotelByProfileId = "+response.code());
+
+                        if(dialog != null && dialog.isShowing())
+                        {
+                            dialog.dismiss();
+                        }
+                        if(response.code() == 200||response.code() == 201||response.code() == 202||response.code() == 204)
+                        {
+                            try{
+                                System.out.println("registered");
+                                HotelMap hotelDetailseResponse = response.body();
+
+                                System.out.println();
+
+                                if(hotelDetailseResponse != null)
+                                {
+
+                                    Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                    startActivity(i);
+                                    finish();
+
+                                }
+
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+
+
+
+
+                        }else if(response.code() == 404){
+                            System.out.println("already registered");
+                            try{
+                                if(response.body()==null){
+                                    Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                    startActivity(i);
+                                    finish();
+
+
+                                }
+
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+
+
+                        }
+                        else
+                        {
+
+                            Toast.makeText(LoginActivity.this,"Device id is not Generated due to "+response.code(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<HotelMap> call, Throwable t) {
+                        System.out.println("Failed");
+                        System.out.println(" Exception = "+t.getMessage());
+                        if(dialog != null && dialog.isShowing())
+                        {
+                            dialog.dismiss();
+                        }
+                        Toast.makeText(LoginActivity.this,"Device id is not Generated",
+                                Toast.LENGTH_LONG).show();
+
+                    }
+                });
+            }
+        });
     }
 }

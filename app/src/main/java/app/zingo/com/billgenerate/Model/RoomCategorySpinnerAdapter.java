@@ -51,8 +51,15 @@ public class RoomCategorySpinnerAdapter extends BaseAdapter {
 
         TextView mCityName = (TextView) view.findViewById(R.id.category_name);
 
+        String count = PreferenceHandler.getInstance(context).getInventory("Category"+mList.get(pos).getRoomCategoryId());
 
-        mCityName.setText(mList.get(pos).getCategoryName().toString());
+        if(count!=null&&!count.isEmpty()){
+            mCityName.setText(mList.get(pos).getCategoryName().toString()+"("+count+")");
+        }else{
+            mCityName.setText(mList.get(pos).getCategoryName().toString());
+        }
+
+
 
         return view;
     }
