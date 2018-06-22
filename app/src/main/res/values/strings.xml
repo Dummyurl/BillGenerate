@@ -41,6 +41,20 @@
         <item>VIA</item>
     </array>
 
+
+    <!--<string name="app_name">CompetativeAnalysis</string>-->
+    <string name="loader_message">Loading...</string>
+
+    <array name="status">
+        <item>Available</item>
+        <item>Soldout</item>
+    </array>
+    <array name="market_demand_array">
+        <item>Low</item>
+        <item>Average</item>
+        <item>High</item>
+    </array>
+
     <array name="B2B_items">
         <item>COR</item>
         <item>BOSH</item>

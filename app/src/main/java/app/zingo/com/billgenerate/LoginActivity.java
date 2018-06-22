@@ -123,9 +123,14 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-
+     ProgressDialog dialog = null;
     private void login( final String username, final String password,final String type){
 
+
+        dialog = new ProgressDialog(LoginActivity.this);
+        dialog.setMessage("Loading..");
+        dialog.setCancelable(false);
+        dialog.show();
 
         final Profile1 p = new Profile1();
         p.setUserName(username);
@@ -148,6 +153,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onResponse(Call<ArrayList<Profile1>> call, Response<ArrayList<Profile1>> response) {
 //                List<RouteDTO.Routes> list = new ArrayList<RouteDTO.Routes>();
                         int statusCode = response.code();
+
 
                         if (statusCode == 200 || statusCode == 201) {
 
@@ -180,6 +186,10 @@ public class LoginActivity extends AppCompatActivity {
                                 if(type.equalsIgnoreCase("Encrypted")){
                                     login(input_num_signup.getText().toString(), input_pass_signup.getText().toString(),"Normal");
                                 }else{
+                                    if(dialog != null && dialog.isShowing())
+                                    {
+                                        dialog.dismiss();
+                                    }
                                     Toast.makeText(LoginActivity.this, "Login credentials are wrong..", Toast.LENGTH_SHORT).show();
                                 }
 
@@ -196,6 +206,10 @@ public class LoginActivity extends AppCompatActivity {
                     public void onFailure(Call<ArrayList<Profile1>> call, Throwable t) {
                         // Log error here since request failed
 
+                        if(dialog != null && dialog.isShowing())
+                        {
+                            dialog.dismiss();
+                        }
                         Log.e("TAG", t.toString());
                     }
                 });
@@ -254,10 +268,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void addDeviceId(final HotelMap hm)
     {
-        final ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
-        dialog.setMessage("Loading..");
-        dialog.setCancelable(false);
-        dialog.show();
+
         new ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
@@ -271,11 +282,11 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<HotelMap> call, Response<HotelMap> response) {
                         System.out.println("GetHotelByProfileId = "+response.code());
-
-                        if(dialog != null && dialog.isShowing())
+                        if (dialog != null && dialog.isShowing())
                         {
                             dialog.dismiss();
                         }
+
                         if(response.code() == 200||response.code() == 201||response.code() == 202||response.code() == 204)
                         {
                             try{
