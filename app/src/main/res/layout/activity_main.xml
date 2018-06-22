@@ -39,7 +39,17 @@
             android:layout_height="wrap_content"
             android:text="Competitive Analysis"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/cancel_booking"
+            android:layout_below="@+id/create_room"
+            />
+
+        <Button
+            android:id="@+id/send_notification"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="Send Notification"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/competitive_analysis"
             />
 
         <Button
@@ -49,7 +59,7 @@
             android:text="Logout"
             android:layout_marginTop="10dp"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/create_room"
+            android:layout_below="@+id/send_notification"
             />
 
 

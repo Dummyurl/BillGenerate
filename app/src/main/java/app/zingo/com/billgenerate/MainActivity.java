@@ -10,7 +10,7 @@ import app.zingo.com.billgenerate.Model.PreferenceHandler;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button mProperty,mBill,mPlan,mRoom,mCancel,mAnalysis;
+    Button mProperty,mBill,mPlan,mRoom,mCancel,mAnalysis,mNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         mRoom = (Button)findViewById(R.id.create_room);
         mCancel = (Button)findViewById(R.id.cancel_booking);
         mAnalysis = (Button)findViewById(R.id.competitive_analysis);
+        mNotification = (Button)findViewById(R.id.send_notification);
 
         mProperty.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +77,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent room = new Intent(MainActivity.this,CancelOptions.class);
+                startActivity(room);
+                MainActivity.this.finish();
+            }
+        });
+
+        mNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent room = new Intent(MainActivity.this,NotificationOptions.class);
                 startActivity(room);
                 MainActivity.this.finish();
             }

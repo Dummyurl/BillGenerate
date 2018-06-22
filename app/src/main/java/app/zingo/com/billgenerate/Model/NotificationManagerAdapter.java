@@ -108,7 +108,6 @@ public class NotificationManagerAdapter extends RecyclerView.Adapter<Notificatio
                             context.startActivity(intent);
                             ((Activity)context).finish();
 
-
                         }
                     }
 

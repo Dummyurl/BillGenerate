@@ -79,7 +79,10 @@
         <activity android:name=".InventoryOptionsActivity" />
         <activity android:name=".OneHotelInventoryActivity" />
         <activity android:name=".NotificationListActivity" />
-        <activity android:name=".InventoryCategoryDetailsActivity"></activity>
+        <activity android:name=".InventoryCategoryDetailsActivity" />
+        <activity android:name=".NotificationOptions" />
+        <activity android:name=".OneHotelOtheNotification" />
+        <activity android:name=".AllHotelNotification"></activity>
     </application>
 
 </manifest>

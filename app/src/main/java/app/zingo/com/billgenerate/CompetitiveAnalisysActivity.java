@@ -145,9 +145,11 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                         message = message+hotelname+","+rate+","+""+":";
                     }
 
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd yyyy hh:mm a");
+
                     message = hotelName+","+mPrice.getText().toString()+","+""+":"+message+"="+mMarketLowPrice.getText().toString()+","+mMarketHighPrice.getText().toString()+","+
                             mMarketAvaragePrice.getText().toString()+","+mMarketDemandSpinner.getSelectedItem().toString()+","+
-                            mDate.getText().toString()+"="+mLowestPriceText.getText().toString()+","+
+                            simpleDateFormat.format(new Date())+"="+mLowestPriceText.getText().toString()+","+
                     mHighestPriceText.getText().toString()+","+mMarketDemand.getText().toString();
 
                     //System.out.println("Message = "+message);
@@ -156,7 +158,9 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                     hotelNotification.setMessage(message);
                     hotelNotification.setSenderId(Util.senderId);
                     hotelNotification.setServerId(Util.serverId);
-                    hotelNotification.setTitle("Dear "+hotelName+", competative analysis report for the day "+mDate.getText().toString());
+
+
+                    hotelNotification.setTitle("Dear "+hotelName+", competative analysis report for the day "+simpleDateFormat.format(new Date()));
                     sendNotification(hotelNotification);
 
                     /*boolean isfilecreated = createPDF();
