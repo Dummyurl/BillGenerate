@@ -169,6 +169,7 @@ public class BillDetails extends AppCompatActivity {
      ArrayList<Rooms> roomsArrayList;
     ArrayList<Rooms> roomList;
     Rooms roomObject = null;
+    int positionRoom;
 
 
     @Override
@@ -722,6 +723,7 @@ public class BillDetails extends AppCompatActivity {
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
                     roomId = roomList.get(i).getRoomId();
+                    positionRoom = i;
                     roomObject = roomList.get(i);
                     System.out.println("Room Id Selected=="+roomId);
                     System.out.println("Room Id Selected Object=="+roomObject.getRoomNo());
@@ -2710,6 +2712,7 @@ public class BillDetails extends AppCompatActivity {
 
 
                                         Toast.makeText(BillDetails.this, "Room Updated", Toast.LENGTH_SHORT).show();
+                                        roomList.remove(positionRoom);
 
 
                                     }

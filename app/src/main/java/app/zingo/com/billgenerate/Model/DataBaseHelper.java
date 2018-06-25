@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +23,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String PROPERTY_TABLE_NAME = "property";
     public static final String PROPERTY_COLUMN_ID = "_id";
     public static final String PROPERTY_COLUMN_NAME = "name";
-    public static final String PROPERTY_COLUMN_LOCATION = "location";
-    public static final String PROPERTY_COLUMN_CITY = "city";
-    public static final String PROPERTY_COLUMN_EMAIL = "mail";
+    public static final String PROPERTY_TARGET_PRICE = "target";
+    public static final String PROPERTY_SELL_PRICE = "sell";
+
     public String property_name;
 
     public DataBaseHelper(Context context) {
@@ -37,9 +38,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + PROPERTY_TABLE_NAME +
                         "(" + PROPERTY_COLUMN_ID + " INTEGER PRIMARY KEY, " +
                         PROPERTY_COLUMN_NAME + " TEXT, " +
-                        PROPERTY_COLUMN_LOCATION + " TEXT, " +
-                        PROPERTY_COLUMN_CITY + " TEXT, " +
-                        PROPERTY_COLUMN_EMAIL + " TEXT)"
+                        PROPERTY_TARGET_PRICE + " REAL, " +
+
+                        PROPERTY_SELL_PRICE + " REAL)"
         );
     }
 
@@ -49,16 +50,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertProperty(String name, String location, String city,String email) {
+    public boolean insertProperty(String name, double target, double sell) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(PROPERTY_COLUMN_NAME, name);
-        contentValues.put(PROPERTY_COLUMN_LOCATION, location);
-        contentValues.put(PROPERTY_COLUMN_CITY, city);
-        contentValues.put(PROPERTY_COLUMN_EMAIL, email);
+        contentValues.put(PROPERTY_TARGET_PRICE, target);
+        contentValues.put(PROPERTY_SELL_PRICE, sell);
+
 
         db.insert(PROPERTY_TABLE_NAME, null, contentValues);
+        System.out.println(" Added");
         return true;
     }
 
@@ -82,11 +84,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery( "SELECT * FROM " + PROPERTY_TABLE_NAME, null );
        // String s1 = res.getString(res.getColumnNames());
-        List<String> array = new ArrayList<String>();
+        List<Double> array = new ArrayList<Double>();
+        List<Double> arrays = new ArrayList<Double>();
         while(res.moveToNext()){
-            String uname = res.getString(res.getColumnIndex("name"));
-            System.out.println("Name=="+uname);
-            array.add(uname);
+            double target = res.getDouble(res.getColumnIndex("target"));
+            double sell = res.getDouble(res.getColumnIndex("sell"));
+
+            array.add(target);
+            array.add(sell);
         }
         return res;
     }

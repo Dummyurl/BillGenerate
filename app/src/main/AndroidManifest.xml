@@ -82,7 +82,8 @@
         <activity android:name=".InventoryCategoryDetailsActivity" />
         <activity android:name=".NotificationOptions" />
         <activity android:name=".OneHotelOtheNotification" />
-        <activity android:name=".AllHotelNotification"></activity>
+        <activity android:name=".AllHotelNotification" />
+        <activity android:name=".DailyRevenueTagetActivity"></activity>
     </application>
 
 </manifest>
