@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
         mAnalysis.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent property = new Intent(MainActivity.this,HotelListActivity.class);
-                Intent property = new Intent(MainActivity.this,DailyRevenueTagetActivity.class);
+                Intent property = new Intent(MainActivity.this,HotelListActivity.class);
+                //Intent property = new Intent(MainActivity.this,DailyRevenueTagetActivity.class);
                 startActivity(property);
                 MainActivity.this.finish();
             }

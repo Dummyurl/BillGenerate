@@ -2301,10 +2301,10 @@ public class BillDetails extends AppCompatActivity {
                 String name = resInfo.activityInfo.name;
 
 
-                if (packageName.contains("android.email")||packageName.contains("whatsapp")) {
+                if (packageName.contains("com.google")||packageName.contains("whatsapp")) {
 
 
-                    if(packageName.contains("android.email")){
+                    if(packageName.contains("com.google")){
                         String[] mailto = {email};
 
                         Intent emailIntent = new Intent(Intent.ACTION_SEND);
@@ -2342,7 +2342,8 @@ public class BillDetails extends AppCompatActivity {
                         }
 
                         intentShareList.add(emailIntent);
-                    }else{
+                    }
+                    else if(packageName.contains("whatsapp")){
                         Intent intent = new Intent();
                         // intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
                         intent.setAction(Intent.ACTION_SEND);

@@ -25,17 +25,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String PROPERTY_COLUMN_NAME = "name";
     public static final String PROPERTY_TARGET_PRICE = "target";
     public static final String PROPERTY_SELL_PRICE = "sell";
+    public Context context;
 
     public String property_name;
 
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME , null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(
-                "CREATE TABLE " + PROPERTY_TABLE_NAME +
+                "CREATE TABLE " + PROPERTY_TABLE_NAME+PreferenceHandler.getInstance(context).getUserId() +
                         "(" + PROPERTY_COLUMN_ID + " INTEGER PRIMARY KEY, " +
                         PROPERTY_COLUMN_NAME + " TEXT, " +
                         PROPERTY_TARGET_PRICE + " REAL, " +
@@ -46,7 +48,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + PROPERTY_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + PROPERTY_TABLE_NAME+PreferenceHandler.getInstance(context).getUserId());
         onCreate(db);
     }
 
@@ -59,7 +61,20 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(PROPERTY_SELL_PRICE, sell);
 
 
-        db.insert(PROPERTY_TABLE_NAME, null, contentValues);
+        db.insert(PROPERTY_TABLE_NAME+PreferenceHandler.getInstance(context).getUserId(), null, contentValues);
+        System.out.println(" Added");
+        return true;
+    }
+
+    public boolean updateProperty(String name, double target) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(PROPERTY_COLUMN_NAME, name);
+        contentValues.put(PROPERTY_TARGET_PRICE, target);
+        //contentValues.put(PROPERTY_SELL_PRICE, sell);
+
+        db.update(PROPERTY_TABLE_NAME+PreferenceHandler.getInstance(context).getUserId(),contentValues,PROPERTY_COLUMN_NAME+"="+name,null );
         System.out.println(" Added");
         return true;
     }
@@ -94,5 +109,22 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             array.add(sell);
         }
         return res;
+    }
+
+    public boolean exists(String table) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        try {
+            // db.query("SELECT * FROM " + table);
+
+            String query = "SELECT * FROM "+table;
+            db.execSQL(query);
+            return true;
+        } catch (Exception e) {
+            onCreate(db);
+            return false;
+
+        }
     }
 }

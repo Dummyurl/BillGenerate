@@ -27,6 +27,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import app.zingo.com.billgenerate.Model.DataBaseHelper;
+import app.zingo.com.billgenerate.Model.PreferenceHandler;
 import app.zingo.com.billgenerate.Model.RoomAdapter;
 import app.zingo.com.billgenerate.Model.RoomCategories;
 import app.zingo.com.billgenerate.Model.Rooms;
@@ -172,6 +173,7 @@ public class DailyRevenueTagetActivity extends AppCompatActivity {
             mAvailableLinearLayout.removeView(mAvailableLinearLayout.getChildAt(no-1));*/
             adapter = new RoomAdapter(DailyRevenueTagetActivity.this,(roomCount-1),price);
             mRecyclerView.setAdapter(adapter);
+
            // calculation(roomCount-1);
         }
         else
@@ -180,6 +182,38 @@ public class DailyRevenueTagetActivity extends AppCompatActivity {
             mSet.setVisibility(View.VISIBLE);
             mRoomCount.setEnabled(true);
             mTargetPrice.setEnabled(true);
+        }
+
+    }
+
+    public void dataBaseFunction(final int count){
+
+        if(dbHelper.exists("property"+ PreferenceHandler.getInstance(DailyRevenueTagetActivity.this).getUserId())){
+
+            if(dbHelper.getAllProperty()!=null){
+
+                double targetPrice = Double.parseDouble(mTargetPrice.getText().toString());
+                double avgPrice = targetPrice/count;
+
+                for(int i=0;i<count;i++){
+                    dbHelper.updateProperty(""+(i+1),avgPrice,0);
+                }
+
+            }else{
+
+                double targetPrice = Double.parseDouble(mTargetPrice.getText().toString());
+                double avgPrice = targetPrice/count;
+
+                for(int i=0;i<count;i++){
+                    dbHelper.insertProperty(""+(i+1),avgPrice,0);
+                }
+
+
+            }
+
+
+        }else{
+            Toast.makeText(DailyRevenueTagetActivity.this, "Please Refresh", Toast.LENGTH_SHORT).show();
         }
 
     }
