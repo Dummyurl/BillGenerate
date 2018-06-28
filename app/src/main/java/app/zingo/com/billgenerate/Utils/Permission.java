@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate.Model;
+package app.zingo.com.billgenerate.Utils;
 
 import android.Manifest;
 import android.annotation.TargetApi;

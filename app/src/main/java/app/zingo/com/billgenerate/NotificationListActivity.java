@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import app.zingo.com.billgenerate.Model.NotificationManager;
-import app.zingo.com.billgenerate.Model.NotificationManagerAdapter;
-import app.zingo.com.billgenerate.Model.PreferenceHandler;
-import app.zingo.com.billgenerate.Model.ThreadExecuter;
-import app.zingo.com.billgenerate.Model.Util;
+import app.zingo.com.billgenerate.Adapter.NotificationManagerAdapter;
+import app.zingo.com.billgenerate.Utils.PreferenceHandler;
+import app.zingo.com.billgenerate.Utils.ThreadExecuter;
+import app.zingo.com.billgenerate.Utils.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

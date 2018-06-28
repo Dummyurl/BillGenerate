@@ -17,11 +17,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import app.zingo.com.billgenerate.Adapter.PropertyAdapter;
 import app.zingo.com.billgenerate.Model.*;
 import app.zingo.com.billgenerate.Model.HotelDetails;
 import app.zingo.com.billgenerate.Model.NotificationManager;
-import app.zingo.com.billgenerate.Model.ThreadExecuter;
-import app.zingo.com.billgenerate.Model.Util;
+import app.zingo.com.billgenerate.Utils.ThreadExecuter;
+import app.zingo.com.billgenerate.Utils.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -115,11 +116,11 @@ public class OneHotelOtheNotification extends AppCompatActivity {
         progressDialog.show();
 
 
-        new app.zingo.com.billgenerate.Model.ThreadExecuter().execute(new Runnable() {
+        new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = app.zingo.com.billgenerate.Model.Util.getToken(OneHotelOtheNotification.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
-                LoginApi hotelOperation = app.zingo.com.billgenerate.Model.Util.getClient().create(LoginApi.class);
+                String auth_string = app.zingo.com.billgenerate.Util.Util.getToken(OneHotelOtheNotification.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
+                LoginApi hotelOperation = app.zingo.com.billgenerate.Util.Util.getClient().create(LoginApi.class);
                 Call<ArrayList<app.zingo.com.billgenerate.Model.HotelDetails>> response = hotelOperation.getHotelsList(auth_string/*userId*/);
 
                 response.enqueue(new Callback<ArrayList<app.zingo.com.billgenerate.Model.HotelDetails>>() {
@@ -179,12 +180,12 @@ public class OneHotelOtheNotification extends AppCompatActivity {
         dialog.show();
 
 
-        new app.zingo.com.billgenerate.Model.ThreadExecuter().execute(new Runnable() {
+        new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = app.zingo.com.billgenerate.Model.Util.getToken(OneHotelOtheNotification.this);
+                String auth_string = app.zingo.com.billgenerate.Util.Util.getToken(OneHotelOtheNotification.this);
                 LoginApi apiService =
-                        app.zingo.com.billgenerate.Model.Util.getClient().create(LoginApi.class);
+                        app.zingo.com.billgenerate.Util.Util.getClient().create(LoginApi.class);
 
 
                 System.out.println("Nodel" + fireBaseModel.toString());
@@ -261,7 +262,7 @@ public class OneHotelOtheNotification extends AppCompatActivity {
             @Override
             public void run() {
                 System.out.println("Hotel id = "+notification.getHotelId());
-                String auth_string = app.zingo.com.billgenerate.Model.Util.getToken(OneHotelOtheNotification.this);
+                String auth_string = app.zingo.com.billgenerate.Util.Util.getToken(OneHotelOtheNotification.this);
                 LoginApi travellerApi = Util.getClient().create(LoginApi.class);
                 Call<NotificationManager> response = travellerApi.saveNotification(auth_string,notification);
 

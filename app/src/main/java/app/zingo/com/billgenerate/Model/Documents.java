@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by ZingoHotels.com on 04-11-2017.
  */
 
+
 public class Documents {
 
     @SerializedName("DocumentId")

@@ -9,6 +9,7 @@ import java.util.ArrayList;
  * Created by ZingoHotels.com on 09-11-2017.
  */
 
+
 public class HotelDetails implements Serializable{
 
     @SerializedName("HotelId")

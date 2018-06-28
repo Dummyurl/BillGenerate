@@ -4,6 +4,7 @@ package app.zingo.com.billgenerate.Model;
 import com.google.gson.annotations.SerializedName;
 
 
+
 public class RoomCategories {
 
     @SerializedName("RoomCategoryId")

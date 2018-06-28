@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Utils;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

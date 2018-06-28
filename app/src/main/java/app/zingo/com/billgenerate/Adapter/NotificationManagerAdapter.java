@@ -1,27 +1,26 @@
-package app.zingo.com.billgenerate.Model;
+package app.zingo.com.billgenerate.Adapter;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import app.zingo.com.billgenerate.BillDetails;
 import app.zingo.com.billgenerate.InventoryCategoryDetailsActivity;
 import app.zingo.com.billgenerate.LoginApi;
+import app.zingo.com.billgenerate.Model.HotelDetails;
+import app.zingo.com.billgenerate.Model.NotificationManager;
 import app.zingo.com.billgenerate.R;
+import app.zingo.com.billgenerate.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -179,12 +178,12 @@ public class NotificationManagerAdapter extends RecyclerView.Adapter<Notificatio
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        new ThreadExecuter().execute(new Runnable() {
+        new Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
                 LoginApi apiService =
-                        Util.getClient().create(LoginApi.class);
-                String authenticationString = Util.getToken(context);
+                        Util.Util.getClient().create(LoginApi.class);
+                String authenticationString = Util.Util.getToken(context);
                 Call<HotelDetails> call = apiService.getHotelsById(authenticationString, id);
 
                 call.enqueue(new Callback<HotelDetails>() {

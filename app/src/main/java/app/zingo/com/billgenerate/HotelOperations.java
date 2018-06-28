@@ -14,6 +14,7 @@ import retrofit2.http.Path;
  * Created by ZingoHotels.com on 09-11-2017.
  */
 
+
 public interface HotelOperations {
 
     @POST("Calculation/SendNotificationForMultipleDeviceByHotelId")

@@ -56,13 +56,13 @@
                 android:resource="@xml/file_provider_path" />
         </provider>
 
-        <service android:name=".Model.MyFirebaseInstanceIDService">
+        <service android:name=".Services.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name=".Model.MyFirebaseMessagingService"
+            android:name=".Services.MyFirebaseMessagingService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

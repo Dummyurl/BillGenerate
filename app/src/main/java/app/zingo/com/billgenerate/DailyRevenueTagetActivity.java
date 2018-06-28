@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,24 +15,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import app.zingo.com.billgenerate.Model.DataBaseHelper;
-import app.zingo.com.billgenerate.Model.PreferenceHandler;
-import app.zingo.com.billgenerate.Model.RoomAdapter;
-import app.zingo.com.billgenerate.Model.RoomCategories;
-import app.zingo.com.billgenerate.Model.Rooms;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import app.zingo.com.billgenerate.Utils.DataBaseHelper;
+import app.zingo.com.billgenerate.Utils.PreferenceHandler;
 
 public class DailyRevenueTagetActivity extends AppCompatActivity {
 

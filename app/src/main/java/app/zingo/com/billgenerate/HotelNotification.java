@@ -8,6 +8,7 @@ import java.io.Serializable;
  * Created by ZingoHotels.com on 4/11/2018.
  */
 
+
 public class HotelNotification implements Serializable {
 
     @SerializedName("HotelId")

@@ -1,8 +1,6 @@
 package app.zingo.com.billgenerate;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,13 +10,11 @@ import android.widget.Toast;
 
 import com.dd.processbutton.FlatButton;
 
-import java.util.ArrayList;
-
-import app.zingo.com.billgenerate.Model.DataBaseHelper;
+import app.zingo.com.billgenerate.Utils.DataBaseHelper;
 import app.zingo.com.billgenerate.Model.Documents;
-import app.zingo.com.billgenerate.Model.PreferenceHandler;
-import app.zingo.com.billgenerate.Model.ThreadExecuter;
-import app.zingo.com.billgenerate.Model.Util;
+import app.zingo.com.billgenerate.Utils.PreferenceHandler;
+import app.zingo.com.billgenerate.Utils.ThreadExecuter;
+import app.zingo.com.billgenerate.Utils.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

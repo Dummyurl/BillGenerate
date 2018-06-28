@@ -1,9 +1,11 @@
-package app.zingo.com.billgenerate.Model;
+package app.zingo.com.billgenerate.Services;
 
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+
+import app.zingo.com.billgenerate.Utils.SharedPrefManager;
 
 /**
  * Created by ZingoHotels Tech on 19-03-2018.

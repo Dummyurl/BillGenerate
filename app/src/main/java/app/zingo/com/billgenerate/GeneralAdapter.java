@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 public class GeneralAdapter extends BaseAdapter {
 
+
     private Context context;
     private String[] list;
 

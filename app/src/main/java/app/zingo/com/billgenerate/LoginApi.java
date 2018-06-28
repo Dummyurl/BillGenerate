@@ -27,6 +27,8 @@ import retrofit2.http.Path;
  * Created by ZingoHotels Tech on 04-04-2018.
  */
 
+
+
 public interface LoginApi {
 
 

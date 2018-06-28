@@ -9,8 +9,7 @@ import android.widget.Toast;
 
 import com.dd.processbutton.FlatButton;
 
-import app.zingo.com.billgenerate.Model.PlanDataBase;
-import app.zingo.com.billgenerate.Model.RoomDataBase;
+import app.zingo.com.billgenerate.Utils.RoomDataBase;
 
 public class RoomDetail extends AppCompatActivity {
 

@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,26 +12,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dd.processbutton.FlatButton;
 
 import java.security.Key;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
-import app.zingo.com.billgenerate.Model.HotelDetails;
 import app.zingo.com.billgenerate.Model.HotelMap;
-import app.zingo.com.billgenerate.Model.PreferenceHandler;
+import app.zingo.com.billgenerate.Utils.PreferenceHandler;
 import app.zingo.com.billgenerate.Model.Profile1;
-import app.zingo.com.billgenerate.Model.SharedPrefManager;
-import app.zingo.com.billgenerate.Model.ThreadExecuter;
-import app.zingo.com.billgenerate.Model.Util;
+import app.zingo.com.billgenerate.Utils.SharedPrefManager;
+import app.zingo.com.billgenerate.Utils.ThreadExecuter;
+import app.zingo.com.billgenerate.Utils.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

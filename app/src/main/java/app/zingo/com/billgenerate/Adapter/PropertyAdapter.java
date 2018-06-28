@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate.Model;
+package app.zingo.com.billgenerate.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,17 +9,18 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import app.zingo.com.billgenerate.Model.HotelDetails;
 import app.zingo.com.billgenerate.R;
 
 /**
- * Created by ZingoHotels Tech on 13-06-2018.
+ * Created by ZingoHotels Tech on 04-04-2018.
  */
 
-public class RoomCategorySpinnerAdapter extends BaseAdapter {
+public class PropertyAdapter extends BaseAdapter {
     private Context context;
-    private ArrayList<RoomCategories> mList = new ArrayList<>();
+    private ArrayList<HotelDetails> mList = new ArrayList<>();
 
-    public RoomCategorySpinnerAdapter(Context context, ArrayList<RoomCategories> mList)
+    public PropertyAdapter(Context context, ArrayList<HotelDetails> mList)
     {
         this.context = context;
         this.mList = mList;
@@ -46,19 +47,13 @@ public class RoomCategorySpinnerAdapter extends BaseAdapter {
         if(view == null)
         {
             LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = mInflater.inflate(R.layout.category_name_spinner,viewGroup,false);
+            view = mInflater.inflate(R.layout.adapter_property,viewGroup,false);
         }
 
-        TextView mCityName = (TextView) view.findViewById(R.id.category_name);
+        TextView mHotelName = (TextView) view.findViewById(R.id.hotel_name);
 
-        String count = PreferenceHandler.getInstance(context).getInventory("Category"+mList.get(pos).getRoomCategoryId());
 
-        if(count!=null&&!count.isEmpty()){
-            mCityName.setText(mList.get(pos).getCategoryName().toString()+"("+count+")");
-        }else{
-            mCityName.setText(mList.get(pos).getCategoryName().toString());
-        }
-
+        mHotelName.setText(mList.get(pos).getHotelDisplayName().toString());
 
 
         return view;

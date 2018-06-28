@@ -8,6 +8,7 @@ import java.io.Serializable;
  * Created by CSC on 11/9/2017.
  */
 
+
 public class RoomView implements Serializable{
     @SerializedName("RoomViewId")
     private int roomViewId;

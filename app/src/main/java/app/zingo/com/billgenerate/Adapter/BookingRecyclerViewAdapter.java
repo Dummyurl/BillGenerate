@@ -1,12 +1,6 @@
-package app.zingo.com.billgenerate.Model;
+package app.zingo.com.billgenerate.Adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,10 +15,9 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 
+import app.zingo.com.billgenerate.Model.Bookings1;
+import app.zingo.com.billgenerate.Model.Traveller;
 import app.zingo.com.billgenerate.R;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 /**

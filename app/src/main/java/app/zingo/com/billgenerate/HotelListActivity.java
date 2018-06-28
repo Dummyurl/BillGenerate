@@ -18,9 +18,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import app.zingo.com.billgenerate.Utils.RecyclerToutchListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 
 
 public class HotelListActivity extends AppCompatActivity {

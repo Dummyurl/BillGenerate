@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate.Model;
+package app.zingo.com.billgenerate.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;

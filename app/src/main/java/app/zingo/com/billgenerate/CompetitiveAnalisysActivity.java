@@ -64,6 +64,7 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
     Spinner mMarketDemandSpinner;
     Button mGeneratePdf;
 
+
     String[] marketDemandArray;
     public static final int MY_PERMISSIONS_REQUEST_RESULT = 1;
     private BaseFont bfBold;

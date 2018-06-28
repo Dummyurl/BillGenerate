@@ -9,6 +9,8 @@ import java.util.ArrayList;
  * Created by ZingoHotels Tech on 10-05-2018.
  */
 
+
+
 public class NotificationManager implements Serializable {
 
     @SerializedName("NotificationManagerId")

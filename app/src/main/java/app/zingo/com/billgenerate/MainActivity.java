@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import app.zingo.com.billgenerate.Model.PreferenceHandler;
+import app.zingo.com.billgenerate.Utils.PreferenceHandler;
 
 public class MainActivity extends AppCompatActivity {
 

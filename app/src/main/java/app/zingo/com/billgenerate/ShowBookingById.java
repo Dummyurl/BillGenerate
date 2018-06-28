@@ -15,22 +15,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import app.zingo.com.billgenerate.Model.BillDataBase;
 import app.zingo.com.billgenerate.Model.Bookings1;
-import app.zingo.com.billgenerate.Model.ContactDetails;
-import app.zingo.com.billgenerate.Model.DataBaseHelper;
 import app.zingo.com.billgenerate.Model.FireBaseModel;
 import app.zingo.com.billgenerate.Model.HotelDetails;
 import app.zingo.com.billgenerate.Model.NotificationManager;
-import app.zingo.com.billgenerate.Model.PaidStatusSpinnerAdapter;
-import app.zingo.com.billgenerate.Model.PlanDataBase;
-import app.zingo.com.billgenerate.Model.PropertyAdapter;
-import app.zingo.com.billgenerate.Model.RoomDataBase;
-import app.zingo.com.billgenerate.Model.ThreadExecuter;
+import app.zingo.com.billgenerate.Utils.ThreadExecuter;
 import app.zingo.com.billgenerate.Model.Traveller;
-import app.zingo.com.billgenerate.Model.Util;
+import app.zingo.com.billgenerate.Utils.Util;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

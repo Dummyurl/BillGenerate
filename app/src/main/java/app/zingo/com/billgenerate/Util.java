@@ -10,6 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by ZingoHotels.com on 6/20/2018.
  */
 
+
 public class Util {
 
 

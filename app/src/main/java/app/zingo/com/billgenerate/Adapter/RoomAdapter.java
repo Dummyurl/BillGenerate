@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate.Model;
+package app.zingo.com.billgenerate.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,17 +9,18 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import app.zingo.com.billgenerate.Model.Rooms;
 import app.zingo.com.billgenerate.R;
 
 /**
- * Created by ZingoHotels Tech on 04-04-2018.
+ * Created by ZingoHotels Tech on 13-06-2018.
  */
 
-public class PropertyAdapter extends BaseAdapter {
+public class RoomAdapter extends BaseAdapter {
     private Context context;
-    private ArrayList<HotelDetails> mList = new ArrayList<>();
+    private ArrayList<Rooms> mList = new ArrayList<>();
 
-    public PropertyAdapter(Context context, ArrayList<HotelDetails> mList)
+    public RoomAdapter(Context context, ArrayList<Rooms> mList)
     {
         this.context = context;
         this.mList = mList;
@@ -46,14 +47,13 @@ public class PropertyAdapter extends BaseAdapter {
         if(view == null)
         {
             LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = mInflater.inflate(R.layout.adapter_property,viewGroup,false);
+            view = mInflater.inflate(R.layout.category_name_spinner,viewGroup,false);
         }
 
-        TextView mHotelName = (TextView) view.findViewById(R.id.hotel_name);
+        TextView mCityName = (TextView) view.findViewById(R.id.category_name);
 
 
-        mHotelName.setText(mList.get(pos).getHotelDisplayName().toString());
-
+        mCityName.setText(mList.get(pos).getRoomNo().toString());
 
         return view;
     }

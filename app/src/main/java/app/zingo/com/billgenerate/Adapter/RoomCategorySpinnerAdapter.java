@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate.Model;
+package app.zingo.com.billgenerate.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,17 +9,19 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import app.zingo.com.billgenerate.Model.RoomCategories;
 import app.zingo.com.billgenerate.R;
+import app.zingo.com.billgenerate.Util;
 
 /**
  * Created by ZingoHotels Tech on 13-06-2018.
  */
 
-public class RoomAdapter extends BaseAdapter {
+public class RoomCategorySpinnerAdapter extends BaseAdapter {
     private Context context;
-    private ArrayList<Rooms> mList = new ArrayList<>();
+    private ArrayList<RoomCategories> mList = new ArrayList<>();
 
-    public RoomAdapter(Context context, ArrayList<Rooms> mList)
+    public RoomCategorySpinnerAdapter(Context context, ArrayList<RoomCategories> mList)
     {
         this.context = context;
         this.mList = mList;
@@ -51,8 +53,15 @@ public class RoomAdapter extends BaseAdapter {
 
         TextView mCityName = (TextView) view.findViewById(R.id.category_name);
 
+        String count = Util.PreferenceHandler.getInstance(context).getInventory("Category"+mList.get(pos).getRoomCategoryId());
 
-        mCityName.setText(mList.get(pos).getRoomNo().toString());
+        if(count!=null&&!count.isEmpty()){
+            mCityName.setText(mList.get(pos).getCategoryName().toString()+"("+count+")");
+        }else{
+            mCityName.setText(mList.get(pos).getCategoryName().toString());
+        }
+
+
 
         return view;
     }

@@ -8,6 +8,7 @@ import java.io.Serializable;
  * Created by ZingoHotels Tech on 09-04-2018.
  */
 
+
 public class HotelMap implements Serializable {
 
     @SerializedName("ProfileDeviceMappingId")

@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate.Model;
+package app.zingo.com.billgenerate.Utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;

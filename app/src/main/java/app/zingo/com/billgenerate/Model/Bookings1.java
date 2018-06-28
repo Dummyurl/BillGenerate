@@ -9,6 +9,7 @@ import java.util.ArrayList;
  * Created by CSC on 11/29/2017.
  */
 
+
 public class Bookings1 implements Serializable {
 
     @SerializedName("BookingId")

@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate.Model;
+package app.zingo.com.billgenerate.Services;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -10,21 +10,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
-import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Map;
-import java.util.Random;
 
+import app.zingo.com.billgenerate.Utils.PreferenceHandler;
 import app.zingo.com.billgenerate.NotificationListActivity;
 import app.zingo.com.billgenerate.R;
 

@@ -8,6 +8,7 @@ import java.io.Serializable;
  * Created by ZingoHotels.com on 4/7/2018.
  */
 
+
 public class FireBaseModel implements Serializable {
 
     @SerializedName("HotelId")

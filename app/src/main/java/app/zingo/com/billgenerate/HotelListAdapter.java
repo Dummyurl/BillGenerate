@@ -13,6 +13,7 @@ import java.util.ArrayList;
  * Created by ZingoHotels.com on 2/26/2018.
  */
 
+
 public class HotelListAdapter extends RecyclerView.Adapter<HotelListAdapter.ViewHolder> {
 
     Context context;

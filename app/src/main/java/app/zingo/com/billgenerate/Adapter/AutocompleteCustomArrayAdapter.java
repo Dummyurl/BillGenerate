@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Adapter;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,7 +10,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import app.zingo.com.billgenerate.BillDetails;
 import app.zingo.com.billgenerate.Model.Traveller;
+import app.zingo.com.billgenerate.R;
 
 
 /**
