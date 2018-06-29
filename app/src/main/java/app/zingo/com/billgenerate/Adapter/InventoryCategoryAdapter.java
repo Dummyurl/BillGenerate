@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import app.zingo.com.billgenerate.Model.RoomCategories;
 import app.zingo.com.billgenerate.R;
 import app.zingo.com.billgenerate.Util;
+import app.zingo.com.billgenerate.Utils.PreferenceHandler;
 
 /**
  * Created by ZingoHotels Tech on 19-06-2018.
@@ -50,14 +51,14 @@ public class InventoryCategoryAdapter extends RecyclerView.Adapter<InventoryCate
         holder.category_name.setText(dto.getCategoryName());
         holder.category_count.setText(count);
 
-        long date = Util.PreferenceHandler.getInstance(context).getInventoryTime("CategoryTime"+dto.getRoomCategoryId());
+        long date = PreferenceHandler.getInstance(context).getInventoryTime("CategoryTime"+dto.getRoomCategoryId());
 
         if(date==0){
-            Util.PreferenceHandler.getInstance(context).setInventoryTime("CategoryTime"+dto.getRoomCategoryId(),dateTime);
-            Util.PreferenceHandler.getInstance(context).setInventory("Category"+dto.getRoomCategoryId(),count);
+            PreferenceHandler.getInstance(context).setInventoryTime("CategoryTime"+dto.getRoomCategoryId(),dateTime);
+            PreferenceHandler.getInstance(context).setInventory("Category"+dto.getRoomCategoryId(),count);
         }else{
             if(date<=dateTime){
-                Util.PreferenceHandler.getInstance(context).setInventory("Category"+dto.getRoomCategoryId(),count);
+                PreferenceHandler.getInstance(context).setInventory("Category"+dto.getRoomCategoryId(),count);
             }
         }
 

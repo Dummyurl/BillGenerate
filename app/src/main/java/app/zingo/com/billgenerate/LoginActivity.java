@@ -147,6 +147,10 @@ public class LoginActivity extends AppCompatActivity {
                     public void onResponse(Call<ArrayList<Profile1>> call, Response<ArrayList<Profile1>> response) {
 //                List<RouteDTO.Routes> list = new ArrayList<RouteDTO.Routes>();
                         int statusCode = response.code();
+                        if(dialog != null && dialog.isShowing())
+                        {
+                            dialog.dismiss();
+                        }
 
 
                         if (statusCode == 200 || statusCode == 201) {
@@ -350,4 +354,16 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
+    /*if(nfm!=null && nfm.size()!=0){
+
+                                        Collections.reverse(nfm);
+                                        adapter = new NotificationManagerAdapter(NotificationListActivity.this, nfm,"Notification");
+                                        notification_list.setAdapter(adapter);
+
+                                        mNoData.setVisibility(View.GONE);
+                                        notification_list.setVisibility(View.VISIBLE);
+                                    }*/
 }

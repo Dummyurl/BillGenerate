@@ -42,7 +42,19 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
+            android:name=".RoomBookingNotifyActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
             android:name=".CompetitiveAnalisysActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".BidNotificationListActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".AgentBookingRequestActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
 
@@ -83,7 +95,8 @@
         <activity android:name=".NotificationOptions" />
         <activity android:name=".OneHotelOtheNotification" />
         <activity android:name=".AllHotelNotification" />
-        <activity android:name=".DailyRevenueTagetActivity"></activity>
+        <activity android:name=".DailyRevenueTagetActivity" />
+        <activity android:name=".NotificationDetailsActivity"></activity>
     </application>
 
 </manifest>

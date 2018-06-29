@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import app.zingo.com.billgenerate.Model.RoomCategories;
 import app.zingo.com.billgenerate.R;
 import app.zingo.com.billgenerate.Util;
+import app.zingo.com.billgenerate.Utils.PreferenceHandler;
 
 /**
  * Created by ZingoHotels Tech on 13-06-2018.
@@ -53,7 +54,7 @@ public class RoomCategorySpinnerAdapter extends BaseAdapter {
 
         TextView mCityName = (TextView) view.findViewById(R.id.category_name);
 
-        String count = Util.PreferenceHandler.getInstance(context).getInventory("Category"+mList.get(pos).getRoomCategoryId());
+        String count = PreferenceHandler.getInstance(context).getInventory("Category"+mList.get(pos).getRoomCategoryId());
 
         if(count!=null&&!count.isEmpty()){
             mCityName.setText(mList.get(pos).getCategoryName().toString()+"("+count+")");

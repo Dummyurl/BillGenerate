@@ -20,7 +20,9 @@ import app.zingo.com.billgenerate.LoginApi;
 import app.zingo.com.billgenerate.Model.HotelDetails;
 import app.zingo.com.billgenerate.Model.NotificationManager;
 import app.zingo.com.billgenerate.R;
-import app.zingo.com.billgenerate.Util;
+
+import app.zingo.com.billgenerate.Utils.Util;
+import app.zingo.com.billgenerate.Utils.ThreadExecuter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -178,12 +180,12 @@ public class NotificationManagerAdapter extends RecyclerView.Adapter<Notificatio
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        new Utils.ThreadExecuter().execute(new Runnable() {
+        new ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
                 LoginApi apiService =
-                        Util.Util.getClient().create(LoginApi.class);
-                String authenticationString = Util.Util.getToken(context);
+                        Util.getClient().create(LoginApi.class);
+                String authenticationString = Util.getToken(context);
                 Call<HotelDetails> call = apiService.getHotelsById(authenticationString, id);
 
                 call.enqueue(new Callback<HotelDetails>() {

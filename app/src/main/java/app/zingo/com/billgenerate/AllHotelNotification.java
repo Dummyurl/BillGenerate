@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import app.zingo.com.billgenerate.Utils.Util;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import app.zingo.com.billgenerate.Model.*;
 import app.zingo.com.billgenerate.Model.HotelDetails;
 import app.zingo.com.billgenerate.Model.NotificationManager;
 import app.zingo.com.billgenerate.Utils.ThreadExecuter;
-import app.zingo.com.billgenerate.Utils.Util;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -104,8 +105,8 @@ public class AllHotelNotification extends AppCompatActivity {
         new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = app.zingo.com.billgenerate.Util.Util.getToken(AllHotelNotification.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
-                LoginApi hotelOperation = app.zingo.com.billgenerate.Util.Util.getClient().create(LoginApi.class);
+                String auth_string = Util.getToken(AllHotelNotification.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
+                LoginApi hotelOperation = Util.getClient().create(LoginApi.class);
                 Call<ArrayList<HotelDetails>> response = hotelOperation.getHotelsList(auth_string/*userId*/);
 
                 response.enqueue(new Callback<ArrayList<HotelDetails>>() {
@@ -185,9 +186,9 @@ public class AllHotelNotification extends AppCompatActivity {
         new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = app.zingo.com.billgenerate.Util.Util.getToken(AllHotelNotification.this);
+                String auth_string = Util.getToken(AllHotelNotification.this);
                 LoginApi apiService =
-                        app.zingo.com.billgenerate.Util.Util.getClient().create(LoginApi.class);
+                        Util.getClient().create(LoginApi.class);
 
 
                 System.out.println("Nodel" + fireBaseModel.toString());
@@ -264,7 +265,7 @@ public class AllHotelNotification extends AppCompatActivity {
             @Override
             public void run() {
                 System.out.println("Hotel id = "+notification.getHotelId());
-                String auth_string = app.zingo.com.billgenerate.Util.Util.getToken(AllHotelNotification.this);
+                String auth_string = Util.getToken(AllHotelNotification.this);
                 LoginApi travellerApi = Util.getClient().create(LoginApi.class);
                 Call<app.zingo.com.billgenerate.Model.NotificationManager> response = travellerApi.saveNotification(auth_string,notification);
 

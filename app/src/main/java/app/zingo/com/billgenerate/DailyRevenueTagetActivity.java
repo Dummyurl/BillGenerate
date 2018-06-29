@@ -187,7 +187,7 @@ public class DailyRevenueTagetActivity extends AppCompatActivity {
                 double avgPrice = targetPrice/count;
 
                 for(int i=0;i<count;i++){
-                    dbHelper.updateProperty(""+(i+1),avgPrice,0);
+                    dbHelper.updateProperty(""+(i+1),avgPrice);
                 }
 
             }else{

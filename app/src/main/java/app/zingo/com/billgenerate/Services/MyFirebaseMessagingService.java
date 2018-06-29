@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 
+import app.zingo.com.billgenerate.RoomBookingNotifyActivity;
 import app.zingo.com.billgenerate.Utils.PreferenceHandler;
 import app.zingo.com.billgenerate.NotificationListActivity;
 import app.zingo.com.billgenerate.R;
@@ -51,8 +52,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
             message = body;
-            sound = Uri.parse("android.resource://" + this.getPackageName() + "/raw/good_morning");
-            intent = new Intent(this, NotificationListActivity.class);
+            if(title.contains("New Booking from Zingo Hotels"))
+            {
+                sound = Uri.parse("android.resource://" + this.getPackageName() + "/raw/good_morning");
+                intent = new Intent(this, RoomBookingNotifyActivity.class);
+                System.out.println("inside got RoomBookingNotifyActivity");
+
+            }
+            else
+            {
+                sound = Uri.parse("android.resource://" + this.getPackageName() + "/raw/good_morning");
+                //intent = new Intent(this, RoomBookingNotifyActivity.class);
+                intent = new Intent(this, NotificationListActivity.class);
+                System.out.println("inside got NotificationListActivity");
+            }
 
 
         //intent = new Intent(this, RoomBookingNotifyActivity.class);
@@ -131,6 +144,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         notificationManager.notify(m, notificationBuilder.build());
+
+        System.out.println("Bill title = "+title);
     }
 
 

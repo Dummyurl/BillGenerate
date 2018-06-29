@@ -51,16 +51,30 @@ public class HotelListActivity extends AppCompatActivity {
 
             Bundle bundle = getIntent().getExtras();
 
+               final String screen = getIntent().getStringExtra("ScreenName");
+
+
+            System.out.println("Notification = "+screen);
 
 
             mHotelList.addOnItemTouchListener(new RecyclerToutchListener(HotelListActivity.this, new RecyclerToutchListener.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, final int position) {
 
-                    Intent intent = new Intent(HotelListActivity.this,CompetitiveAnalisysActivity.class);
-                    intent.putExtra("HotelName",hotelDetailsArrayList.get(position).getHotelName());
-                    intent.putExtra("HotelId",hotelDetailsArrayList.get(position).getHotelId());
-                    startActivity(intent);
+                    if(screen == null)
+                    {
+                        Intent intent = new Intent(HotelListActivity.this,CompetitiveAnalisysActivity.class);
+                        intent.putExtra("HotelName",hotelDetailsArrayList.get(position).getHotelName());
+                        intent.putExtra("HotelId",hotelDetailsArrayList.get(position).getHotelId());
+                        startActivity(intent);
+                    }
+                    else
+                    {
+                        Intent intent = new Intent(HotelListActivity.this,NotificationDetailsActivity.class);
+                        intent.putExtra("HotelName",hotelDetailsArrayList.get(position).getHotelName());
+                        intent.putExtra("HotelId",hotelDetailsArrayList.get(position).getHotelId());
+                        startActivity(intent);
+                    }
                 }
 
                 @Override

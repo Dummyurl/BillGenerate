@@ -61,6 +61,7 @@ import app.zingo.com.billgenerate.Adapter.AutocompleteCustomArrayAdapter;
 import app.zingo.com.billgenerate.Utils.BillDataBase;
 import app.zingo.com.billgenerate.Model.Bookings1;
 import app.zingo.com.billgenerate.Model.ContactDetails;
+import app.zingo.com.billgenerate.Utils.CustomAutoCompleteView;
 import app.zingo.com.billgenerate.Utils.DataBaseHelper;
 import app.zingo.com.billgenerate.Model.FireBaseModel;
 import app.zingo.com.billgenerate.Model.HotelDetails;

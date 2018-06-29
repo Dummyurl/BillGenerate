@@ -119,8 +119,8 @@ public class OneHotelOtheNotification extends AppCompatActivity {
         new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = app.zingo.com.billgenerate.Util.Util.getToken(OneHotelOtheNotification.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
-                LoginApi hotelOperation = app.zingo.com.billgenerate.Util.Util.getClient().create(LoginApi.class);
+                String auth_string = Util.getToken(OneHotelOtheNotification.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
+                LoginApi hotelOperation = Util.getClient().create(LoginApi.class);
                 Call<ArrayList<app.zingo.com.billgenerate.Model.HotelDetails>> response = hotelOperation.getHotelsList(auth_string/*userId*/);
 
                 response.enqueue(new Callback<ArrayList<app.zingo.com.billgenerate.Model.HotelDetails>>() {
@@ -183,9 +183,9 @@ public class OneHotelOtheNotification extends AppCompatActivity {
         new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = app.zingo.com.billgenerate.Util.Util.getToken(OneHotelOtheNotification.this);
+                String auth_string = Util.getToken(OneHotelOtheNotification.this);
                 LoginApi apiService =
-                        app.zingo.com.billgenerate.Util.Util.getClient().create(LoginApi.class);
+                        Util.getClient().create(LoginApi.class);
 
 
                 System.out.println("Nodel" + fireBaseModel.toString());
@@ -262,7 +262,7 @@ public class OneHotelOtheNotification extends AppCompatActivity {
             @Override
             public void run() {
                 System.out.println("Hotel id = "+notification.getHotelId());
-                String auth_string = app.zingo.com.billgenerate.Util.Util.getToken(OneHotelOtheNotification.this);
+                String auth_string = Util.getToken(OneHotelOtheNotification.this);
                 LoginApi travellerApi = Util.getClient().create(LoginApi.class);
                 Call<NotificationManager> response = travellerApi.saveNotification(auth_string,notification);
 
