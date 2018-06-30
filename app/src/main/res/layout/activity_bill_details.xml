@@ -377,7 +377,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
                     android:textColor="#000000"/>
-                <app.zingo.com.billgenerate.CustomAutoCompleteView
+                <app.zingo.com.billgenerate.Utils.CustomAutoCompleteView
                     android:id="@+id/bill_guest_name"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"

@@ -85,6 +85,26 @@ public class PreferenceHandler {
         return sh.getString(inventoryKey,"");
     }
 
+    public void setBookingFileName(String bookingFileName )
+    {
+        sh.edit().putString(Constatnts.BOOKING_FILE_NAME,bookingFileName).apply();
+    }
+
+    public String getBookingFileName()
+    {
+        return sh.getString(Constatnts.BOOKING_FILE_NAME,"");
+    }
+
+    public void setBookingRefNumber(String bookingRefNumber )
+    {
+        sh.edit().putString(Constatnts.BOOKING_REF_NO,bookingRefNumber).apply();
+    }
+
+    public String getBookingRefNumber()
+    {
+        return sh.getString(Constatnts.BOOKING_REF_NO,"");
+    }
+
     public void setInventoryTime(String inventoryTimeKey,long inventoryTime )
     {
         sh.edit().putLong(inventoryTimeKey,inventoryTime).apply();

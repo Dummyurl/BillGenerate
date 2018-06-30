@@ -76,6 +76,7 @@ import app.zingo.com.billgenerate.Adapter.PropertyAdapter;
 import app.zingo.com.billgenerate.Adapter.RoomAdapter;
 import app.zingo.com.billgenerate.Model.RoomCategories;
 import app.zingo.com.billgenerate.Adapter.RoomCategorySpinnerAdapter;
+import app.zingo.com.billgenerate.Utils.PreferenceHandler;
 import app.zingo.com.billgenerate.Utils.RoomDataBase;
 import app.zingo.com.billgenerate.Model.Rooms;
 import app.zingo.com.billgenerate.Utils.ThreadExecuter;
@@ -498,7 +499,23 @@ public class BillDetails extends AppCompatActivity {
                         }
 
                     }else{
-                        validate();
+                        String bookingrefno = PreferenceHandler.getInstance(BillDetails.this).getBookingRefNumber();
+                        String bookingRefno1 = mBookingID.getText().toString();
+                        if(!bookingrefno.isEmpty() && bookingrefno.equals(bookingRefno1))
+                        {
+                            Toast.makeText(BillDetails.this,"Booking Is Already Done For This Referrence ID",Toast.LENGTH_LONG)
+                                    .show();
+                            if(csvFile != null)
+                            {
+                                onShareClick();
+                            }
+
+                        }
+                        else
+                        {
+                            validate();
+                        }
+                        //validate();
                     }
 
                 }
@@ -1818,6 +1835,8 @@ public class BillDetails extends AppCompatActivity {
                                     book = true;
                                     zingoBookingId = ""+response.body().getBookingId();
 
+                                    //Storing ota booking id for check of booking created or not
+                                    PreferenceHandler.getInstance(BillDetails.this).setBookingRefNumber(bookings.getOTABookingID());
 
                                     Toast.makeText(BillDetails.this, "Booking done successfully", Toast.LENGTH_SHORT).show();
                                     //sendEmailattache();
