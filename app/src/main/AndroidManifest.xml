@@ -96,7 +96,8 @@
         <activity android:name=".OneHotelOtheNotification" />
         <activity android:name=".AllHotelNotification" />
         <activity android:name=".DailyRevenueTagetActivity" />
-        <activity android:name=".NotificationDetailsActivity"></activity>
+        <activity android:name=".NotificationDetailsActivity" />
+        <activity android:name=".UpdateBookingsActivity"></activity>
     </application>
 
 </manifest>

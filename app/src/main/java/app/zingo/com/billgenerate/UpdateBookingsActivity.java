@@ -1,8 +1,7 @@
 package app.zingo.com.billgenerate;
 
-import android.Manifest;
+import android.*;
 import android.app.DatePickerDialog;
-
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -38,6 +37,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.DecimalFormat;
@@ -48,50 +58,25 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import com.itextpdf.text.BadElementException;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
-
 import app.zingo.com.billgenerate.Adapter.AutocompleteCustomArrayAdapter;
-import app.zingo.com.billgenerate.Utils.BillDataBase;
-import app.zingo.com.billgenerate.Model.Bookings1;
-import app.zingo.com.billgenerate.Model.ContactDetails;
-import app.zingo.com.billgenerate.Utils.CustomAutoCompleteView;
-import app.zingo.com.billgenerate.Utils.DataBaseHelper;
-import app.zingo.com.billgenerate.Model.FireBaseModel;
-import app.zingo.com.billgenerate.Model.HotelDetails;
-import app.zingo.com.billgenerate.Model.NotificationManager;
 import app.zingo.com.billgenerate.Adapter.PaidStatusSpinnerAdapter;
-import app.zingo.com.billgenerate.Utils.PlanDataBase;
 import app.zingo.com.billgenerate.Adapter.PropertyAdapter;
 import app.zingo.com.billgenerate.Adapter.RoomAdapter;
-import app.zingo.com.billgenerate.Model.RoomCategories;
 import app.zingo.com.billgenerate.Adapter.RoomCategorySpinnerAdapter;
-import app.zingo.com.billgenerate.Utils.PreferenceHandler;
-import app.zingo.com.billgenerate.Utils.RoomDataBase;
-import app.zingo.com.billgenerate.Model.Rooms;
-import app.zingo.com.billgenerate.Utils.ThreadExecuter;
-import app.zingo.com.billgenerate.Model.Traveller;
+import app.zingo.com.billgenerate.Model.*;
+import app.zingo.com.billgenerate.Model.HotelDetails;
+import app.zingo.com.billgenerate.Utils.*;
 import app.zingo.com.billgenerate.Utils.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class BillDetails extends AppCompatActivity {
+public class UpdateBookingsActivity extends AppCompatActivity {
 
-    Spinner mRoomCount, mPayment, mRate, mDesc, mProperty,mOTA,mDataBase,
+    Spinner mRoomCount, mPayment, mRate, mDesc,mOTA,
             mSourceType,room_category_spinner,mRoom;
     LinearLayout mDataLayout,mOtherLayout,mAddLayout,mCustomerLayout,mOtaService,mOtaGSTLay,mOTAComLay,mOTAPER,mRoomLay;
-    EditText mLocation, mCity, mMobile, mRoomType,
+    EditText mLocation, mCity, mMobile, mRoomType,mProperty,
             mGuestCount, mTotal, mBooking, mZingo,mOtherProperty,
             mBookingID, mEmail,  mNet, mNights, mArr,mOtaFee,
             mRoomCharge,mExtraCharge,mHotelTaxes,mAdditional,mCustomerPay,mOTAPerce,
@@ -101,11 +86,11 @@ public class BillDetails extends AppCompatActivity {
     Button mSave, mCalculate;
     String[] bookingSourceArray;
     int hotelId,travellerIid,roomId=0;
-    ArrayList<HotelDetails> chainsList;
+    ArrayList<app.zingo.com.billgenerate.Model.HotelDetails> chainsList;
     Traveller dtos;
     Bookings1 bookings;
     double commisionAmt,commisionGST;
-    HotelDetails list;
+    app.zingo.com.billgenerate.Model.HotelDetails list;
     ArrayList<Traveller> tlist;
     String[] bookingSourceTitleStringArray;
 
@@ -167,24 +152,22 @@ public class BillDetails extends AppCompatActivity {
     private String csvFile;
 
     private ArrayList<RoomCategories> roomCategories;
-     ArrayList<Rooms> roomsArrayList;
+    ArrayList<Rooms> roomsArrayList;
     ArrayList<Rooms> roomList;
     Rooms roomObject = null;
     int positionRoom;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
-            setContentView(R.layout.activity_bill_details);
 
+            setContentView(R.layout.activity_update_bookings);
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            setTitle("Create Bill");
+            setTitle("Update Booking");
 
-            mProperty = (Spinner) findViewById(R.id.bill_property_name);
-            mDataBase = (Spinner) findViewById(R.id.bill_data_base);
+            mProperty = (EditText) findViewById(R.id.bill_property_name);
             mAddLayout = (LinearLayout)findViewById(R.id.additional_layout);
             mOtaService = (LinearLayout)findViewById(R.id.ota_service);
             mCustomerLayout = (LinearLayout)findViewById(R.id.customer_pay_layout);
@@ -235,7 +218,7 @@ public class BillDetails extends AppCompatActivity {
 
             bookingSourceTitleStringArray = getResources().getStringArray(R.array.booking_source_title);
 
-            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceTitleStringArray);
+            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceTitleStringArray);
             mSourceType.setAdapter(spinneradapter);
 
             mSourceType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -246,21 +229,21 @@ public class BillDetails extends AppCompatActivity {
                         {
                             String[] bookingSourceArray = getResources().getStringArray(R.array.OTA_items);
 
-                            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
+                            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceArray);
                             mOTA.setAdapter(spinneradapter);
                         }
                         else if(bookingSourceTitleStringArray[position].equals("B2B"))
                         {
                             String[] bookingSourceArray = getResources().getStringArray(R.array.B2B_items);
 
-                            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
+                            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceArray);
                             mOTA.setAdapter(spinneradapter);
                         }
                         else if(bookingSourceTitleStringArray[position].equals("Offline"))
                         {
                             String[] bookingSourceArray = getResources().getStringArray(R.array.Offline_items);
 
-                            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
+                            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceArray);
                             mOTA.setAdapter(spinneradapter);
                         }
                     }
@@ -277,7 +260,7 @@ public class BillDetails extends AppCompatActivity {
             });
 
             //bookingSourceArray = getResources().getStringArray(R.array.OTA_items);
-            /*PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
+            /*PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceArray);
             mOTA.setAdapter(spinneradapter);*/
 
             mOTA.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -307,7 +290,7 @@ public class BillDetails extends AppCompatActivity {
 
             bill = new BillDataBase(this);
 
-           // getHotels();
+            // getHotels();
 
             mBook.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -371,16 +354,16 @@ public class BillDetails extends AppCompatActivity {
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
                     try {
-                       String room = mRoomCharge.getText().toString();
-                       String pere = mOTAPerce.getText().toString();
+                        String room = mRoomCharge.getText().toString();
+                        String pere = mOTAPerce.getText().toString();
 
-                       if(room!=null && !room.isEmpty()){
-                           double roomCharge = Double.parseDouble(room);
-                           double percentage = Double.parseDouble(pere);
-                           double value = roomCharge * percentage;
-                           double amount = value/100;
-                           mBooking.setText(""+amount);
-                       }
+                        if(room!=null && !room.isEmpty()){
+                            double roomCharge = Double.parseDouble(room);
+                            double percentage = Double.parseDouble(pere);
+                            double value = roomCharge * percentage;
+                            double amount = value/100;
+                            mBooking.setText(""+amount);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -394,128 +377,7 @@ public class BillDetails extends AppCompatActivity {
 
                 }
             });
-            mRoomCharge.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-
-                    priceCalculation();
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-
-            mExtraCharge.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-
-                    priceCalculation();
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-
-            mHotelTaxes.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-
-                    priceCalculation();
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-
-            mOTACommison.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-
-                    otaCalculation();
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-
-            mOTAGST.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-
-                    otaCalculation();
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-            mDataBase.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    if(mDataBase.getSelectedItem().toString().equalsIgnoreCase("OTHERS")){
-                        mDataLayout.setVisibility(View.GONE);
-                        mOtherLayout.setVisibility(View.VISIBLE);
-                        mLocation.setText("");
-                        mCity.setText("");
-                        mEmail.setText("");
-
-
-                    }else{
-                        mDataLayout.setVisibility(View.VISIBLE);
-                        mOtherLayout.setVisibility(View.GONE);
-                        getHotels();
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
 
 
             mOTA.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -593,16 +455,16 @@ public class BillDetails extends AppCompatActivity {
                         if(fileCreated){
                             onShareClick();
                         }else{
-                            Toast.makeText(BillDetails.this, "File not generate but booking happened", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(UpdateBookingsActivity.this, "File not generate but booking happened", Toast.LENGTH_SHORT).show();
                             createPdf();
                         }
 
                     }else{
-                        String bookingrefno = PreferenceHandler.getInstance(BillDetails.this).getBookingRefNumber();
+                        String bookingrefno = PreferenceHandler.getInstance(UpdateBookingsActivity.this).getBookingRefNumber();
                         String bookingRefno1 = mBookingID.getText().toString();
                         if(!bookingrefno.isEmpty() && bookingrefno.equals(bookingRefno1))
                         {
-                            Toast.makeText(BillDetails.this,"Booking Is Already Done For This Referrence ID",Toast.LENGTH_LONG)
+                            Toast.makeText(UpdateBookingsActivity.this,"Booking Is Already Done For This Referrence ID",Toast.LENGTH_LONG)
                                     .show();
                             if(csvFile != null)
                             {
@@ -642,39 +504,39 @@ public class BillDetails extends AppCompatActivity {
                     String source = mOTA.getSelectedItem().toString();
 
                     if (booking == null || booking.isEmpty()) {
-                        //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
                         mBooking.setError("Should not be Empty");
                         mBooking.requestFocus();
 
                     } else if (zingo == null || zingo.isEmpty()) {
-                        //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
                         mZingo.setError("Should not be Empty");
                         mZingo.requestFocus();
 
                     } else if (cit == null || cit.isEmpty()) {
-                        //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
                         mCID.setError("Should not be Empty");
                         mCID.requestFocus();
 
                     } else if (cot == null || cot.isEmpty()) {
-                        // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
                         mCOD.setError("Should not be Empty");
                         mCOD.requestFocus();
 
                     } else if (total == null || total.isEmpty()) {
-                        // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
                         mTotal.setError("Should not be Empty");
                         mTotal.requestFocus();
 
                     } else if (roomCharge == null || roomCharge.isEmpty()) {
-                        Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
 
 
                     } else if (extraCharge == null || extraCharge.isEmpty()) {
-                        Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
 
                     } else if (hoteltaxes == null || hoteltaxes.isEmpty()) {
-                        Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
 
                     } else {
 
@@ -770,33 +632,6 @@ public class BillDetails extends AppCompatActivity {
             });
 
 
-            mProperty.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-                    hotelId = chainsList.get(i).getHotelId();
-                    property = chainsList.get(i).getHotelDisplayName();
-
-                    mLocation.setText(chainsList.get(i).getLocalty());
-                    mCity.setText(chainsList.get(i).getCity());
-                    roomsArrayList = (ArrayList<Rooms>)chainsList.get(i).getRooms();
-                    //getContactByHotelId(chainsList.get(i).getHotelId());
-                    if(chainsList.get(i).getContact()!=null&&chainsList.get(i).getContact().size()!=0){
-                        mEmail.setText(""+chainsList.get(i).getContact().get(0).getEmailList());
-                    }else{
-                        mEmail.setText("");
-                    }
-
-                    mRoomType.setVisibility(View.GONE);
-                    room_category_spinner.setVisibility(View.VISIBLE);
-                    loadRoomCategoriesSpinner(chainsList.get(i).getHotelId());
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
 
             room_category_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -817,19 +652,19 @@ public class BillDetails extends AppCompatActivity {
                         }
 
                         if(roomList!=null&&roomList.size()!=0){
-                           // roomsArrayList = new ArrayList<>();
+                            // roomsArrayList = new ArrayList<>();
                             System.out.println("After Room SIze=="+roomsArrayList.size());
                             mRoomLay.setVisibility(View.VISIBLE);
 
-                            loadRoomSpinner(roomList);
+                            //loadRoomSpinner(roomList);
                         }else{
                             roomId =0;
-                            Toast.makeText(BillDetails.this, "No available rooms in this hotel", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(UpdateBookingsActivity.this, "No available rooms in this hotel", Toast.LENGTH_SHORT).show();
                             mRoomLay.setVisibility(View.GONE);
                         }
                     }else{
                         roomId =0;
-                        Toast.makeText(BillDetails.this, "There is no rooms in this hotel", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateBookingsActivity.this, "There is no rooms in this hotel", Toast.LENGTH_SHORT).show();
                         mRoomLay.setVisibility(View.GONE);
                     }
                 }
@@ -857,10 +692,11 @@ public class BillDetails extends AppCompatActivity {
                 }
             });
 
+
+
         }catch (Exception e){
             e.printStackTrace();
         }
-
 
     }
 
@@ -868,7 +704,7 @@ public class BillDetails extends AppCompatActivity {
 
 //        String properties = mProperty.getSelectedItem().toString();
         try{
-            String data = mDataBase.getSelectedItem().toString();
+            //String data = mDataBase.getSelectedItem().toString();
 
 
             rooms = mRoomType.getText().toString();
@@ -902,90 +738,58 @@ public class BillDetails extends AppCompatActivity {
             System.out.println("Print" + String.valueOf(path));
 
             if (location == null || location.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             } else if (city == null || city.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             } else if (guest == null || guest.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            }/* else if (mobile == null || mobile.isEmpty()) {
-            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        }*/ else if (count == null || count.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+            } else if (count == null || count.isEmpty()) {
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             } else if (desc == null || desc.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             } else if (total == null || total.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             } else if (booking == null || booking.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             } else if (zingo == null || zingo.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             } else if (bdate == null || bdate.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             } else if (cit == null || cit.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             } else if (cot == null || cot.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             } else if (email == null || email.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             } else if (ota == null || ota.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             } else if (net == null || net.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
             } else if (nights == null || nights.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
             } else if (arr == null || arr.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please click calculate button", Toast.LENGTH_SHORT).show();
             }else if (roomCharge == null || roomCharge.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } /*else if (addtional == null || addtional.isEmpty()) {
-            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        } else if (customer == null || customer.isEmpty()) {
-            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-        }*/else if (extraCharge == null || extraCharge.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+            } else if (extraCharge == null || extraCharge.isEmpty()) {
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             }else if (hoteltaxes == null || hoteltaxes.isEmpty()) {
-                Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             } else {
 
-                if(data.equalsIgnoreCase("OTHERS")){
 
-                    if(mOtherProperty.getText().toString()==null||mOtherProperty.getText().toString().isEmpty()){
-                        mOtherProperty.setError("Please enter property name");
-                        mOtherProperty.requestFocus();
-                    }else{
-                        property = mOtherProperty.getText().toString();
-                    }
-                }else{
-                    property = chainsList.get(mProperty.getSelectedItemPosition()).getHotelDisplayName();
-                }
 
-                //createPdf();
                 System.out.println("Property name==" + property);
 
 
-                if(data.equalsIgnoreCase("OTHERS")){
-                    // sendEmailattache();
-                    boolean isfilecreated = createPdf();
-                    if (isfilecreated) {
-                        onShareClick();
-                    }
-                }else{
-                    /*if (mobile == null || mobile.isEmpty()) {
-                        //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-                        addTraveler();
-                    }else if(mobile.equalsIgnoreCase("0")){
-                        addTraveler();
-                    }else{
-                        getTravelerByPhone(mobile);
-                    }*/
+
+
 
                     if(travellerIid==0){
                         addTraveler();
-                        //System.out.println("Not exist");
                     }else if(tlist != null && !isexist(tlist)){
                         addTraveler();
-                        //updateTraveller("paylater");
-                        //System.out.println("Not exist "+isexist(tlist));
+
                     }
                     else
                     {
@@ -994,27 +798,8 @@ public class BillDetails extends AppCompatActivity {
                 }
 
 
-                //System.out.println("oooo" + isfilecreated);
-           /* if (isfilecreated) {
-                //sendEmailattache();
-
-                if(data.equalsIgnoreCase("OTHERS")){
-                   // sendEmailattache();
-                    onShareClick();
-                }else{
-                    if (mobile == null || mobile.isEmpty()) {
-                        //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-                        addTraveler();
-                    }else{
-                        getTravelerByPhone(mobile);
-                    }
-                }
 
 
-
-            }*/
-
-            }
 
         }catch (Exception e){
             e.printStackTrace();
@@ -1534,19 +1319,19 @@ public class BillDetails extends AppCompatActivity {
     }
 
     private void fn_permission() {
-        if ((ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) ||
-                (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+        if ((ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) ||
+                (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
 
-            if ((ActivityCompat.shouldShowRequestPermissionRationale(BillDetails.this, android.Manifest.permission.READ_EXTERNAL_STORAGE))) {
+            if ((ActivityCompat.shouldShowRequestPermissionRationale(UpdateBookingsActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE))) {
             } else {
-                ActivityCompat.requestPermissions(BillDetails.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                ActivityCompat.requestPermissions(UpdateBookingsActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
                         REQUEST_PERMISSIONS);
 
             }
 
-            if ((ActivityCompat.shouldShowRequestPermissionRationale(BillDetails.this, Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
+            if ((ActivityCompat.shouldShowRequestPermissionRationale(UpdateBookingsActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
             } else {
-                ActivityCompat.requestPermissions(BillDetails.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                ActivityCompat.requestPermissions(UpdateBookingsActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         REQUEST_PERMISSIONS);
 
             }
@@ -1568,7 +1353,7 @@ public class BillDetails extends AppCompatActivity {
             } else {
 
                 Log.v("hi", "Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
                 return false;
             }
         } else { //permission is automatically granted on sdk<23 upon installation
@@ -1668,7 +1453,7 @@ public class BillDetails extends AppCompatActivity {
     //We are calling this method to check the permission status
     private boolean isReadStorageAllowed() {
         //Getting the permission status
-        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        int result = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
 
         //If permission is granted returning true
         if (result == PackageManager.PERMISSION_GRANTED)
@@ -1681,14 +1466,14 @@ public class BillDetails extends AppCompatActivity {
     //Requesting permission
     private void requestStoragePermission() {
 
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
             //If the user has denied the permission previously your code will come to this block
             //Here you can explain why you need this permission
             //Explain here why you need this permission
         }
 
         //And finally ask for the permission
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
     }
 
     //This method will be called when the user will tap on allow or deny
@@ -1717,38 +1502,35 @@ public class BillDetails extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        new ThreadExecuter().execute(new Runnable() {
+        new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
                 LoginApi apiService =
-                        Util.getClient().create(LoginApi.class);
-                String authenticationString = Util.getToken(BillDetails.this);
-                Call<HotelDetails> call = apiService.getHotelsById(authenticationString, id);
+                        app.zingo.com.billgenerate.Utils.Util.getClient().create(LoginApi.class);
+                String authenticationString = app.zingo.com.billgenerate.Utils.Util.getToken(UpdateBookingsActivity.this);
+                Call<app.zingo.com.billgenerate.Model.HotelDetails> call = apiService.getHotelsById(authenticationString, id);
 
-                call.enqueue(new Callback<HotelDetails>() {
+                call.enqueue(new Callback<app.zingo.com.billgenerate.Model.HotelDetails>() {
                     @Override
-                    public void onResponse(Call<HotelDetails> call, Response<HotelDetails> response) {
+                    public void onResponse(Call<app.zingo.com.billgenerate.Model.HotelDetails> call, Response<app.zingo.com.billgenerate.Model.HotelDetails> response) {
 //                List<RouteDTO.Routes> list = new ArrayList<RouteDTO.Routes>();
                         int statusCode = response.code();
                         if (statusCode == 200 || statusCode == 201 || statusCode == 203 || statusCode == 204) {
 
                             if (progressDialog != null)
                                 progressDialog.dismiss();
-                             list = response.body();
+                            list = response.body();
 
                             if (list != null) {
 
 
 
-                                if(mDataBase.getSelectedItem().toString().equalsIgnoreCase("OTHERS")){
-                                    mLocation.setText("");
-                                    mCity.setText("");
-                                    mEmail.setText("");
-                                }else{
+
+                                    mProperty.setText(list.getHotelDisplayName());
                                     mLocation.setText(list.getLocalty());
                                     mCity.setText(list.getCity());
                                     getContactByHotelId(id);
-                                }
+
 
 
 
@@ -1760,13 +1542,13 @@ public class BillDetails extends AppCompatActivity {
                         } else {
                             if (progressDialog != null)
                                 progressDialog.dismiss();
-                            Toast.makeText(BillDetails.this, " failed due to : " + response.message(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(UpdateBookingsActivity.this, " failed due to : " + response.message(), Toast.LENGTH_SHORT).show();
                         }
 //                callGetStartEnd();
                     }
 
                     @Override
-                    public void onFailure(Call<HotelDetails> call, Throwable t) {
+                    public void onFailure(Call<app.zingo.com.billgenerate.Model.HotelDetails> call, Throwable t) {
                         // Log error here since request failed
                         if (progressDialog != null)
                             progressDialog.dismiss();
@@ -1779,91 +1561,22 @@ public class BillDetails extends AppCompatActivity {
         });
     }
 
-    private void getHotels() {
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("please wait..");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
-
-        new ThreadExecuter().execute(new Runnable() {
-            @Override
-            public void run() {
-                String auth_string = Util.getToken(BillDetails.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
-                LoginApi hotelOperation = Util.getClient().create(LoginApi.class);
-                Call<ArrayList<HotelDetails>> response = hotelOperation.getHotelsList(auth_string/*userId*/);
-
-                response.enqueue(new Callback<ArrayList<HotelDetails>>() {
-                    @Override
-                    public void onResponse(Call<ArrayList<HotelDetails>> call, Response<ArrayList<HotelDetails>> response) {
-                        System.out.println("GetHotelByProfileId = " + response.code());
-                        chainsList = response.body();
-
-                        if (progressDialog != null)
-                            progressDialog.dismiss();
-                        try{
-                            if (response.code() == 200) {
-                                if (chainsList != null && chainsList.size() != 0) {
-                                    PropertyAdapter chainAdapter = new PropertyAdapter(BillDetails.this, chainsList);
-                                    mProperty.setAdapter(chainAdapter);
-//
-
-
-                                } else {
-                                    Toast.makeText(BillDetails.this, "No Hotels", Toast.LENGTH_SHORT).show();
-                                /*Intent intent = new Intent(BillDetails.this,AddHotelActivity.class);
-                                startActivity(intent);*/
-                                }
-                            } else {
-                                Toast.makeText(BillDetails.this, "Check your internet connection or please try after some time",
-                                        Toast.LENGTH_LONG).show();
-                            }
-
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-
-
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<ArrayList<HotelDetails>> call, Throwable t) {
-                        System.out.println("Failed");
-                        if (progressDialog != null)
-                            progressDialog.dismiss();
-
-                        Toast.makeText(BillDetails.this, "Check your internet connection or please try after some time",
-                                Toast.LENGTH_LONG).show();
-
-                    }
-                });
-            }
-        });
-    }
 
     public void getContactByHotelId(final int id) {
-      /* final ProgressDialog dialog = new ProgressDialog(BillDetails.this);
-        dialog.setMessage("Please wait");
-        dialog.setCancelable(false);
-        dialog.show();*/
 
-        new ThreadExecuter().execute(new Runnable() {
+        new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String authenticationString = Util.getToken(BillDetails.this);
-                LoginApi operations = Util.getClient().create(LoginApi.class);
+                String authenticationString = app.zingo.com.billgenerate.Utils.Util.getToken(UpdateBookingsActivity.this);
+                LoginApi operations = app.zingo.com.billgenerate.Utils.Util.getClient().create(LoginApi.class);
                 Call<ArrayList<ContactDetails>> getContactResponse = operations.getContactByHotelId(authenticationString, id);
 
                 getContactResponse.enqueue(new Callback<ArrayList<ContactDetails>>() {
                     @Override
                     public void onResponse(Call<ArrayList<ContactDetails>> call, Response<ArrayList<ContactDetails>> response) {
                         System.out.println("Code  = " + response.code());
-                      /*  if(dialog != null && dialog.isShowing())
-                        {
-                            dialog.dismiss();
-                        }*/
+
                         try{
                             ArrayList<ContactDetails> contactResponse = response.body();
 
@@ -1875,17 +1588,12 @@ public class BillDetails extends AppCompatActivity {
 
 
                             } else {
-                           /* hotelMob =  "No Mobile";
-                            hotelPhone =  "No Phone";
-                            hotelEmail =  "No Email";*/
+
                                 mEmail.setText("");
                             }
 
                         }catch (Exception e){
-                           /* if(dialog != null && dialog.isShowing())
-                            {
-                                dialog.dismiss();
-                            }*/
+
                             e.printStackTrace();
                         }
 
@@ -1896,33 +1604,29 @@ public class BillDetails extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<ArrayList<ContactDetails>> call, Throwable t) {
                         System.out.println("Contact failed");
-                        Toast.makeText(BillDetails.this, "Failed Due to: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                       /* if(dialog != null && dialog.isShowing())
-                        {
-                            dialog.dismiss();
-                        }*/
+                        Toast.makeText(UpdateBookingsActivity.this, "Failed Due to: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+
                     }
                 });
             }
         });
     }
 
-    //QuickBook
-//Do bookings
+
     private void updateRoomBooking(final Bookings1 bookings) {
 
-        final ProgressDialog progressDialog = new ProgressDialog(BillDetails.this);
+        final ProgressDialog progressDialog = new ProgressDialog(UpdateBookingsActivity.this);
         progressDialog.setTitle("please wait..");
         progressDialog.setCancelable(false);
         progressDialog.show();
 
 
-        new ThreadExecuter().execute(new Runnable() {
+        new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = Util.getToken(BillDetails.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
+                String auth_string = app.zingo.com.billgenerate.Utils.Util.getToken(UpdateBookingsActivity.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
                 LoginApi apiService =
-                        Util.getClient().create(LoginApi.class);
+                        app.zingo.com.billgenerate.Utils.Util.getClient().create(LoginApi.class);
                 Call<Bookings1> call = apiService.postBooking(auth_string, bookings);
 
                 call.enqueue(new Callback<Bookings1>() {
@@ -1941,9 +1645,9 @@ public class BillDetails extends AppCompatActivity {
                                     zingoBookingId = ""+response.body().getBookingId();
 
                                     //Storing ota booking id for check of booking created or not
-                                    PreferenceHandler.getInstance(BillDetails.this).setBookingRefNumber(bookings.getOTABookingID());
+                                    PreferenceHandler.getInstance(UpdateBookingsActivity.this).setBookingRefNumber(bookings.getOTABookingID());
 
-                                    Toast.makeText(BillDetails.this, "Booking done successfully", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(UpdateBookingsActivity.this, "Booking done successfully", Toast.LENGTH_SHORT).show();
                                     //sendEmailattache();
                                     FireBaseModel fm = new FireBaseModel();
                                     fm.setSenderId("415720091200");
@@ -1954,26 +1658,9 @@ public class BillDetails extends AppCompatActivity {
                                     //registerTokenInDB(fm);
                                     sendNotification(fm);
                                     double roomCount = Double.parseDouble(mRoomCount.getSelectedItem().toString());
-                                    if(roomCount>1){
-
-                                        Toast.makeText(BillDetails.this, "Please Allocate Room from Hotel Main App", Toast.LENGTH_SHORT).show();
-
-                                    }else{
-                                        if(roomObject!=null&&roomId!=0){
-
-                                            bookedRoom();
-                                        }
-                                    }
-
-
-
 
                                 }else{
                                     String subject=null;
-
-
-
-                                    //sendEmailattache();
                                     onShareClick();
                                 }
 
@@ -1981,7 +1668,7 @@ public class BillDetails extends AppCompatActivity {
                                 if (progressDialog != null)
                                     progressDialog.dismiss();
 
-                                Toast.makeText(BillDetails.this, " failed due to : " + response.message(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(UpdateBookingsActivity.this, " failed due to : " + response.message(), Toast.LENGTH_SHORT).show();
                             }
                         }catch (Exception e){
                             e.printStackTrace();
@@ -1992,11 +1679,11 @@ public class BillDetails extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<Bookings1> call, Throwable t) {
-                        // Log error here since request failed
+
                         if (progressDialog != null)
                             progressDialog.dismiss();
                         Log.e("TAG", t.toString());
-                        Toast.makeText(BillDetails.this, " failed due to : " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateBookingsActivity.this, " failed due to : " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -2009,12 +1696,12 @@ public class BillDetails extends AppCompatActivity {
     public void sendNotification(final FireBaseModel fireBaseModel) {
 
 
-        new ThreadExecuter().execute(new Runnable() {
+        new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = Util.getToken(BillDetails.this);
+                String auth_string = app.zingo.com.billgenerate.Utils.Util.getToken(UpdateBookingsActivity.this);
                 LoginApi apiService =
-                        Util.getClient().create(LoginApi.class);
+                        app.zingo.com.billgenerate.Utils.Util.getClient().create(LoginApi.class);
 
 
                 System.out.println("Nodel" + fireBaseModel.toString());
@@ -2030,7 +1717,7 @@ public class BillDetails extends AppCompatActivity {
 
                                 ArrayList<String> list = response.body();
 
-                                Toast.makeText(BillDetails.this, "Notification Send Successfully", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(UpdateBookingsActivity.this, "Notification Send Successfully", Toast.LENGTH_SHORT).show();
 
 
 
@@ -2045,7 +1732,7 @@ public class BillDetails extends AppCompatActivity {
 
                             } else {
 
-                                Toast.makeText(BillDetails.this, " failed due to status code:" + statusCode, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(UpdateBookingsActivity.this, " failed due to status code:" + statusCode, Toast.LENGTH_SHORT).show();
                             }
                         }catch (Exception e){
                             e.printStackTrace();
@@ -2076,12 +1763,12 @@ public class BillDetails extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        new ThreadExecuter().execute(new Runnable() {
+        new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = Util.getToken(BillDetails.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
+                String auth_string = app.zingo.com.billgenerate.Utils.Util.getToken(UpdateBookingsActivity.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
                 LoginApi apiService =
-                        Util.getClient().create(LoginApi.class);
+                        app.zingo.com.billgenerate.Utils.Util.getClient().create(LoginApi.class);
                 Call<ArrayList<Traveller>> call = apiService.fetchTravelerByPhone(auth_string,dto);
 
                 call.enqueue(new Callback<ArrayList<Traveller>>() {
@@ -2097,17 +1784,10 @@ public class BillDetails extends AppCompatActivity {
 
                             if (response.body().size()!=0) {
                                 tlist = response.body();
-                                /* dtos = list.get(0);
 
-                                if (dtos != null) {
-                                    *//*travellerIid = dtos.getTravellerId();
-                                    mGuest.setText(dtos.getFirstName());*//*
-                                    //updateTraveller(travellerIid);
-
-                                }*/
 
                                 AutocompleteCustomArrayAdapter autocompleteCustomArrayAdapter =
-                                        new AutocompleteCustomArrayAdapter(BillDetails.this,R.layout.hotels_row,tlist);
+                                        new AutocompleteCustomArrayAdapter(UpdateBookingsActivity.this,R.layout.hotels_row,tlist);
                                 mGuest.setThreshold(1);
                                 mGuest.setAdapter(autocompleteCustomArrayAdapter);
 
@@ -2122,13 +1802,74 @@ public class BillDetails extends AppCompatActivity {
                         }else {
                             if (progressDialog!=null)
                                 progressDialog.dismiss();
-                            Toast.makeText(BillDetails.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(UpdateBookingsActivity.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
                         }
 //                callGetStartEnd();
                     }
 
                     @Override
                     public void onFailure(Call<ArrayList<Traveller>> call, Throwable t) {
+                        // Log error here since request failed
+                        if (progressDialog!=null)
+                            progressDialog.dismiss();
+                        Log.e("TAG", t.toString());
+                    }
+                });
+            }
+
+
+        });
+    }
+
+
+    private void getTravelerById(final int id){
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("please wait we are fetching traveller details..");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
+            @Override
+            public void run() {
+                String auth_string = app.zingo.com.billgenerate.Utils.Util.getToken(UpdateBookingsActivity.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
+                LoginApi apiService =
+                        app.zingo.com.billgenerate.Utils.Util.getClient().create(LoginApi.class);
+                Call<Traveller> call = apiService.getTravellerDetails(auth_string,id);
+
+                call.enqueue(new Callback<Traveller>() {
+                    @Override
+                    public void onResponse(Call<Traveller> call, Response<Traveller> response) {
+//                List<RouteDTO.Routes> list = new ArrayList<RouteDTO.Routes>();
+                        int statusCode = response.code();
+                        if (statusCode == 200 || statusCode == 201 || statusCode == 203 || statusCode == 204) {
+
+                            if (progressDialog!=null)
+                                progressDialog.dismiss();
+
+
+                            if (response.body()!=null) {
+
+                                mGuest.setText(""+response.body().getFirstName());
+                                mMobile.setText(""+response.body().getFirstName());
+                            }else{
+                                //travellerIid = 0;
+                                //addTraveler();
+                                mGuest.setText("");
+
+                            }
+
+
+                        }else {
+                            if (progressDialog!=null)
+                                progressDialog.dismiss();
+                            Toast.makeText(UpdateBookingsActivity.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
+                        }
+//                callGetStartEnd();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Traveller> call, Throwable t) {
                         // Log error here since request failed
                         if (progressDialog!=null)
                             progressDialog.dismiss();
@@ -2158,12 +1899,12 @@ public class BillDetails extends AppCompatActivity {
 
         dto.setUserRoleId(1);
 
-        new ThreadExecuter().execute(new Runnable() {
+        new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = Util.getToken(BillDetails.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
+                String auth_string = app.zingo.com.billgenerate.Utils.Util.getToken(UpdateBookingsActivity.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
                 LoginApi apiService =
-                        Util.getClient().create(LoginApi.class);
+                        app.zingo.com.billgenerate.Utils.Util.getClient().create(LoginApi.class);
                 Call<Traveller> call = apiService.addTraveler(auth_string,dto);
 
                 call.enqueue(new Callback<Traveller>() {
@@ -2191,7 +1932,7 @@ public class BillDetails extends AppCompatActivity {
                             }else {
                                 if (progressDialog!=null)
                                     progressDialog.dismiss();
-                                Toast.makeText(BillDetails.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(UpdateBookingsActivity.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
                             }
                         }catch (Exception e){
                             e.printStackTrace();
@@ -2222,12 +1963,12 @@ public class BillDetails extends AppCompatActivity {
         dto.setFirstName(guest);
         dto.setUserRoleId(1);
 
-        new ThreadExecuter().execute(new Runnable() {
+        new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = Util.getToken(BillDetails.this);
+                String auth_string = app.zingo.com.billgenerate.Utils.Util.getToken(UpdateBookingsActivity.this);
                 LoginApi apiService =
-                        Util.getClient().create(LoginApi.class);
+                        app.zingo.com.billgenerate.Utils.Util.getClient().create(LoginApi.class);
                 Call<Traveller> call = apiService.updateTravellerDetails(auth_string,travellerIid,dto);
 
                 call.enqueue(new Callback<Traveller>() {
@@ -2251,7 +1992,7 @@ public class BillDetails extends AppCompatActivity {
                             }else {
                                 if (progressDialog!=null)
                                     progressDialog.dismiss();
-                                Toast.makeText(BillDetails.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(UpdateBookingsActivity.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
                             }
                         }catch (Exception e){
                             e.printStackTrace();
@@ -2275,7 +2016,7 @@ public class BillDetails extends AppCompatActivity {
 
     public String randomByDate(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmss");
-         Date random = new Date();
+        Date random = new Date();
         String bookNumber = dateFormat.format(random);
         System.out.println("Z"+bookNumber);
         return bookNumber;
@@ -2287,7 +2028,7 @@ public class BillDetails extends AppCompatActivity {
         String[] mailto = {email};
 
         Intent emailIntent = new Intent();
-      //  emailIntent.setAction(Intent.ACTION_SEND);
+        //  emailIntent.setAction(Intent.ACTION_SEND);
         // Native email client doesn't currently support HTML, but it doesn't hurt to try in case they fix it
         emailIntent.setType("text/plain");
         emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
@@ -2329,7 +2070,7 @@ public class BillDetails extends AppCompatActivity {
                         "Please find the attached reservation for you.");
 
                 emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-               // startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
+                // startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
                /* Intent intent = new Intent();
                // intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
               //  intent.setAction(Intent.ACTION_SEND);
@@ -2356,7 +2097,7 @@ public class BillDetails extends AppCompatActivity {
                 intent.putExtra(Intent.EXTRA_STREAM, uris);*/
 
 
-               // intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
+                // intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
             } else {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
@@ -2507,7 +2248,7 @@ public class BillDetails extends AppCompatActivity {
             }
 
             if (intentShareList.isEmpty()) {
-                Toast.makeText(BillDetails.this, "No apps to share !", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateBookingsActivity.this, "No apps to share !", Toast.LENGTH_SHORT).show();
             } else {
                 Intent chooserIntent = Intent.createChooser(intentShareList.remove(0), "Share via");
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentShareList.toArray(new Parcelable[]{}));
@@ -2521,17 +2262,17 @@ public class BillDetails extends AppCompatActivity {
 
     private void savenotification(final NotificationManager notification) {
 
-        final ProgressDialog dialog = new ProgressDialog(BillDetails.this);
+        final ProgressDialog dialog = new ProgressDialog(UpdateBookingsActivity.this);
         dialog.setMessage("Loading");
         dialog.setCancelable(false);
         dialog.show();
 
-        new ThreadExecuter().execute(new Runnable() {
+        new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
                 System.out.println("Hotel id = "+notification.getHotelId());
-                String auth_string = Util.getToken(BillDetails.this);
-                LoginApi travellerApi = Util.getClient().create(LoginApi.class);
+                String auth_string = app.zingo.com.billgenerate.Utils.Util.getToken(UpdateBookingsActivity.this);
+                LoginApi travellerApi = app.zingo.com.billgenerate.Utils.Util.getClient().create(LoginApi.class);
                 Call<NotificationManager> response = travellerApi.saveNotification(auth_string,notification);
 
                 response.enqueue(new Callback<NotificationManager>() {
@@ -2548,19 +2289,19 @@ public class BillDetails extends AppCompatActivity {
                             {
                                 if(response.body() != null)
                                 {
-                                /*Toast.makeText(BillDetails.this,"Thank you for selecting room. Your request has been sent to hotel. " +
+                                /*Toast.makeText(UpdateBookingsActivity.this,"Thank you for selecting room. Your request has been sent to hotel. " +
                                         "Please wait for there reply.",Toast.LENGTH_SHORT).show();*/
                                     //SelectRoom.this.finish();
                                     boolean fileCreated = createPdf();
                                     if(fileCreated){
                                         onShareClick();
                                     }else{
-                                        Toast.makeText(BillDetails.this, "File not created", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(UpdateBookingsActivity.this, "File not created", Toast.LENGTH_SHORT).show();
                                         createPdf();
                                     }
 
 
-                                    //Toast.makeText(BillDetails.this, "Save Notification", Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(UpdateBookingsActivity.this, "Save Notification", Toast.LENGTH_SHORT).show();
 
 
 
@@ -2598,7 +2339,7 @@ public class BillDetails extends AppCompatActivity {
         try{
             switch (item.getItemId()) {
                 case android.R.id.home:
-                    Intent main = new Intent(BillDetails.this,MainActivity.class);
+                    Intent main = new Intent(UpdateBookingsActivity.this,MainActivity.class);
                     startActivity(main);
                     this.finish();
                     return true;
@@ -2620,7 +2361,7 @@ public class BillDetails extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         try{
-            Intent main = new Intent(BillDetails.this,MainActivity.class);
+            Intent main = new Intent(UpdateBookingsActivity.this,MainActivity.class);
             startActivity(main);
             this.finish();
         }catch (Exception e){
@@ -2635,16 +2376,16 @@ public class BillDetails extends AppCompatActivity {
             if (view instanceof EditText) {
                 ((EditText)view).setText("");
             }
-           mCID.setText("");
-           mCOD.setText("");
-           mBook.setText("");
-           book = false;
-           zingoBookingId = "";
-           dtos = null;
-           bookings = null;
-           commisionAmt = 0.0;
-           commisionGST = 0.0;
-           travellerIid= 0;
+            mCID.setText("");
+            mCOD.setText("");
+            mBook.setText("");
+            book = false;
+            zingoBookingId = "";
+            dtos = null;
+            bookings = null;
+            commisionAmt = 0.0;
+            commisionGST = 0.0;
+            travellerIid= 0;
             mProperty.setSelection(0);
             mRoomCount.setSelection(0);
             mPayment.setSelection(0);
@@ -2661,43 +2402,7 @@ public class BillDetails extends AppCompatActivity {
             if(view instanceof ViewGroup && (((ViewGroup)view).getChildCount() > 0))
                 clearForm((ViewGroup)view);
         }
-       /* mBookingID.setText("");
-        mMobile.setText("");
-        mGuest.setText("");
-        mBook.setText("");
-        mCID.setText("");
-        mCOD.setText("");
-        mRoomType.setText("");
-        mRoomCount.setSelection(0);
-        mPayment.setSelection(0);
-        mRate.setSelection(0);
-        mGuestCount.setText("");
-        mDesc.setSelection(0);
-        mProperty.setSelection(0);
-        mRoomCharge.setText("");
-        mExtraCharge.setText("");
-        mHotelTaxes.setText("");
-        mTotal.setText("");
-        mOtaFee.setText("");
-        mBooking.setText("");
-        mZingo.setText("");
-        mAdditional.setText("");
-        mCustomerPay.setText("");
-        mNights.setText("");
-        mNet.setText("");
-        mArr.setText("");
-        book = false;
-        zingoBookingId = "";
-        dtos = null;
-        bookings = null;
-        commisionAmt = 0.0;
-        commisionGST = 0.0;
-        travellerIid = 0;
 
-        if(tlist != null)
-        {
-            tlist.clear();
-        }*/
     }
 
     private boolean isexist(ArrayList<Traveller> travellers) {
@@ -2729,19 +2434,19 @@ public class BillDetails extends AppCompatActivity {
 
     public void loadRoomCategoriesSpinner(final int hotelId)
     {
-        final ProgressDialog dialog = new ProgressDialog(BillDetails.this);
+        final ProgressDialog dialog = new ProgressDialog(UpdateBookingsActivity.this);
         dialog.setMessage("Loading..");
         dialog.setCancelable(false);
         dialog.show();
 
-        new ThreadExecuter().execute(new Runnable() {
+        new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
 
-                final LoginApi getRoomCategories = Util.getClient().create(LoginApi.class);
+                final LoginApi getRoomCategories = app.zingo.com.billgenerate.Utils.Util.getClient().create(LoginApi.class);
 
 
-                String authenticationString = Util.getToken(BillDetails.this);
+                String authenticationString = app.zingo.com.billgenerate.Utils.Util.getToken(UpdateBookingsActivity.this);
                 Call<ArrayList<RoomCategories>> getRoomCategoriesResponse = getRoomCategories.fetchRoomCategoriesByHotelId(authenticationString, hotelId);
 
 
@@ -2761,7 +2466,7 @@ public class BillDetails extends AppCompatActivity {
                                 if(response.body() != null && response.body().size() != 0)
                                 {
                                     roomCategories = response.body();
-                                    RoomCategorySpinnerAdapter adapter = new RoomCategorySpinnerAdapter(BillDetails.this,roomCategories);
+                                    RoomCategorySpinnerAdapter adapter = new RoomCategorySpinnerAdapter(UpdateBookingsActivity.this,roomCategories);
                                     room_category_spinner.setAdapter(adapter);
 
 
@@ -2790,7 +2495,7 @@ public class BillDetails extends AppCompatActivity {
                         {
                             dialog.dismiss();
                         }
-                        Toast.makeText(BillDetails.this,t.getMessage(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateBookingsActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
                         mRoomType.setVisibility(View.VISIBLE);
                         room_category_spinner.setVisibility(View.GONE);
                     }
@@ -2805,7 +2510,7 @@ public class BillDetails extends AppCompatActivity {
     {
 
 
-        RoomAdapter adapter = new RoomAdapter(BillDetails.this,rooms);
+        RoomAdapter adapter = new RoomAdapter(UpdateBookingsActivity.this,rooms);
         mRoom.setAdapter(adapter);
 
     }
@@ -2813,109 +2518,49 @@ public class BillDetails extends AppCompatActivity {
     private void bookedRoom() throws  Exception{
 
 
-            final Rooms room = roomObject;
+        final Rooms room = roomObject;
 
-            room.setStatus("Quick");
+        room.setStatus("Quick");
 
-            new ThreadExecuter().execute(new Runnable() {
-                @Override
-                public void run() {
-                    String auth_string = Util.getToken(BillDetails.this);
-                    LoginApi api = Util.getClient().create(LoginApi.class);
-                    Call<Rooms> response = api.updateRoom(auth_string,room.getRoomId(), room);
+        new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
+            @Override
+            public void run() {
+                String auth_string = app.zingo.com.billgenerate.Utils.Util.getToken(UpdateBookingsActivity.this);
+                LoginApi api = Util.getClient().create(LoginApi.class);
+                Call<Rooms> response = api.updateRoom(auth_string,room.getRoomId(), room);
 
-                    response.enqueue(new Callback<Rooms>() {
-                        @Override
-                        public void onResponse(Call<Rooms> call, Response<Rooms> response) {
+                response.enqueue(new Callback<Rooms>() {
+                    @Override
+                    public void onResponse(Call<Rooms> call, Response<Rooms> response) {
 
-                            try
-                            {
-                                int code = response.code();
-                                if (code == 200||code ==204 ||code==201) {
-                                    Rooms roomresponse = response.body();
-                                    if (roomresponse != null) {
-
-
-                                        Toast.makeText(BillDetails.this, "Room Updated", Toast.LENGTH_SHORT).show();
-                                        roomList.remove(positionRoom);
+                        try
+                        {
+                            int code = response.code();
+                            if (code == 200||code ==204 ||code==201) {
+                                Rooms roomresponse = response.body();
+                                if (roomresponse != null) {
 
 
-                                    }
+                                    Toast.makeText(UpdateBookingsActivity.this, "Room Updated", Toast.LENGTH_SHORT).show();
+                                    roomList.remove(positionRoom);
+
+
                                 }
                             }
-                            catch (Exception ex)
-                            {
-                                ex.printStackTrace();
-                            }
                         }
-
-                        @Override
-                        public void onFailure(Call<Rooms> call, Throwable t) {
-
+                        catch (Exception ex)
+                        {
+                            ex.printStackTrace();
                         }
-                    });
-                }
-            });
+                    }
 
-    }
+                    @Override
+                    public void onFailure(Call<Rooms> call, Throwable t) {
 
-    public void priceCalculation(){
-        try {
-            String room = mRoomCharge.getText().toString();
-            String extra = mExtraCharge.getText().toString();
-            String gst = mHotelTaxes.getText().toString();
-
-            double roomCharge = 0,extraCharge =0,gstCharge=0;
-
-            if(room!=null&&!room.isEmpty()){
-                roomCharge = Double.parseDouble(room);
+                    }
+                });
             }
-
-            if(extra!=null&&!extra.isEmpty()){
-                extraCharge = Double.parseDouble(extra);
-            }
-
-            if(gst!=null&&!gst.isEmpty()){
-                gstCharge = Double.parseDouble(gst);
-            }
-
-            double total = roomCharge+extraCharge+gstCharge;
-            mTotal.setText(""+total);
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-
-
-    }
-
-    public void otaCalculation(){
-        try {
-            String otaCA = mOTACommison.getText().toString();
-            String otaGST = mOTAGST.getText().toString();
-
-
-            double otaCharge = 0,otaGstCharge =0;
-
-            if(otaCA!=null&&!otaCA.isEmpty()){
-                otaCharge = Double.parseDouble(otaCA);
-            }
-
-            if(otaGST!=null&&!otaGST.isEmpty()){
-                otaGstCharge = Double.parseDouble(otaGST);
-            }
-
-
-
-            double total = otaCharge+otaGstCharge;
-            mBooking.setText(""+total);
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-
+        });
 
     }
 

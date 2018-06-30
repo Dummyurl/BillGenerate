@@ -22,6 +22,8 @@ public class HotelDetails implements Serializable{
     private ArrayList<BankDetails> accountsInfo;*/
     @SerializedName("room")
     private ArrayList<Rooms> rooms;
+    @SerializedName("contact")
+    private ArrayList<ContactDetails> contact;
     @SerializedName("DisplayName")
     private String hotelDisplayName;
     @SerializedName("HotelType")
@@ -81,19 +83,6 @@ public class HotelDetails implements Serializable{
         this.userId = userId;
     }
 
-   /* public Bookings getBookingList() {
-        return bookingList;
-    }
-
-    public void setBookingList(Bookings bookingList) {
-        this.bookingList = bookingList;
-    }*/
-    /*private String hotelLocality;
-    private String hotelCountry;
-    private String hotelState;
-    private String hotelCity;
-    private String hotelPinCode;*/
-
     public HotelDetails()
     {
 
@@ -103,14 +92,14 @@ public class HotelDetails implements Serializable{
                         String hotelType, String starRating, int chainId, String chainName, String hotelBuiltYear, String noofRestuarentsInHotel,
                         String noOfRoomsInHotel, String noOfFloorsInHotel, String currencyAccepted, String vccCurrencyAccepted,
                         String standardCheckInTime, String standardCheckOutTime, String hotelTimeZone, boolean is24HourCheckIn,
-                        String hotelStreetAddress, int userId, String localty, String state, String country, String city, String pincode)
+                        String hotelStreetAddress, int userId, String localty, String state, String country, String city, String pincode,ArrayList contacts)
     {
         this.hotelId = hotelId;
         this.hotelName = hotelName;
         this.aminetiesList = aminetiesList;
-        //this.isApproved = isApproved;
-        //this.accountsInfo = accountsInfo;
+
         this.rooms = rooms;
+        this.contact = contacts;
         this.hotelDisplayName = hotelDisplayName;
         this.hotelType = hotelType;
         this.starRating = starRating;
@@ -139,7 +128,7 @@ public class HotelDetails implements Serializable{
     public HotelDetails(int hotelId, String hotelName, String hotelDisplayName, String hotelType, String starRating, int chainId, String hotelBuiltYear, String noofRestuarentsInHotel,
                         String noOfRoomsInHotel, String noOfFloorsInHotel, String currencyAccepted, String vccCurrencyAccepted,
                         String standardCheckInTime, String standardCheckOutTime, String hotelTimeZone, boolean is24HourCheckIn,
-                        String hotelStreetAddress, int userId, String localty, String state, String country, String city, String pincode)
+                        String hotelStreetAddress, int userId, String localty, String state, String country, String city, String pincode,ArrayList contact)
     {
         this.hotelId = hotelId;
         this.hotelName = hotelName;
@@ -219,6 +208,28 @@ public class HotelDetails implements Serializable{
 
     public ArrayList getRooms() {
         return rooms;
+    }
+
+/*
+    public void setRooms(ArrayList<Rooms> rooms) {
+        this.rooms = rooms;
+    }
+*/
+
+    public ArrayList<ContactDetails> getContact() {
+        return contact;
+    }
+
+    public void setContact(ArrayList<ContactDetails> contact) {
+        this.contact = contact;
+    }
+
+    public boolean isIs24HourCheckIn() {
+        return is24HourCheckIn;
+    }
+
+    public boolean isApproved() {
+        return isApproved;
     }
 
     public void setHotelDisplayName(String hotelDisplayName) {
