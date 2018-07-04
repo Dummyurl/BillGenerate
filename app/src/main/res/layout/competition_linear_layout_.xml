@@ -7,6 +7,9 @@
     android:layout_gravity="center"
     android:gravity="center"
     android:textSize="18sp"
+    android:lines="1"
+    android:maxLines="1"
+    android:singleLine="true"
     android:padding="5dp"
     android:background="@drawable/background_border">
 

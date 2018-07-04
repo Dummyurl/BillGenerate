@@ -5,14 +5,17 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -29,6 +32,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.Marker;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -49,6 +53,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import app.zingo.com.billgenerate.Model.NotificationManager;
 import retrofit2.Call;
@@ -59,7 +64,7 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
 
     EditText mHotelName,mPrice;
     TextView mDate,mEnteredHotelName,mLowestPrice,mHighestPrice,mAveragePrice,mMarketLowPrice,mMarketHighPrice,
-            mMarketAvaragePrice,mLowestPriceText,mHighestPriceText,mMarketDemand;
+            mMarketAvaragePrice,mLowestPriceText,mHighestPriceText,mMarketDemand,mAvgComparision;
     FloatingActionButton fab;
     LinearLayout mCompitionLinearLayout,mRatesLinearlayout,mAvailableLinearLayout;
     Spinner mMarketDemandSpinner;
@@ -72,6 +77,10 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
     private BaseFont bf;
     String csvFile;
     String hotelName;
+    String[]competitorsHotelList;
+    int hotelListSize;
+    boolean notificationSend = false;
+    String email="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +107,7 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
         mMarketHighPrice = (TextView)findViewById(R.id.market_highest_selling_price);
         mMarketAvaragePrice = (TextView)findViewById(R.id.average_market_selling_price);
         mLowestPriceText = (TextView)findViewById(R.id.lowest_price_text);
+        mAvgComparision = (TextView)findViewById(R.id.average_price_comparision);
         mHighestPriceText = (TextView)findViewById(R.id.highest_price_text);
         mMarketDemand = (TextView)findViewById(R.id.remark_price_text);
         mMarketDemandSpinner= (Spinner)findViewById(R.id.market_demand_spinner);
@@ -114,6 +124,58 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
 
         hotelName = getIntent().getStringExtra("HotelName");
         final int hotelid = getIntent().getIntExtra("HotelId",0);
+
+        if(hotelName!=null&&!hotelName.isEmpty()){
+            if(hotelName.equalsIgnoreCase("Holiday Homes ")){
+
+                competitorsHotelList = getResources().getStringArray(R.array.competitor_hotel_hoilday);
+                email = getResources().getString(R.string.email_hoilday);
+
+            }else if(hotelName.equalsIgnoreCase("Zingo Nagananda Residency")){
+
+                competitorsHotelList = getResources().getStringArray(R.array.competitor_hotel_nagananda);
+                email = getResources().getString(R.string.email_naga);
+
+            }else if(hotelName.equalsIgnoreCase("RB Hospitality")){
+
+                competitorsHotelList = getResources().getStringArray(R.array.competitor_hotel_rb);
+                email = getResources().getString(R.string.email_rb);
+
+            }else if(hotelName.equalsIgnoreCase("Hotel Ashapura International")){
+
+                competitorsHotelList = getResources().getStringArray(R.array.competitor_hotel_ashapura);
+                email = getResources().getString(R.string.email_ashapura);
+
+            }else if(hotelName.equalsIgnoreCase("SS Lumina Hotel")){
+
+                competitorsHotelList = getResources().getStringArray(R.array.competitor_hotel_ssl);
+                email = getResources().getString(R.string.email_ssl);
+
+            }else if(hotelName.equalsIgnoreCase("Emirates suites")){
+
+                competitorsHotelList = getResources().getStringArray(R.array.competitor_hotel_emirates);
+                email = getResources().getString(R.string.email_emir);
+
+            }else if(hotelName.equalsIgnoreCase("Tranquil Homes")){
+
+                competitorsHotelList = getResources().getStringArray(R.array.competitor_hotel_tranquil);
+                email = getResources().getString(R.string.email_tranquil);
+
+            }else if(hotelName.equalsIgnoreCase("Woodlands Hotel")){
+
+                competitorsHotelList = getResources().getStringArray(R.array.competitor_hotel_woodlands);
+                email = getResources().getString(R.string.email_woodlands);
+
+            }
+        }
+
+        if(competitorsHotelList!=null&&competitorsHotelList.length!=0){
+            hotelListSize = competitorsHotelList.length;
+
+            for(int i=0;i<hotelListSize;i++){
+                onAddField(i);
+            }
+        }
 
 
         mHotelName.setText(hotelName);
@@ -148,8 +210,26 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                     }
 
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd yyyy hh:mm a");
+                    String hotelprices = mPrice.getText().toString();
+                    int hotelprice=0;
+                    try{
+                         hotelprice = Integer.parseInt(hotelprices);
+                        if(hotelprice==0){
 
-                    message = hotelName+","+mPrice.getText().toString()+","+""+":"+message+"="+mMarketLowPrice.getText().toString()+","+mMarketHighPrice.getText().toString()+","+
+                            hotelprices = "Sold out";
+                        }else{
+
+                            hotelprices = mPrice.getText().toString();
+                        }
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+
+
+
+                    message = hotelName+","+hotelprices+","+""+":"+message+"="+mMarketLowPrice.getText().toString()+","+mMarketHighPrice.getText().toString()+","+
                             mMarketAvaragePrice.getText().toString()+","+mMarketDemandSpinner.getSelectedItem().toString()+","+
                             simpleDateFormat.format(new Date())+"="+mLowestPriceText.getText().toString()+","+
                     mHighestPriceText.getText().toString()+","+mMarketDemand.getText().toString();
@@ -163,15 +243,31 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
 
 
                     hotelNotification.setTitle("Dear "+hotelName+", competative analysis report for the day "+simpleDateFormat.format(new Date()));
-                    sendNotification(hotelNotification);
 
-                    /*boolean isfilecreated = createPDF();
-                    if(isfilecreated)
-                    {
-                        File sd = Environment.getExternalStorageDirectory();
-                        sendEmail(sd.getAbsolutePath()+"/ZingoCompetitiveAnalysis/"+mEnteredHotelName.getText().toString()+
-                                " "+mDate.getText().toString()+ ".pdf");
-                    }*/
+
+                    if(notificationSend){
+                        boolean isfilecreated = createPDF();
+                        if(isfilecreated)
+                        {
+                            File sd = Environment.getExternalStorageDirectory();
+                            sendEmail(sd.getAbsolutePath()+"/ZingoCompetitiveAnalysis/"+mEnteredHotelName.getText().toString()+
+                                    " "+mDate.getText().toString()+ ".pdf");
+                        }
+
+                    }else{
+                        //sendNotification(hotelNotification);
+
+                        boolean isfilecreated = createPDF();
+                        if(isfilecreated)
+                        {
+                            File sd = Environment.getExternalStorageDirectory();
+                            sendEmail(sd.getAbsolutePath()+"/ZingoCompetitiveAnalysis/"+mEnteredHotelName.getText().toString()+
+                                    " "+mDate.getText().toString()+ ".pdf");
+                        }
+                    }
+
+
+
                 }
 
 
@@ -228,6 +324,7 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                 else
                 {
                     int i = mRatesLinearlayout.getChildCount();
+                    int count = i;
                     System.out.println("childs = "+i);
                     ArrayList<Integer> rates = new ArrayList<>();
                     ArrayList<Integer> rates1 = new ArrayList<>();
@@ -249,6 +346,8 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                                 rates1.add(rate);
                                 total = total+rate;
                                 hotelName.add(editText1.getText().toString().trim());
+                            }else{
+                                count = count-1;
                             }
                         }
                         else
@@ -261,8 +360,26 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                     if(total != 0)
                     {
                     /*System.out.println(total/i);*/
-                        mAveragePrice.setText("Rs. "+(total/i)+"");
-                        mMarketAvaragePrice.setText("Rs. "+(total/i)+"");
+                        mAveragePrice.setText("Rs. "+(total/count)+"");
+                        mMarketAvaragePrice.setText("Rs. "+(total/count)+"");
+                        double avgPrice = (total/count);
+                        double price = Double.parseDouble(mPrice.getText().toString().trim());
+                        double difference,percentage,value;
+                        if(avgPrice>price){
+                            difference = avgPrice - price;
+                            percentage = difference/avgPrice;
+                            value = percentage * 100;
+                            mAvgComparision.setText("Your Hotel price is "+df.format(difference)+"("+df.format(value)+"%) lower from Marker Average Price");
+                        }else if(avgPrice<price){
+
+                            difference = price - avgPrice;
+                            percentage = difference/price;
+                            value = percentage * 100;
+                            mAvgComparision.setText("Your Hotel price is "+df.format(difference)+"("+df.format(value)+"%) higher than Marker Average Price");
+                        }else if(avgPrice==price){
+
+                            mAvgComparision.setText("Your Hotel price is equal to Marker Average Price");
+                        }
                     }
                     else
                     {
@@ -436,13 +553,8 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                             if(response.body() != null)
                             {
 
-                                    boolean isfilecreated = createPDF();
-                                    if(isfilecreated)
-                                    {
-                                        File sd = Environment.getExternalStorageDirectory();
-                                        sendEmail(sd.getAbsolutePath()+"/ZingoCompetitiveAnalysis/"+mEnteredHotelName.getText().toString()+
-                                                " "+mDate.getText().toString()+ ".pdf");
-                                    }
+                                notificationSend = true;
+
                                 NotificationManager nf = new NotificationManager();
                                 nf.setNotificationText(notification.getTitle());
                                 nf.setNotificationFor(notification.getMessage());
@@ -475,7 +587,10 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
 
     private void savenotification(final NotificationManager notification) {
 
-
+        final ProgressDialog dialog = new ProgressDialog(CompetitiveAnalisysActivity.this);
+        dialog.setMessage(getResources().getString(R.string.loader_message));
+        dialog.setCancelable(false);
+        dialog.show();
 
         new ThreadExecuter().execute(new Runnable() {
             @Override
@@ -488,16 +603,30 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                 response.enqueue(new Callback<NotificationManager>() {
                     @Override
                     public void onResponse(Call<NotificationManager> call, Response<NotificationManager> response) {
-
+                        if(dialog != null && dialog.isShowing())
+                        {
+                            dialog.dismiss();
+                        }
 
                         System.out.println(response.code());
                         try{
-                            if(response.code() == 200)
+                            if(response.code() == 200||response.code() == 201||response.code() == 204)
                             {
+                                if(dialog != null && dialog.isShowing())
+                                {
+                                    dialog.dismiss();
+                                }
                                 if(response.body() != null)
                                 {
 
-
+                                    boolean isfilecreated = createPDF();
+                                    if(isfilecreated)
+                                    {
+                                        File sd = Environment.getExternalStorageDirectory();
+                                        sendEmail(sd.getAbsolutePath()+"/ZingoCompetitiveAnalysis/"+mEnteredHotelName.getText().toString()+
+                                                " "+mDate.getText().toString()+ ".pdf");
+                                    }
+                                    Toast.makeText(CompetitiveAnalisysActivity.this, "Notification Send Successfully", Toast.LENGTH_SHORT).show();
 
                                 }
                             }
@@ -509,7 +638,10 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<NotificationManager> call, Throwable t) {
-
+                        if(dialog != null && dialog.isShowing())
+                        {
+                            dialog.dismiss();
+                        }
                     }
                 });
             }
@@ -517,12 +649,16 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
     }
 
 
-    public void onAddField() {
+    public void onAddField(final int i) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
          View rowView = inflater.inflate(R.layout.competition_linear_layout_, null);
         // Add the new row before the add field button.
 
+
         mCompitionLinearLayout.addView(rowView);
+        if(i!=-1){
+            ((EditText)rowView).setText(""+competitorsHotelList[i]);
+        }
         LayoutInflater inflater1 = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
          View rowView1 = inflater1.inflate(R.layout.competition_linear_layout_, null);
         mRatesLinearlayout.addView(rowView1);
@@ -738,12 +874,12 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
             cb.stroke();
 
             //hotel list
-            cb.rectangle(30,540,200,30);
+            cb.rectangle(30,540,220,30);
             //cb.moveTo(30,510);
             //cb.lineTo(230,510);
             cb.stroke();
 
-            cb.rectangle(230,540,80,30);
+            cb.rectangle(250,540,100,30);
             //cb.moveTo(230,510);
             //cb.lineTo(310,510);
             /*cb.stroke();
@@ -751,17 +887,17 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
             //cb.moveTo(230,510);
             //cb.lineTo(310,510);
             cb.stroke();
-            cb.rectangle(310,540,80,30);
+            cb.rectangle(350,540,60,30);
             //cb.moveTo(310,510);
             //cb.lineTo(360,510);
             cb.stroke();
 
-            cb.rectangle(390,540,80,30);
+            cb.rectangle(410,540,60,30);
 //            cb.moveTo(360,510);
   //          cb.lineTo(410,510);
             cb.stroke();
 
-            cb.rectangle(470,540,80,30);
+            cb.rectangle(470,540,60,30);
     //        cb.moveTo(410,510);
       //      cb.lineTo(460,510);
             cb.stroke();
@@ -771,11 +907,11 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
 
             for(int i=0;i<mRatesLinearlayout.getChildCount();i++)
             {
-                cb.rectangle(30,y,200,20);
+                cb.rectangle(30,y,220,20);
                 //        cb.moveTo(410,510);
                 //      cb.lineTo(460,510);
                 cb.stroke();
-                cb.rectangle(230,y,80,20);
+                cb.rectangle(250,y,100,20);
                 //cb.moveTo(230,510);
                 //cb.lineTo(310,510);
                 /*cb.stroke();
@@ -788,19 +924,19 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                 Spinner sp = (Spinner) mAvailableLinearLayout.getChildAt(i);
                 createContent(cb,35,y+5, editText.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
                 //createContent(cb,235,y+5, sp.getSelectedItem().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
-                createContent(cb,235,y+5, editText1.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+                createContent(cb,255,y+5, editText1.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
                 //createContent(cb,285,y+5, editText1.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
                 y = y-20;
                 //x = y;
             }
 
-            cb.rectangle(310,y+20,80,x-y);
+            cb.rectangle(350,y+20,60,x-y);
             cb.stroke();
-            createContent(cb,330,(y+20)+((x-y)/2)-10,mLowestPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
-            cb.rectangle(390,y+20,80,x-y);
+            createContent(cb,370,(y+20)+((x-y)/2)-10,mLowestPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            cb.rectangle(410,y+20,60,x-y);
             cb.stroke();
-            createContent(cb,410,(y+20)+((x-y)/2)-10,mHighestPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
-            cb.rectangle(470,y+20,80,x-y);
+            createContent(cb,430,(y+20)+((x-y)/2)-10,mHighestPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            cb.rectangle(470,y+20,60,x-y);
             cb.stroke();
             createContent(cb,490,(y+20)+((x-y)/2)-10,mAveragePrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
 
@@ -940,6 +1076,7 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
             createContent(cb,30,190, mLowestPriceText.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
             createContent(cb,30,170, mHighestPriceText.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
             createContent(cb,30,150, mMarketDemand.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            createContent(cb,30,130, mAvgComparision.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
 
             createHeadingsTitle(cb,35,700, mDate.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
             createHeadingsTitle(cb,35,670, "Performance Intelligence Report",PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
@@ -1018,25 +1155,101 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
 
         if(file.exists() )
         {
-            //File[] files = file.listFiles();
-            //System.out.println("File = "+files[files.length -1].getAbsolutePath());
-            Intent emailIntent = new Intent(Intent.ACTION_SEND);
-            emailIntent.setType("text/plain");
-            //emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"email@example.com"});
-            //emailIntent.putExtra(Intent.EXTRA_SUBJECT, "subject here");
-            //emailIntent.putExtra(Intent.EXTRA_TEXT, "body text");
-            //File root = Environment.getExternalStorageDirectory();
-            //String pathToMyAttachedFile = "/BookingReport/AllBookings.xls";
-            /*File file1 = files[files.length-1];//new File(root, pathToMyAttachedFile);
-            if (!file1.exists() || !file1.canRead()) {
-                return;
-            }*/
-            Uri uri = Uri.fromFile(file);
-            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-            startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
+            try{
+                List<Intent> intentShareList = new ArrayList<Intent>();
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                List<ResolveInfo> resolveInfoList = getPackageManager().queryIntentActivities(shareIntent, 0);
+
+                for (ResolveInfo resInfo : resolveInfoList) {
+                    String packageName = resInfo.activityInfo.packageName;
+                    String name = resInfo.activityInfo.name;
+
+
+                    if (packageName.contains("com.google") || packageName.contains("whatsapp")) {
+                        if(packageName.contains("com.google")){
+                            String[] mailto = {email};
+
+                            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                            emailIntent.setType("text/plain");
+                            emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
+                            emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Performance Intelligence Report - "+hotelName+" "+mDate.getText().toString());
+
+                            emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Hotel Partner,\n" +
+                                    "We Thank you for your continued support in ensuring the highest level of service Standards. \n" +
+                                    "\n" +
+                                    "Please find attached performance Intelligence  Report for your hotel for "+mDate.getText().toString());
+
+                            Uri uri = null;
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                uri = FileProvider.getUriForFile(this, "app.zingo.com.billgenerate.fileprovider", file);
+                            }else{
+                                uri = Uri.fromFile(file);
+                            }
+
+
+                            if(uri!=null){
+                                emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                            }else{
+                                Toast.makeText(this, "File cannot access", Toast.LENGTH_SHORT).show();
+                            }
+
+                            intentShareList.add(emailIntent);
+                        }
+                        else if(packageName.contains("whatsapp")){
+                            Intent intent = new Intent();
+                            // intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
+                            intent.setAction(Intent.ACTION_SEND);
+                            intent.setType("application/pdf");
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+
+                            Uri uris = Uri.fromFile(file);
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+                                uris = FileProvider.getUriForFile(this, "app.zingo.com.billgenerate.fileprovider", file);
+
+                            }else{
+                                uris = Uri.fromFile(file);
+                            }
+
+                            if(uris!=null){
+                                intent.putExtra(Intent.EXTRA_STREAM, uris);
+                            }else{
+                                Toast.makeText(this, "File cannot access", Toast.LENGTH_SHORT).show();
+                            }
+
+
+                            intentShareList.add(intent);
+                        }
+
+                    }
+                }
+
+                if (intentShareList.isEmpty()) {
+                    Toast.makeText(CompetitiveAnalisysActivity.this, "No apps to share !", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent chooserIntent = Intent.createChooser(intentShareList.remove(0), "Share via");
+                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentShareList.toArray(new Parcelable[]{}));
+                    startActivity(chooserIntent);
+                }
+
+                    }catch (Exception e){
+                e.printStackTrace();
+            }
+           // Intent emailIntent = new Intent(Intent.ACTION_SEND);
+            //emailIntent.setType("text/plain");
+
+         //   Uri uri = Uri.fromFile(file);
+           // emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+          //  startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
         }
 
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -1055,7 +1268,7 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
         {
             case R.id.action_add:
                 //logout();
-                onAddField();
+                onAddField(-1);
                 return true;
             case R.id.action_delete:
                 //logout();

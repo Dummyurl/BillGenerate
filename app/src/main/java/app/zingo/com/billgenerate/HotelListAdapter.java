@@ -33,7 +33,7 @@ public class HotelListAdapter extends RecyclerView.Adapter<HotelListAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mHotelName.setText(hotelDetailsArrayList.get(position).getHotelDisplayName());
+        holder.mHotelName.setText(hotelDetailsArrayList.get(position).getHotelName());
         holder.mHotelLocality.setText(hotelDetailsArrayList.get(position).getLocalty());
     }
 

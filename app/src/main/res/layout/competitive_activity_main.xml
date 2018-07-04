@@ -517,6 +517,14 @@
                    android:layout_marginTop="5dp"
                    android:textColor="#000"
                    android:textSize="14sp" />
+
+               <TextView
+                   android:id="@+id/average_price_comparision"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="5dp"
+                   android:textColor="#000"
+                   android:textSize="14sp" />
            </LinearLayout>
            <Button
                android:layout_width="match_parent"

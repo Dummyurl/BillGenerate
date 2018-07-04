@@ -15,14 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "728780325041-8j0vlt2ona4lbshks9pnbqe6ka5nh1st.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "app.zingo.com.billgenerate",
-            "certificate_hash": "439d1a42b6b731e14f7c007ec26bcbbdedb2c4b1"
-          }
-        },
-        {
           "client_id": "728780325041-iet0atqu0equ205l91767h5ve6p4kib8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -31,8 +23,12 @@
           }
         },
         {
-          "client_id": "728780325041-rc4np8557bhijea61vf5nht57q8k5n6f.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "728780325041-8j0vlt2ona4lbshks9pnbqe6ka5nh1st.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.zingo.com.billgenerate",
+            "certificate_hash": "439d1a42b6b731e14f7c007ec26bcbbdedb2c4b1"
+          }
         },
         {
           "client_id": "728780325041-rc4np8557bhijea61vf5nht57q8k5n6f.apps.googleusercontent.com",

@@ -6,21 +6,6 @@
     android:layout_height="match_parent"
     android:id="@+id/bill_details_layout"
     tools:context=".BillDetails">
-    <com.dd.processbutton.FlatButton
-        android:id="@+id/send_email"
-        android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:background="@color/colorPrimary"
-        android:padding="10dp"
-        android:layout_gravity="bottom"
-        android:text="Send Email"
-        android:visibility="visible"
-        android:textColor="@android:color/white"
-        app:pb_colorNormal="@android:color/holo_red_light"
-        app:pb_colorPressed="@android:color/holo_red_dark" />
-
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -1175,7 +1160,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="60dp"
                 android:layout_marginTop="5dp">
                 <TextView
                     android:layout_width="match_parent"
@@ -1204,7 +1188,48 @@
 
             </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
 
+            <com.dd.processbutton.FlatButton
+                android:id="@+id/send_email"
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:background="@color/colorPrimary"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:layout_gravity="bottom"
+                android:text="Send Email"
+                android:visibility="visible"
+                android:textColor="@android:color/white"
+                app:pb_colorNormal="@android:color/holo_red_light"
+                app:pb_colorPressed="@android:color/holo_red_dark" />
+
+            <com.dd.processbutton.FlatButton
+                android:id="@+id/send_sms"
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:background="@color/colorPrimary"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:layout_gravity="bottom"
+                android:text="Send Guest"
+                android:layout_weight="1"
+                android:visibility="visible"
+                android:textColor="@android:color/white"
+                app:pb_colorNormal="@android:color/holo_red_light"
+                app:pb_colorPressed="@android:color/holo_red_dark" />
+
+
+        </LinearLayout>
 
 
 

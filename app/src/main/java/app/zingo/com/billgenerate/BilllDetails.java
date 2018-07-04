@@ -1696,7 +1696,7 @@ public class BilllDetails extends AppCompatActivity {
                                 }*/
 
                                 AutocompleteCustomArrayAdapter autocompleteCustomArrayAdapter =
-                                        new AutocompleteCustomArrayAdapter(BilllDetails.this,R.layout.hotels_row,tlist);
+                                        new AutocompleteCustomArrayAdapter(BilllDetails.this,R.layout.hotels_row,tlist,"BilllDetails");
                                 mGuest.setThreshold(1);
                                 mGuest.setAdapter(autocompleteCustomArrayAdapter);
 

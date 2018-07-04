@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import app.zingo.com.billgenerate.BillDetails;
 import app.zingo.com.billgenerate.Model.Traveller;
 import app.zingo.com.billgenerate.R;
+import app.zingo.com.billgenerate.UpdateBookingsActivity;
 
 
 /**
@@ -25,13 +26,15 @@ public class AutocompleteCustomArrayAdapter extends ArrayAdapter<Traveller> {
 
     Context mContext;
     int layoutResourceId;
+    String activity;
     ArrayList<Traveller> data = null;
 
-    public AutocompleteCustomArrayAdapter(Context mContext, int layoutResourceId, ArrayList<Traveller> data) {
+    public AutocompleteCustomArrayAdapter(Context mContext, int layoutResourceId, ArrayList<Traveller> data,String activity) {
 
         super(mContext, layoutResourceId, data);
 
         this.layoutResourceId = layoutResourceId;
+        this.activity = activity;
         this.mContext = mContext;
         this.data = data;
     }
@@ -48,9 +51,16 @@ public class AutocompleteCustomArrayAdapter extends ArrayAdapter<Traveller> {
              * So, when convertView is not null, you should simply update its contents instead of inflating a new row layout.
              */
             if(convertView==null){
+
+                if(activity.equalsIgnoreCase("BillDetails")){
+                    LayoutInflater inflater = ((BillDetails) mContext).getLayoutInflater();
+                    convertView = inflater.inflate(layoutResourceId, parent, false);
+                }else{
+                    LayoutInflater inflater = ((UpdateBookingsActivity) mContext).getLayoutInflater();
+                    convertView = inflater.inflate(layoutResourceId, parent, false);
+                }
                 // inflate the layout
-                LayoutInflater inflater = ((BillDetails) mContext).getLayoutInflater();
-                convertView = inflater.inflate(layoutResourceId, parent, false);
+
             }
 
             // object item based on the position

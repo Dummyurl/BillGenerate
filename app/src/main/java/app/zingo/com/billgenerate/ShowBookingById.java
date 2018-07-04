@@ -96,12 +96,11 @@ public class ShowBookingById extends AppCompatActivity {
                         builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                              /*  System.out.println("room id = "+list.get(pos).getRoomId());
-                                Intent intent = new Intent(ShowBookingById.this,AddRoomsActivity.class);
+                                Intent intent = new Intent(ShowBookingById.this,UpdateBookingsActivity.class);
                                 Bundle bundle = new Bundle();
-                                bundle.putSerializable("roomupdate",list.get(pos));
+                                bundle.putSerializable("BOOKINGS",updateBooking);
                                 intent.putExtras(bundle);
-                                startActivity(intent);*/
+                                startActivity(intent);
 
                             }
                         });

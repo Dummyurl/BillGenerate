@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -47,7 +48,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -98,7 +110,7 @@ public class BillDetails extends AppCompatActivity {
             mOTACommison,mOTAGST,mOtherbookingSource;
     TextView mBook, mCID, mCOD;
     CustomAutoCompleteView mGuest;
-    Button mSave, mCalculate;
+    Button mSave, mCalculate,mSendGuest;
     String[] bookingSourceArray;
     int hotelId,travellerIid,roomId=0;
     ArrayList<HotelDetails> chainsList;
@@ -172,6 +184,18 @@ public class BillDetails extends AppCompatActivity {
     Rooms roomObject = null;
     int positionRoom;
 
+    //Phone OTP
+    private FirebaseAuth mAuth;
+    private static final String TAG = "BillDetails";
+    private static final String KEY_VERIFY_IN_PROGRESS = "key_verify_in_progress";
+
+    private boolean mVerificationInProgress = false;
+    private String mVerificationId;
+    private PhoneAuthProvider.ForceResendingToken mResendToken;
+    private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -228,6 +252,8 @@ public class BillDetails extends AppCompatActivity {
             mCID = (TextView) findViewById(R.id.bill_property_checkiin);
             mCOD = (TextView) findViewById(R.id.bill_property_checkout);
             mSave = (Button) findViewById(R.id.send_email);
+            mSendGuest = (Button) findViewById(R.id.send_sms);
+            mSendGuest.setVisibility(View.GONE);
             mCalculate = (Button) findViewById(R.id.bill_calculate);
             mOtherbookingSource = (EditText) findViewById(R.id.other_booking_source);
             room_category_spinner = (Spinner) findViewById(R.id.room_category_spinner);
@@ -856,6 +882,59 @@ public class BillDetails extends AppCompatActivity {
 
                 }
             });
+
+
+            mSendGuest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String mobileNumber = mMobile.getText().toString();
+                    if(mobileNumber!=null && !mobileNumber.isEmpty()&&mobileNumber.length()>=0){
+
+                        startPhoneNumberVerification(mobileNumber);
+
+                    }
+                }
+            });
+
+            mAuth = FirebaseAuth.getInstance();
+            mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+                @Override
+                public void onVerificationCompleted(PhoneAuthCredential credential) {
+                    Log.d(TAG, "onVerificationCompleted:" + credential);
+                    mVerificationInProgress = false;
+
+                    String code = credential.getSmsCode();
+
+                        signInWithPhoneAuthCredential(credential);//<---hard code---->
+
+
+
+                }
+
+                @Override
+                public void onVerificationFailed(FirebaseException e) {
+                    Log.w(TAG, "onVerificationFailed", e);
+                    mVerificationInProgress = false;
+
+                    if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                    } else if (e instanceof FirebaseTooManyRequestsException) {
+                        Snackbar.make(findViewById(android.R.id.content), "Quota exceeded.",
+                                Snackbar.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCodeSent(String verificationId,
+                                       PhoneAuthProvider.ForceResendingToken token) {
+                    Log.d(TAG, "onCodeSent:" + verificationId);
+
+                    mVerificationId = verificationId;
+                    mResendToken = token;
+                    Toast.makeText(BillDetails.this, "Sms Sent successfully", Toast.LENGTH_SHORT).show();
+
+                }
+            };
 
         }catch (Exception e){
             e.printStackTrace();
@@ -1798,13 +1877,29 @@ public class BillDetails extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<ArrayList<HotelDetails>> call, Response<ArrayList<HotelDetails>> response) {
                         System.out.println("GetHotelByProfileId = " + response.code());
-                        chainsList = response.body();
+                        //chainsList = response.body();
+                        ArrayList<HotelDetails> taggedProfiles = response.body();
 
                         if (progressDialog != null)
                             progressDialog.dismiss();
                         try{
                             if (response.code() == 200) {
-                                if (chainsList != null && chainsList.size() != 0) {
+                                if (taggedProfiles != null && taggedProfiles.size() != 0) {
+
+                                   /* chainsList = new ArrayList<>();
+                                    if(chainsList != null && chainsList.size() != 0)
+                                    {
+                                        chainsList.clear();
+                                    }
+
+                                    for (int i=0;i<taggedProfiles.size();i++)
+                                    {
+                                        if(taggedProfiles.get(i) != null && taggedProfiles.get(i).getApproved())
+                                        {
+                                            chainsList.add(taggedProfiles.get(i));
+                                        }
+                                    }*/
+                                   chainsList = response.body();
                                     PropertyAdapter chainAdapter = new PropertyAdapter(BillDetails.this, chainsList);
                                     mProperty.setAdapter(chainAdapter);
 //
@@ -2107,7 +2202,7 @@ public class BillDetails extends AppCompatActivity {
                                 }*/
 
                                 AutocompleteCustomArrayAdapter autocompleteCustomArrayAdapter =
-                                        new AutocompleteCustomArrayAdapter(BillDetails.this,R.layout.hotels_row,tlist);
+                                        new AutocompleteCustomArrayAdapter(BillDetails.this,R.layout.hotels_row,tlist,"BillDetails");
                                 mGuest.setThreshold(1);
                                 mGuest.setAdapter(autocompleteCustomArrayAdapter);
 
@@ -2917,6 +3012,82 @@ public class BillDetails extends AppCompatActivity {
         }
 
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_VERIFY_IN_PROGRESS, mVerificationInProgress);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mVerificationInProgress = savedInstanceState.getBoolean(KEY_VERIFY_IN_PROGRESS);
+    }
+
+    private void startPhoneNumberVerification(String phoneNumber) {
+        System.out.println("PhoneNumber - "+phoneNumber);
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                phoneNumber,
+                75,
+                TimeUnit.SECONDS,
+                this,
+                mCallbacks);
+
+        mVerificationInProgress = true;
+    }
+
+    private void verifyPhoneNumberWithCode(String verificationId, String code) {
+
+        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
+
+        signInWithPhoneAuthCredential(credential);
+
+    }
+
+    private void resendVerificationCode(String phoneNumber,
+                                        PhoneAuthProvider.ForceResendingToken token) {
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                phoneNumber,
+                60,
+                TimeUnit.SECONDS,
+                this,
+                mCallbacks,
+                token);
+    }
+
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "signInWithCredential:success");
+
+                            FirebaseUser user = task.getResult().getUser();
+                            Toast.makeText(BillDetails.this, "Sucess verification", Toast.LENGTH_SHORT).show();
+
+                            try{
+
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+
+
+
+                        } else {
+
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+
+
+                                Toast.makeText(BillDetails.this, "Message Not Send", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    }
+                });
     }
 
 

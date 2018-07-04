@@ -17,6 +17,9 @@
     <string-array name="payment_mode">
         <item>PaY@HOTEL</item>
         <item>PREPAID/ONLINE</item>
+        <item>B2C PREPAID</item>
+        <item>B2C POSTPAID</item>
+        <item>PART PAYMENT</item>
     </string-array>
 
     <string-array name="database_name">
@@ -64,7 +67,7 @@
 
     <array name="Offline_items">
         <item>WAL</item>
-        <item>DIR</item>
+        <item>ZINGO DIRECT</item>
         <item>AGT</item>
         <item>Other</item>
     </array>
@@ -85,5 +88,116 @@
 
     <string name="file_provider_authority" translatable="false">app.zingo.com.billgenerate.fileprovider</string>
 
+    <array name="competitor_hotel_ashapura">
+        <item>Hotel Chandan</item>
+        <item>Hotel City Plaza</item>
+        <item>Hotel Shree Maruti</item>
+        <item>Hotel Empire</item>
+        <item>The shiv Regency</item>
+        <item>Hotel Aarti International</item>
+        <item>Hotel Shivam</item>
+        <item>Hotel Seven spice</item>
+    </array>
+
+    <array name="competitor_hotel_hoilday">
+        <item>Hotel  janpath-Kalasipalyam</item>
+        <item>Hotel Nandhini(Minerva Circle)</item>
+        <item>Hotel Raaj Residency</item>
+        <item>Tap Gold Crest</item>
+        <item>oyo 12985 Sabharwal Viceroy Lal Bagh</item>
+        <item>Oyo Charu Comfort</item>
+        <item>South Park Hotel Basavanagudi</item>
+        <item>Hotel Green Residency</item>
+        <item>Hotel Ganesh Mahal</item>
+        <item>Sathyam Lodge</item>
+    </array>
+
+    <array name="competitor_hotel_nagananda">
+        <item>Pratik Comforts</item>
+        <item>The Grand Krishna Room</item>
+        <item>OYO 4531 Pleasant Stay Inn</item>
+        <item>OYO 9151 Hotel Sri Sai Comforts</item>
+        <item>Hotel Nandhini</item>
+        <item>FabHotel Barons Inn</item>
+        <item>Kingston Palace</item>
+        <item>Monarch International</item>
+        <item>GKS Residency Deluxe Lodge</item>
+        <item>The Woodbridge Hotel</item>
+    </array>
+
+    <array name="competitor_hotel_rb">
+        <item>OYO 499 umerkot Residency</item>
+        <item>Luxtay suites</item>
+        <item>Nandu Associates Koramangala</item>
+        <item>oyo 3495 Dass Suites</item>
+        <item>Hotel Mint Downtown</item>
+        <item>Oyo 8252 Aayush Corporate stays</item>
+        <item>Hotel Silicrest</item>
+        <item>Oyo 14416 De Oriell</item>
+        <item>OYO 539 Pearl Inn</item>
+        <item>Fabhotel Ivory pearl Koramangala</item>
+    </array>
+
+    <array name="competitor_hotel_ssl">
+        <item>Blupetal Hotel</item>
+        <item>Comfy Hotel</item>
+        <item>Davanam Sarvor Portic Suites</item>
+        <item>Ginger Hotel (Inner ring road)</item>
+        <item>Hotel Empire International Kormangala</item>
+        <item>Hotel Pent House</item>
+        <item>Nandhana Grand</item>
+        <item>Octave studio Hotel</item>
+        <item>Shilton Royale</item>
+        <item>Grandeur Luxury Suites</item>
+    </array>
+
+    <array name="competitor_hotel_tranquil">
+        <item>Bon Cord</item>
+        <item>Lake Habitat Serviced Apartments</item>
+        <item>Mint Queensway Suites</item>
+        <item>OYO 12761 High Street</item>
+        <item>OYO 649 Hotel Ajantha Trinity INN</item>
+        <item>Taura Comfort</item>
+        <item>Tranquil Serviced Apartments</item>
+        <item>Astor Vue</item>
+        <item>PAi Vihar Boarding &amp; Lodging</item>
+        <item>OYO 2235 Home Stay Indiranagar</item>
+    </array>
+
+    <array name="competitor_hotel_woodlands">
+        <item>Oyo 4292 woodlands</item>
+        <item>Hotel Ramanshree Richmond Road</item>
+        <item>Octave Hotel</item>
+        <item>Ibis Hotel City Center</item>
+        <item>The pride hotel</item>
+        <item>Iris- The Business Hotel</item>
+        <item>Southern Star</item>
+        <item>hotel nahar</item>
+        <item>treebo edge</item>
+        <item>Sterling living Space- Residency road</item>
+    </array>
+
+    <array name="competitor_hotel_emirates">
+        <item>Fab Hotel Amazing Inn</item>
+        <item>GS Suite</item>
+        <item>Treebo Live Inn Castle</item>
+        <item>Azaa Stays</item>
+        <item>Comfy Hotel Koramangala</item>
+        <item>Golden Bell</item>
+        <item>Oyo 5488 Hotel the Libra</item>
+        <item>Oyo Central Suite</item>
+        <item>Treebo Elmas</item>
+        <item>Hotel Empire Koramangala</item>
+    </array>
+
+
+    <string name="email_rb">rajendrababum.rb@gmail.com</string>
+    <string name="email_ssl">GM@sslumina.com,Hello@sslumina.com</string>
+    <string name="email_tranquil">tranquilreservation@gmail.com</string>
+    <string name="email_woodlands">info@woodlands.in,gm@woodlands.in</string>
+    <string name="email_hoilday">hotelholidayhome999@gmail.com</string>
+    <string name="email_emir">emiratessuitesindia@gmail.com,info@emiratessuitesindia.com</string>
+    <string name="email_naga">PRAKSHETTY29@gmail.com</string>
+    <string name="email_ashapura">hotelaashapurainternational@yahoo.in,pankaj.jha53@gmail.com</string>
 
 </resources>

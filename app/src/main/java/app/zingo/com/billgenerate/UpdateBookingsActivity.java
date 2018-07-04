@@ -54,6 +54,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -74,23 +75,23 @@ import retrofit2.Response;
 public class UpdateBookingsActivity extends AppCompatActivity {
 
     Spinner mRoomCount, mPayment, mRate, mDesc,mOTA,
-            mSourceType,room_category_spinner,mRoom;
+            mSourceType,mRoom;
     LinearLayout mDataLayout,mOtherLayout,mAddLayout,mCustomerLayout,mOtaService,mOtaGSTLay,mOTAComLay,mOTAPER,mRoomLay;
     EditText mLocation, mCity, mMobile, mRoomType,mProperty,
             mGuestCount, mTotal, mBooking, mZingo,mOtherProperty,
             mBookingID, mEmail,  mNet, mNights, mArr,mOtaFee,
             mRoomCharge,mExtraCharge,mHotelTaxes,mAdditional,mCustomerPay,mOTAPerce,
-            mOTACommison,mOTAGST,mOtherbookingSource;
+            mOTACommison,mOTAGST,mOtherbookingSource,room_category_spinner;
     TextView mBook, mCID, mCOD;
     CustomAutoCompleteView mGuest;
     Button mSave, mCalculate;
     String[] bookingSourceArray;
     int hotelId,travellerIid,roomId=0;
-    ArrayList<app.zingo.com.billgenerate.Model.HotelDetails> chainsList;
+    ArrayList<HotelDetails> chainsList;
     Traveller dtos;
     Bookings1 bookings;
     double commisionAmt,commisionGST;
-    app.zingo.com.billgenerate.Model.HotelDetails list;
+    HotelDetails list;
     ArrayList<Traveller> tlist;
     String[] bookingSourceTitleStringArray;
 
@@ -210,13 +211,27 @@ public class UpdateBookingsActivity extends AppCompatActivity {
             mBook = (TextView) findViewById(R.id.bill_property_booking);
             mCID = (TextView) findViewById(R.id.bill_property_checkiin);
             mCOD = (TextView) findViewById(R.id.bill_property_checkout);
-            mSave = (Button) findViewById(R.id.send_email);
+            mSave = (Button) findViewById(R.id.update);
             mCalculate = (Button) findViewById(R.id.bill_calculate);
             mOtherbookingSource = (EditText) findViewById(R.id.other_booking_source);
-            room_category_spinner = (Spinner) findViewById(R.id.room_category_spinner);
+            room_category_spinner = (EditText) findViewById(R.id.room_category_spinner);
             mRoom = (Spinner) findViewById(R.id.room_spinner);
 
             bookingSourceTitleStringArray = getResources().getStringArray(R.array.booking_source_title);
+
+            Bundle bundle = getIntent().getExtras();
+            if(bundle!=null){
+                bookings = (Bookings1) bundle.getSerializable("BOOKINGS");
+            }
+            
+            if(bookings!=null){
+                
+                setFields(bookings);
+                
+            }
+            
+
+
 
             PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceTitleStringArray);
             mSourceType.setAdapter(spinneradapter);
@@ -378,7 +393,105 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                 }
             });
 
+            mRoomCharge.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+
+                    priceCalculation();
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
+            mExtraCharge.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+
+                    priceCalculation();
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
+            mHotelTaxes.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+
+                    priceCalculation();
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
+            mOTACommison.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+
+                    otaCalculation();
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
+            mOTAGST.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+
+                    otaCalculation();
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
 
             mOTA.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -460,22 +573,9 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                         }
 
                     }else{
-                        String bookingrefno = PreferenceHandler.getInstance(UpdateBookingsActivity.this).getBookingRefNumber();
-                        String bookingRefno1 = mBookingID.getText().toString();
-                        if(!bookingrefno.isEmpty() && bookingrefno.equals(bookingRefno1))
-                        {
-                            Toast.makeText(UpdateBookingsActivity.this,"Booking Is Already Done For This Referrence ID",Toast.LENGTH_LONG)
-                                    .show();
-                            if(csvFile != null)
-                            {
-                                onShareClick();
-                            }
 
-                        }
-                        else
-                        {
                             validate();
-                        }
+
                         //validate();
                     }
 
@@ -633,7 +733,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
 
 
 
-            room_category_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    /*        room_category_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
@@ -644,8 +744,8 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                     if(roomsArrayList!=null&&roomsArrayList.size()!=0){
                         for(int j=0;j<roomsArrayList.size();j++){
 
-                            /*System.out.println("Room Category id=="+roomCategories.get(i).getRoomCategoryId());
-                            System.out.println("Rooms Category id=="+roomsArrayList.get(j).getRoomNo());*/
+                            *//*System.out.println("Room Category id=="+roomCategories.get(i).getRoomCategoryId());
+                            System.out.println("Rooms Category id=="+roomsArrayList.get(j).getRoomNo());*//*
                             if((roomCategories.get(i).getRoomCategoryId()==roomsArrayList.get(j).getRoomCategoryId())&&roomsArrayList.get(j).getStatus().equalsIgnoreCase("Available")){
                                 roomList.add(roomsArrayList.get(j));
                             }
@@ -674,7 +774,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
 
                 }
             });
-
+*/
             mRoom.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -707,11 +807,12 @@ public class UpdateBookingsActivity extends AppCompatActivity {
             //String data = mDataBase.getSelectedItem().toString();
 
 
-            rooms = mRoomType.getText().toString();
+            rooms = room_category_spinner.getText().toString();
             plans = mRate.getSelectedItem().toString();
             roomNum = mRoomCount.getSelectedItem().toString();
             payment = mPayment.getSelectedItem().toString();
             bookingID = mBookingID.getText().toString();
+            property = mProperty.getText().toString();
             location = mLocation.getText().toString();
             city = mCity.getText().toString();
             guest = mGuest.getText().toString();
@@ -812,79 +913,71 @@ public class UpdateBookingsActivity extends AppCompatActivity {
     public void setData(int tid){
 
         try{
-            bookings = new Bookings1();
-            String bookingnumber = randomByDate();
-            bookings.setBookingNumber(bookingnumber);
+            Bookings1 updateBooking = bookings;
 
-            bookings.setTravellerId(tid);
-            bookings.setCheckInDate(cits);
-            bookings.setOptCheckInDate(cits);//----------------change in case of customer app booking-----------
-            bookings.setCheckOutDate(cots);
-            bookings.setOptCheckOutDate(cots);
-            bookings.setHotelId(hotelId);
-            bookings.setBookingSourceType(mSourceType.getSelectedItem().toString());
-            bookings.setNoOfAdults(Integer.parseInt(count));
-            bookings.setBookingStatus("Quick");
-            bookings.setBookingSource(mOTA.getSelectedItem().toString());
-            bookings.setOTACommissionGSTAmount(otaGstAmount);
-            bookings.setOTACommissionAmount(otaComAmount);
-            bookings.setOTATotalCommissionAmount(otaAmt);
-            bookings.setOTAServiceFees(otaFeeAmount);
+            updateBooking.setCheckInDate(cits);
+            updateBooking.setOptCheckInDate(cits);//----------------change in case of customer app booking-----------
+            updateBooking.setCheckOutDate(cots);
+            updateBooking.setOptCheckOutDate(cots);
+            updateBooking.setTravellerId(travellerIid);
+            updateBooking.setBookingSourceType(mSourceType.getSelectedItem().toString());
+            updateBooking.setNoOfAdults(Integer.parseInt(count));
+            updateBooking.setBookingSource(mOTA.getSelectedItem().toString());
+            updateBooking.setOTACommissionGSTAmount(otaGstAmount);
+            updateBooking.setOTACommissionAmount(otaComAmount);
+            updateBooking.setOTATotalCommissionAmount(otaAmt);
+            updateBooking.setOTAServiceFees(otaFeeAmount);
 
             double roomCount = Double.parseDouble(mRoomCount.getSelectedItem().toString());
-            if(roomCount>1){
-                bookings.setRoomId(0);
-            }else{
-                bookings.setRoomId(roomId);
-            }
+
 
             if(otaToHotelPay<0){
-                bookings.setOTAToPayHotel(0);
-                bookings.setHotelToPayOTA(Math.abs(otaToHotelPay));
+                updateBooking.setOTAToPayHotel(0);
+                updateBooking.setHotelToPayOTA(Math.abs(otaToHotelPay));
             }else{
-                bookings.setOTAToPayHotel(Math.abs(otaToHotelPay));
-                bookings.setHotelToPayOTA(0);
+                updateBooking.setOTAToPayHotel(Math.abs(otaToHotelPay));
+                updateBooking.setHotelToPayOTA(0);
             }
-            bookings.setZingoCommision(zingoAmt);
-            bookings.setCustomerPaymentAtOTA(payCustomer);
-            bookings.setAdditionalCharges(addtionalChrg);
-            bookings.setOTABookingID(bookingID);
-            bookings.setGstAmount((int)gstValue);
+            updateBooking.setZingoCommision(zingoAmt);
+            updateBooking.setCustomerPaymentAtOTA(payCustomer);
+            updateBooking.setAdditionalCharges(addtionalChrg);
+            updateBooking.setOTABookingID(bookingID);
+            updateBooking.setGstAmount((int)gstValue);
             DecimalFormat df = new DecimalFormat("##.##");
-            bookings.setCommisionGSTAmount(commisionGST);
+            updateBooking.setCommisionGSTAmount(commisionGST);
             if(mRoomCharge.getText().toString()==null||mRoomCharge.getText().toString().isEmpty()){
-                bookings.setSellRate(0);
+                updateBooking.setSellRate(0);
             }else{
 
                 double sellRate = Double.parseDouble(mRoomCharge.getText().toString());
-                bookings.setSellRate((int) sellRate);
+                updateBooking.setSellRate((int) sellRate);
             }
 
             if(mExtraCharge.getText().toString()==null||mExtraCharge.getText().toString().isEmpty()){
-                bookings.setExtraCharges(0);
+                updateBooking.setExtraCharges(0);
             }else{
 
                 double sellRate = Double.parseDouble(mExtraCharge.getText().toString());
-                bookings.setExtraCharges((int) sellRate);
+                updateBooking.setExtraCharges((int) sellRate);
             }
-            bookings.setCommissionAmount((int) commisionAmt);
-            bookings.setDurationOfStay(Integer.parseInt(nights));
-            bookings.setTotalAmount((int) Double.parseDouble(total));
+            updateBooking.setCommissionAmount((int) commisionAmt);
+            updateBooking.setDurationOfStay(Integer.parseInt(nights));
+            updateBooking.setTotalAmount((int) Double.parseDouble(total));
             if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
-                bookings.setBalanceAmount((int) Double.parseDouble(total));
-                bookings.setHotelToZingo(zingoAmt);
+                updateBooking.setBalanceAmount((int) Double.parseDouble(total));
+                updateBooking.setHotelToZingo(zingoAmt);
             }else{
-                bookings.setBalanceAmount(0);
-                bookings.setZingoToHotel(zingoAmt);
+                updateBooking.setBalanceAmount(0);
+                updateBooking.setZingoToHotel(zingoAmt);
             }
 
-            bookings.setBookingPlan(mRate.getSelectedItem().toString());
-            bookings.setRoomCategory(mRoomType.getText().toString());
+            updateBooking.setBookingPlan(mRate.getSelectedItem().toString());
+            updateBooking.setRoomCategory(room_category_spinner.getText().toString());
 
             if(mRoomCount.getSelectedItem().toString().isEmpty()){
-                bookings.setNoOfRooms(1);
+                updateBooking.setNoOfRooms(1);
             }else{
-                bookings.setNoOfRooms(Integer.parseInt(mRoomCount.getSelectedItem().toString()));
+                updateBooking.setNoOfRooms(Integer.parseInt(mRoomCount.getSelectedItem().toString()));
             }
 
 
@@ -898,11 +991,11 @@ public class UpdateBookingsActivity extends AppCompatActivity {
             if(mBook.getText().toString()==null||mBook.getText().toString().isEmpty()){
                 String bookingDate = sdf.format(date);
                 System.out.println("Booking Date==="+bookingDate);
-                bookings.setBookingDate(bookingDate);
+                updateBooking.setBookingDate(bookingDate);
             }else{
 
                 Date date1 = sdfs.parse(mBook.getText().toString());
-                bookings.setBookingDate(sdf.format(date1));
+                updateBooking.setBookingDate(sdf.format(date1));
             }
 
        /* String bookingDate = sdf.format(date);
@@ -913,7 +1006,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
             Date d = new Date();
             String time = sdft.format(d);
 
-            bookings.setBookingTime(time);
+            updateBooking.setBookingTime(time);
 
             if(book){
                 boolean fileCreated = createPdf();
@@ -925,7 +1018,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                 }
 
             }else{
-                updateRoomBooking(bookings);
+                updateRoomBooking(updateBooking);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -1508,11 +1601,11 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                 LoginApi apiService =
                         app.zingo.com.billgenerate.Utils.Util.getClient().create(LoginApi.class);
                 String authenticationString = app.zingo.com.billgenerate.Utils.Util.getToken(UpdateBookingsActivity.this);
-                Call<app.zingo.com.billgenerate.Model.HotelDetails> call = apiService.getHotelsById(authenticationString, id);
+                Call<HotelDetails> call = apiService.getHotelsById(authenticationString, id);
 
-                call.enqueue(new Callback<app.zingo.com.billgenerate.Model.HotelDetails>() {
+                call.enqueue(new Callback<HotelDetails>() {
                     @Override
-                    public void onResponse(Call<app.zingo.com.billgenerate.Model.HotelDetails> call, Response<app.zingo.com.billgenerate.Model.HotelDetails> response) {
+                    public void onResponse(Call<HotelDetails> call, Response<HotelDetails> response) {
 //                List<RouteDTO.Routes> list = new ArrayList<RouteDTO.Routes>();
                         int statusCode = response.code();
                         if (statusCode == 200 || statusCode == 201 || statusCode == 203 || statusCode == 204) {
@@ -1548,7 +1641,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<app.zingo.com.billgenerate.Model.HotelDetails> call, Throwable t) {
+                    public void onFailure(Call<HotelDetails> call, Throwable t) {
                         // Log error here since request failed
                         if (progressDialog != null)
                             progressDialog.dismiss();
@@ -1627,11 +1720,11 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                 String auth_string = app.zingo.com.billgenerate.Utils.Util.getToken(UpdateBookingsActivity.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
                 LoginApi apiService =
                         app.zingo.com.billgenerate.Utils.Util.getClient().create(LoginApi.class);
-                Call<Bookings1> call = apiService.postBooking(auth_string, bookings);
+                Call<String> call = apiService.updateBookingStatus(auth_string, bookings.getBookingId(),bookings);
 
-                call.enqueue(new Callback<Bookings1>() {
+                call.enqueue(new Callback<String>() {
                     @Override
-                    public void onResponse(Call<Bookings1> call, Response<Bookings1> response) {
+                    public void onResponse(Call<String> call, Response<String> response) {
 
                         int statusCode = response.code();
                         try{
@@ -1639,10 +1732,10 @@ public class UpdateBookingsActivity extends AppCompatActivity {
 
                                 if (progressDialog != null)
                                     progressDialog.dismiss();
-                                Bookings1 dto = response.body();
-                                if (dto != null) {
+
+
                                     book = true;
-                                    zingoBookingId = ""+response.body().getBookingId();
+                                    zingoBookingId = ""+bookings.getBookingId();
 
                                     //Storing ota booking id for check of booking created or not
                                     PreferenceHandler.getInstance(UpdateBookingsActivity.this).setBookingRefNumber(bookings.getOTABookingID());
@@ -1653,16 +1746,13 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                                     fm.setSenderId("415720091200");
                                     fm.setServerId("AIzaSyBFdghUu7AgQVnu27xkKKLHJ6oSz9AnQ8M");
                                     fm.setHotelId(hotelId);
-                                    fm.setTitle("New Booking from Zingo Hotels");
-                                    fm.setMessage("Congrats! "+property+" got one new booking for "+nights +" nights from "+cit+" to "+cot+"\nBooking Number:"+dto.getBookingNumber());
+                                    fm.setTitle("Modified booking");
+                                    fm.setMessage("Dear "+property+" got Modified booking for "+mGuest.getText().toString() +"\nBooking Number:"+bookings.getBookingNumber());
                                     //registerTokenInDB(fm);
                                     sendNotification(fm);
                                     double roomCount = Double.parseDouble(mRoomCount.getSelectedItem().toString());
 
-                                }else{
-                                    String subject=null;
-                                    onShareClick();
-                                }
+
 
                             } else {
                                 if (progressDialog != null)
@@ -1678,7 +1768,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<Bookings1> call, Throwable t) {
+                    public void onFailure(Call<String> call, Throwable t) {
 
                         if (progressDialog != null)
                             progressDialog.dismiss();
@@ -1787,7 +1877,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
 
 
                                 AutocompleteCustomArrayAdapter autocompleteCustomArrayAdapter =
-                                        new AutocompleteCustomArrayAdapter(UpdateBookingsActivity.this,R.layout.hotels_row,tlist);
+                                        new AutocompleteCustomArrayAdapter(UpdateBookingsActivity.this,R.layout.hotels_row,tlist,"UpdateBookingsActivity");
                                 mGuest.setThreshold(1);
                                 mGuest.setAdapter(autocompleteCustomArrayAdapter);
 
@@ -1824,10 +1914,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
 
     private void getTravelerById(final int id){
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("please wait we are fetching traveller details..");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+
 
         new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
             @Override
@@ -1844,14 +1931,22 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                         int statusCode = response.code();
                         if (statusCode == 200 || statusCode == 201 || statusCode == 203 || statusCode == 204) {
 
-                            if (progressDialog!=null)
-                                progressDialog.dismiss();
 
 
                             if (response.body()!=null) {
 
-                                mGuest.setText(""+response.body().getFirstName());
-                                mMobile.setText(""+response.body().getFirstName());
+
+                                if(response.body().getFirstName()==null||response.body().getFirstName().isEmpty()){
+                                    mGuest.setText("");
+                                }else {
+                                    mGuest.setText(""+response.body().getFirstName());
+                                }
+                                if(response.body().getPhoneNumber()==null||response.body().getPhoneNumber().isEmpty()){
+                                    mMobile.setText("");
+                                }else {
+                                    mMobile.setText(""+response.body().getPhoneNumber());
+                                }
+
                             }else{
                                 //travellerIid = 0;
                                 //addTraveler();
@@ -1861,8 +1956,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
 
 
                         }else {
-                            if (progressDialog!=null)
-                                progressDialog.dismiss();
+
                             Toast.makeText(UpdateBookingsActivity.this, " failed due to : "+response.message(), Toast.LENGTH_SHORT).show();
                         }
 //                callGetStartEnd();
@@ -1871,8 +1965,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<Traveller> call, Throwable t) {
                         // Log error here since request failed
-                        if (progressDialog!=null)
-                            progressDialog.dismiss();
+
                         Log.e("TAG", t.toString());
                     }
                 });
@@ -2176,16 +2269,16 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                         emailIntent.setType("text/plain");
                         emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
                         emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+                       /* if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
                             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- "+payment+"-"+ota+" voucher - "+property);
                         }else{
                             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- Confirm Prepaid -"+ota+" voucher - "+property);
-                        }
-
+                        }*/
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, ota+" -Modified Booking!("+mBookingID.getText().toString()+","+mCID.getText().toString()+")");
                         emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Hotel Partner,\n" +
                                 "We Thank you for your continued support in ensuring the highest level of service Standards. \n" +
                                 "\n" +
-                                "Please find the attached reservation for you.");
+                                "Please find the attached modified reservation for you.");
                         File root = Environment.getExternalStorageDirectory();
                         String pathToMyAttachedFile = "/BillGenerate/Pdf/" + csvFile;
                         File file = new File(root, pathToMyAttachedFile);
@@ -2432,7 +2525,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
         return false;
     }
 
-    public void loadRoomCategoriesSpinner(final int hotelId)
+   /* public void loadRoomCategoriesSpinner(final int hotelId)
     {
         final ProgressDialog dialog = new ProgressDialog(UpdateBookingsActivity.this);
         dialog.setMessage("Loading..");
@@ -2504,7 +2597,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
 
             }
         });
-    }
+    }*/
 
     public void loadRoomSpinner(ArrayList<Rooms> rooms)
     {
@@ -2561,6 +2654,177 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                 });
             }
         });
+
+    }
+    private void setFields(Bookings1 booking) {
+
+        DecimalFormat df = new DecimalFormat("#,###.##");
+        SimpleDateFormat sdfs = new SimpleDateFormat("MMM dd,yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        cits = booking.getCheckInDate();
+        cots = booking.getCheckOutDate();
+
+
+        try {
+            mCID.setText(sdfs.format(sdf.parse(booking.getCheckInDate()))+"");
+            mCOD.setText(sdfs.format(sdf.parse(booking.getCheckOutDate()))+"");
+            mBook.setText(sdfs.format(sdf.parse(booking.getBookingDate()))+"");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        mGuestCount.setText(booking.getNoOfAdults()+"");
+
+
+        getTravelerById(booking.getTravellerId());
+        getHotelName(booking.getHotelId());
+        hotelId = booking.getHotelId();
+        travellerIid = booking.getTravellerId();
+
+        mRoomCharge.setText(booking.getSellRate()+"");
+        mExtraCharge.setText(booking.getExtraCharges()+"");
+        mHotelTaxes.setText(booking.getGstAmount()+"");
+     //   room_category_spinner.setText(booking.getRoomCategory()+"");
+        mTotal.setText(booking.getTotalAmount()+"");
+       
+        String bookSource = booking.getBookingSourceType();
+
+        int ind = Arrays.asList(bookingSourceTitleStringArray).indexOf(bookSource);
+        System.out.println("Booking Plan=="+booking.getBookingSourceType()+" i = "+ind);
+        mSourceType.setSelection(ind);
+
+        mOTACommison.setText(""+booking.getOTACommissionAmount());
+        mBookingID.setText(""+booking.getOTABookingID());
+        mOTAGST.setText(""+booking.getOTACommissionGSTAmount());
+        mBooking.setText(""+booking.getOTATotalCommissionAmount());
+        mOtaFee.setText(""+booking.getOTAServiceFees());
+        mZingo.setText(""+booking.getZingoCommision());
+        mAdditional.setText(""+booking.getAdditionalCharges());
+        mCustomerPay.setText(""+booking.getCustomerPaymentAtOTA());
+        mNights.setText(""+booking.getDurationOfStay());
+        double net = booking.getTotalAmount() - booking.getCommissionAmount();
+        mNet.setText(""+net);
+        double arrAmt = totals / booking.getDurationOfStay();
+        double arrRamt = arrAmt / booking.getNoOfRooms();
+        mArr.setText("" + df.format(arrRamt));
+        room_category_spinner.setText(""+booking.getRoomCategory());//room_count
+
+        String[] rooms = getResources().getStringArray(R.array.room_count);
+
+
+        int j = Arrays.asList(rooms).indexOf(booking.getNoOfRooms());
+        System.out.println("Rooms Plan=="+booking.getNoOfRooms()+" i = "+j);
+        mRoomCount.setSelection(j);
+
+        if(booking.getBalanceAmount()!=0){
+            String[] payment = getResources().getStringArray(R.array.payment_mode);
+
+
+            int i = Arrays.asList(payment).indexOf("PaY@HOTEL");
+            mPayment.setSelection(i);
+        }else{
+            String[] payment = getResources().getStringArray(R.array.payment_mode);
+
+
+            int i = Arrays.asList(payment).indexOf("PREPAID/ONLINE");
+            mPayment.setSelection(i);
+        }
+
+
+        if(bookSource.equals("OTA"))
+        {
+            String[] otaArray = getResources().getStringArray(R.array.OTA_items);
+
+            mOTA.setAdapter(new GeneralAdapter(UpdateBookingsActivity.this,otaArray));
+            int i = Arrays.asList(bookingSourceTitleStringArray).indexOf(bookSource);
+            System.out.println("Booking Plan=="+booking.getBookingSource()+" i = "+i);
+            mOTA.setSelection(i);
+        }
+        else if(bookSource.equals("B2B"))
+        {
+            String[] otaArray = getResources().getStringArray(R.array.B2B_items);
+            mOTA.setAdapter(new GeneralAdapter(UpdateBookingsActivity.this,otaArray));
+            int i = Arrays.asList(bookingSourceTitleStringArray).indexOf(bookSource);
+            mOTA.setSelection(i);
+        }
+        else if(bookSource.equals("Offline_items"))
+        {
+            String[] otaArray = getResources().getStringArray(R.array.Offline_items);
+            mOTA.setAdapter(new GeneralAdapter(UpdateBookingsActivity.this,otaArray));
+            int i = Arrays.asList(bookingSourceTitleStringArray).indexOf(bookSource);
+            mOTA.setSelection(i);
+        }
+
+        if(booking.getBookingPlan() != null)
+        {
+
+            String[] ratePlanArray = getResources().getStringArray(R.array.room_plan);
+
+
+            int i = Arrays.asList(ratePlanArray).indexOf(booking.getBookingPlan());
+            System.out.println("Booking Plan=="+booking.getBookingPlan()+" i = "+i);
+            mRate.setSelection(i);
+
+        }
+    }
+
+    public void priceCalculation(){
+        try {
+            String room = mRoomCharge.getText().toString();
+            String extra = mExtraCharge.getText().toString();
+            String gst = mHotelTaxes.getText().toString();
+
+            double roomCharge = 0,extraCharge =0,gstCharge=0;
+
+            if(room!=null&&!room.isEmpty()){
+                roomCharge = Double.parseDouble(room);
+            }
+
+            if(extra!=null&&!extra.isEmpty()){
+                extraCharge = Double.parseDouble(extra);
+            }
+
+            if(gst!=null&&!gst.isEmpty()){
+                gstCharge = Double.parseDouble(gst);
+            }
+
+            double total = roomCharge+extraCharge+gstCharge;
+            mTotal.setText(""+total);
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
+
+    }
+
+    public void otaCalculation(){
+        try {
+            String otaCA = mOTACommison.getText().toString();
+            String otaGST = mOTAGST.getText().toString();
+
+
+            double otaCharge = 0,otaGstCharge =0;
+
+            if(otaCA!=null&&!otaCA.isEmpty()){
+                otaCharge = Double.parseDouble(otaCA);
+            }
+
+            if(otaGST!=null&&!otaGST.isEmpty()){
+                otaGstCharge = Double.parseDouble(otaGST);
+            }
+
+
+
+            double total = otaCharge+otaGstCharge;
+            mBooking.setText(""+total);
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
 
     }
 

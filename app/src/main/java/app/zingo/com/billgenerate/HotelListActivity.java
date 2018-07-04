@@ -178,11 +178,15 @@ public class HotelListActivity extends AppCompatActivity {
 
                                     for (int i=0;i<taggedProfiles.size();i++)
                                     {
+                                        if(i==0){
+                                            hotelDetailsArrayList.add(taggedProfiles.get(i));
+                                        }
                                         if(taggedProfiles.get(i) != null && taggedProfiles.get(i).getApproved())
                                         {
                                             hotelDetailsArrayList.add(taggedProfiles.get(i));
                                         }
                                     }
+
                                     HotelListAdapter adapter = new HotelListAdapter(HotelListActivity.this,hotelDetailsArrayList);
                                     mHotelList.setAdapter(adapter);
 
@@ -280,7 +284,10 @@ public class HotelListActivity extends AppCompatActivity {
     public void onBackPressed() {
 
 
-            exit();
+            //exit();
+        Intent main = new Intent(HotelListActivity.this,MainActivity.class);
+        startActivity(main);
+        HotelListActivity.this.finish();
 
 
     }

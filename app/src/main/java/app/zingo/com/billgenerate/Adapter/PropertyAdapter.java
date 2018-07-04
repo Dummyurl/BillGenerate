@@ -53,7 +53,7 @@ public class PropertyAdapter extends BaseAdapter {
         TextView mHotelName = (TextView) view.findViewById(R.id.hotel_name);
 
 
-        mHotelName.setText(mList.get(pos).getHotelDisplayName().toString());
+        mHotelName.setText(mList.get(pos).getHotelName().toString());
 
 
         return view;
