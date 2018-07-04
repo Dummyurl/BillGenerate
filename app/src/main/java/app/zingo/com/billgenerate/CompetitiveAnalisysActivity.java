@@ -369,16 +369,16 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                             difference = avgPrice - price;
                             percentage = difference/avgPrice;
                             value = percentage * 100;
-                            mAvgComparision.setText("Your Hotel price is "+df.format(difference)+"("+df.format(value)+"%) lower from Marker Average Price");
+                            mAvgComparision.setText("Your Hotel price is "+df.format(difference)+"("+df.format(value)+"%) lower from Market Average Price");
                         }else if(avgPrice<price){
 
                             difference = price - avgPrice;
                             percentage = difference/price;
                             value = percentage * 100;
-                            mAvgComparision.setText("Your Hotel price is "+df.format(difference)+"("+df.format(value)+"%) higher than Marker Average Price");
+                            mAvgComparision.setText("Your Hotel price is "+df.format(difference)+"("+df.format(value)+"%) higher than Market Average Price");
                         }else if(avgPrice==price){
 
-                            mAvgComparision.setText("Your Hotel price is equal to Marker Average Price");
+                            mAvgComparision.setText("Your Hotel price is equal to Market Average Price");
                         }
                     }
                     else
@@ -419,13 +419,13 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                                 double per = dd*100;
                                 int pos = rates1.indexOf(rates.get(0));
 
-                                mLowestPriceText.setText("Your Hotel price is "+df.format(per)+"% higher than "+hotelName.get(pos));
+                                mLowestPriceText.setText("Your Hotel price is "+df.format(per)+"% higher than lowest priced hotel "+hotelName.get(pos));
 
                             }
                             else
                             {
                                 int pos = rates1.indexOf(rates.get(0));
-                                mLowestPriceText.setText("Your Hotel price is "+0+"% higher than "+hotelName.get(pos));
+                                mLowestPriceText.setText("Your Hotel price is "+0+"% higher than lowest priced hotel "+hotelName.get(pos));
                             }
 
                             if(price < rates.get(rates.size()-1))
@@ -434,13 +434,13 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                                 double dd = d/rates.get(rates.size()-1);
                                 double per = dd*100;
                                 int pos = rates1.indexOf(rates.get(rates.size()-1));
-                                mHighestPriceText.setText("Your Hotel price is "+df.format(per)+"% lower than "+hotelName.get(pos));
+                                mHighestPriceText.setText("Your Hotel price is "+df.format(per)+"% lower than highest priced hotel "+hotelName.get(pos));
 
                             }
                             else
                             {
                                 int pos = rates1.indexOf(rates.get(rates.size()-1));
-                                mHighestPriceText.setText("Your Hotel price is "+0+"% lower than "+hotelName.get(pos));
+                                mHighestPriceText.setText("Your Hotel price is "+0+"% lower than highest priced hotel "+hotelName.get(pos));
                                 //mHighestPriceText.setText("Your Hotel price is "+0+"% lower than ABC hotel");
                             }
                             //System.out.println(d/100);
@@ -932,13 +932,13 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
 
             cb.rectangle(350,y+20,60,x-y);
             cb.stroke();
-            createContent(cb,370,(y+20)+((x-y)/2)-10,mLowestPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            createContent(cb,355,(y+20)+((x-y)/2)-10,mLowestPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
             cb.rectangle(410,y+20,60,x-y);
             cb.stroke();
-            createContent(cb,430,(y+20)+((x-y)/2)-10,mHighestPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            createContent(cb,415,(y+20)+((x-y)/2)-10,mHighestPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
             cb.rectangle(470,y+20,60,x-y);
             cb.stroke();
-            createContent(cb,490,(y+20)+((x-y)/2)-10,mAveragePrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            createContent(cb,475,(y+20)+((x-y)/2)-10,mAveragePrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
 
             System.out.println("y value = "+y);
 
@@ -1052,10 +1052,10 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
             createHeadingsTitle(cb,35,730, mEnteredHotelName.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.RED);
             createHeadingsTitle(cb,100,310, "Competitive Overview",PdfContentByte.ALIGN_LEFT,BaseColor.RED);
             createHeadingsTitle(cb,35,550, "Hotel Name",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
-            createHeadingsTitle(cb,235,550, "Rates",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
+            createHeadingsTitle(cb,255,550, "Rates",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
             //createHeadingsTitle(cb,285,550, "Rates",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
-            createHeadingsTitle(cb,315,550, "LP",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
-            createHeadingsTitle(cb,395,550, "HP",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
+            createHeadingsTitle(cb,355,550, "Lowest P.",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
+            createHeadingsTitle(cb,415,550, "Highest P.",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
             createHeadingsTitle(cb,475,550, "Average",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
 
 
@@ -1073,20 +1073,32 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
             createContent(cb,110,220, "Average Market Selling Price",PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
             createContent(cb,310,220, mMarketAvaragePrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
 
-            createContent(cb,30,190, mLowestPriceText.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
-            createContent(cb,30,170, mHighestPriceText.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
-            createContent(cb,30,150, mMarketDemand.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
-            createContent(cb,30,130, mAvgComparision.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            createContent2(cb,30,180, mLowestPriceText.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.RED);
+            createContent2(cb,30,160, mHighestPriceText.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.RED);
+            createContent2(cb,30,130, mMarketDemand.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.RED);
+            createContent2(cb,30,110, mAvgComparision.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.RED);
 
             createHeadingsTitle(cb,35,700, mDate.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
             createHeadingsTitle(cb,35,670, "Performance Intelligence Report",PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
-            createContent(cb,200,20,"This is computer generated analysis",PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            createContent(cb,200,20,"This is computer generated analysis report",PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
             //createContent(cb,300,525, "₹ ",PdfContentByte.ALIGN_RIGHT);
         }
         catch (Exception ex)
         {
             ex.printStackTrace();
         }
+    }
+
+    private void createContent2(PdfContentByte cb, float x, float y, String text, int align,BaseColor bc){
+
+
+        cb.beginText();
+        cb.setFontAndSize(bfBold, 15);
+        cb.setColorFill(bc);
+
+        cb.showTextAligned(align, text.trim(), x , y, 0);
+        cb.endText();
+
     }
 
     private void createContent(PdfContentByte cb, float x, float y, String text, int align,BaseColor bc){
