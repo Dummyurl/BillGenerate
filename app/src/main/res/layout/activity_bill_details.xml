@@ -21,123 +21,24 @@
             android:layout_margin="10dp"
             android:orientation="vertical"
             >
-            <LinearLayout
-                android:layout_width="match_parent"
+
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="5dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Booking ID"
-                    android:layout_weight="2"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#000000"/>
-                <EditText
-                    android:id="@+id/bill_booking_id"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:inputType="text"
-                    android:paddingLeft="10dp"
-                    android:hint="Booking ID"
-                    android:layout_weight="1"
-                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
-                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                    android:background="@drawable/spinner_background"/>
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="Property Details"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="#000"
+                android:layout_margin="5dp"/>
 
-
-            </LinearLayout>
-
-            <LinearLayout
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="5dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Booking Source Type"
-                    android:layout_weight="2"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#000000"/>
-                <Spinner
-                    android:id="@+id/bill_booking_source"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                    android:background="@drawable/spinner_background"/>
-
-                <!-- <EditText
-                     android:id="@+id/bill_booking_ota"
-                     android:layout_width="match_parent"
-                     android:layout_height="50dp"
-                     android:inputType="text"
-                     android:paddingLeft="10dp"
-                     android:hint="Booking Source"
-                     android:layout_weight="1"
-                     android:drawablePadding="@dimen/registration_padding_drawable_margin"
-                     android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                     android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                     android:background="@drawable/spinner_background"/>
- -->
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="5dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Booking Source"
-                    android:layout_weight="2"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#000000"/>
-                <Spinner
-                    android:id="@+id/bill_booking_ota"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                    android:background="@drawable/spinner_background"/>
-
-               <!-- <EditText
-                    android:id="@+id/bill_booking_ota"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:inputType="text"
-                    android:paddingLeft="10dp"
-                    android:hint="Booking Source"
-                    android:layout_weight="1"
-                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
-                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                    android:background="@drawable/spinner_background"/>
--->
-
-            </LinearLayout>
-            <EditText
-                android:id="@+id/other_booking_source"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:visibility="gone"
-                android:background="@drawable/spinner_background"
-                android:singleLine="true"
-                android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                android:paddingLeft="10dp"
-                android:hint="Enter Source"
+                android:layout_height="1dp"
+                android:background="#ffffff"
                 android:layout_marginBottom="5dp"
-                android:inputType="textAutoComplete" />
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -318,6 +219,24 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/billing_booking_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="Booking Source"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="#000"
+                android:layout_margin="5dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#ffffff"
+                android:layout_marginBottom="5dp"
+                />
 
 
             <LinearLayout
@@ -328,18 +247,18 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Guest Mobie"
+                    android:text="Booking ID"
                     android:layout_weight="2"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
                     android:textColor="#000000"/>
                 <EditText
-                    android:id="@+id/bill_guest_mobile"
+                    android:id="@+id/bill_booking_id"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:inputType="number"
+                    android:inputType="text"
                     android:paddingLeft="10dp"
-                    android:hint="Guest Mobile"
+                    android:hint="Booking ID"
                     android:layout_weight="1"
                     android:drawablePadding="@dimen/registration_padding_drawable_margin"
                     android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
@@ -357,23 +276,139 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Name of Guest"
+                    android:text="Booking Source Type"
                     android:layout_weight="2"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
                     android:textColor="#000000"/>
-                <app.zingo.com.billgenerate.Utils.CustomAutoCompleteView
-                    android:id="@+id/bill_guest_name"
+                <Spinner
+                    android:id="@+id/bill_booking_source"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+                <!-- <EditText
+                     android:id="@+id/bill_booking_ota"
+                     android:layout_width="match_parent"
+                     android:layout_height="50dp"
+                     android:inputType="text"
+                     android:paddingLeft="10dp"
+                     android:hint="Booking Source"
+                     android:layout_weight="1"
+                     android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                     android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                     android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                     android:background="@drawable/spinner_background"/>
+ -->
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Booking Source"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <Spinner
+                    android:id="@+id/bill_booking_ota"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+               <!-- <EditText
+                    android:id="@+id/bill_booking_ota"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:inputType="text"
                     android:paddingLeft="10dp"
-                    android:hint="Guest Name"
+                    android:hint="Booking Source"
                     android:layout_weight="1"
                     android:drawablePadding="@dimen/registration_padding_drawable_margin"
                     android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
                     android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
                     android:background="@drawable/spinner_background"/>
+-->
+
+            </LinearLayout>
+            <EditText
+                android:id="@+id/other_booking_source"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:visibility="gone"
+                android:background="@drawable/spinner_background"
+                android:singleLine="true"
+                android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                android:paddingLeft="10dp"
+                android:hint="Enter Source"
+                android:layout_marginBottom="5dp"
+                android:inputType="textAutoComplete" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="2"
+                    android:text="Rate Plan Name"
+                    android:textColor="#000000" />
+
+                <Spinner
+                    android:id="@+id/bill_property_rate"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:entries="@array/room_plan"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Inclusion"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+
+                <Spinner
+                    android:id="@+id/bill_plan_inclusion"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:entries="@array/plan_inclusion"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
 
 
             </LinearLayout>
@@ -477,6 +512,150 @@
 
             </LinearLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:text="Guest Details"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textColor="#000"
+                android:paddingLeft="10dp"
+                />
+
+
+            //
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Guest Mobie"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_guest_mobile"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="number"
+                    android:paddingLeft="10dp"
+                    android:hint="Guest Mobile"
+                    android:layout_weight="1"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Name of Guest"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <app.zingo.com.billgenerate.Utils.CustomAutoCompleteView
+                    android:id="@+id/bill_guest_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="text"
+                    android:paddingLeft="10dp"
+                    android:hint="Guest Name"
+                    android:layout_weight="1"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Guest Email"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_guest_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="text"
+                    android:paddingLeft="10dp"
+                    android:hint="Guest Email"
+                    android:layout_weight="1"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Total Guest"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_property_guest_num"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="number"
+                    android:paddingLeft="10dp"
+                    android:hint="Total no of Guest"
+                    android:layout_weight="1"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tarrif Details"
+                android:textColor="#000"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -572,61 +751,7 @@
             </LinearLayout>
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="5dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Total Guest"
-                    android:layout_weight="2"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#000000"/>
-                <EditText
-                    android:id="@+id/bill_property_guest_num"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:inputType="number"
-                    android:paddingLeft="10dp"
-                    android:hint="Total no of Guest"
-                    android:layout_weight="1"
-                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
-                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                    android:background="@drawable/spinner_background"/>
 
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="5dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Rate Plan Name"
-                    android:layout_weight="2"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#000000"/>
-
-                <Spinner
-                    android:id="@+id/bill_property_rate"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:entries="@array/room_plan"
-                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                    android:background="@drawable/spinner_background"/>
-
-
-            </LinearLayout>
 
 
             <LinearLayout
@@ -655,33 +780,9 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="5dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Inclusion"
-                    android:layout_weight="2"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#000000"/>
-
-                <Spinner
-                    android:id="@+id/bill_plan_inclusion"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:entries="@array/plan_inclusion"
-                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                    android:background="@drawable/spinner_background"/>
 
 
-
-            </LinearLayout>
+            //
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -807,194 +908,202 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:id="@+id/ota_commision_amt_layout"
-                android:layout_marginTop="5dp">
-                <TextView
+                android:id="@+id/ota_transaction"
+                android:orientation="vertical">
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="OTA Commission Amount"
-                    android:layout_weight="2"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#000000"/>
-                <EditText
-                    android:id="@+id/bill_booking_com_amount"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:inputType="numberDecimal"
-                    android:paddingLeft="10dp"
-                    android:hint="OTA Commission Amount"
-                    android:layout_weight="1"
-                    android:textColor="#000000"
-                    android:textStyle="bold"
-                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
-                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                    android:background="@drawable/spinner_background"/>
+                    android:orientation="horizontal"
+                    android:id="@+id/ota_commision_amt_layout"
+                    android:layout_marginTop="5dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="OTA Commission Amount"
+                        android:layout_weight="2"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#000000"/>
+                    <EditText
+                        android:id="@+id/bill_booking_com_amount"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:inputType="numberDecimal"
+                        android:paddingLeft="10dp"
+                        android:hint="OTA Commission Amount"
+                        android:layout_weight="1"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                        android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                        android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                        android:background="@drawable/spinner_background"/>
 
 
-            </LinearLayout>
+                </LinearLayout>
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:id="@+id/ota_gst_layout"
-                android:layout_marginTop="5dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="OTA GST"
-                    android:layout_weight="2"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#000000"/>
-                <EditText
-                    android:id="@+id/bill_booking_com_gst"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:inputType="numberDecimal"
-                    android:paddingLeft="10dp"
-                    android:hint="OTA GST"
-                    android:layout_weight="1"
-                    android:textColor="#000000"
-                    android:textStyle="bold"
-                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
-                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                    android:background="@drawable/spinner_background"/>
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:id="@+id/ota_commision_per_layout"
-                android:layout_marginTop="5dp">
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="OTA Commission %"
-                    android:layout_weight="2"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#000000"/>
-                <EditText
-                    android:id="@+id/bill_booking_com_percentage"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:inputType="numberDecimal"
-                    android:paddingLeft="10dp"
-                    android:hint="OTA Commission %"
-                    android:layout_weight="1"
-                    android:textColor="#000000"
-                    android:textStyle="bold"
-                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
-                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                    android:background="@drawable/spinner_background"/>
+                    android:orientation="horizontal"
+                    android:id="@+id/ota_gst_layout"
+                    android:layout_marginTop="5dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="OTA GST"
+                        android:layout_weight="2"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#000000"/>
+                    <EditText
+                        android:id="@+id/bill_booking_com_gst"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:inputType="numberDecimal"
+                        android:paddingLeft="10dp"
+                        android:hint="OTA GST"
+                        android:layout_weight="1"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                        android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                        android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                        android:background="@drawable/spinner_background"/>
 
 
-            </LinearLayout>
+                </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="5dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="OTA Commission (Incl GST)"
-                    android:layout_weight="2"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#000000"/>
-                <EditText
-                    android:id="@+id/bill_booking_com"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:inputType="numberDecimal"
-                    android:paddingLeft="10dp"
-                    android:hint="OTA Commission(Incl GST)"
-                    android:layout_weight="1"
-                    android:textColor="#000000"
-                    android:textStyle="bold"
-                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
-                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                    android:background="@drawable/spinner_background"/>
-
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:id="@+id/ota_service"
-                android:layout_marginTop="5dp">
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="OTA Service Fee"
-                    android:layout_weight="2"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#000000"/>
-                <EditText
-                    android:id="@+id/bill_booking_com_service"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:inputType="numberDecimal"
-                    android:paddingLeft="10dp"
-                    android:hint="OTA Service Fee"
-                    android:layout_weight="1"
-                    android:textColor="#000000"
-                    android:textStyle="bold"
-                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
-                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                    android:background="@drawable/spinner_background"/>
+                    android:orientation="horizontal"
+                    android:id="@+id/ota_commision_per_layout"
+                    android:layout_marginTop="5dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="OTA Commission %"
+                        android:layout_weight="2"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#000000"/>
+                    <EditText
+                        android:id="@+id/bill_booking_com_percentage"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:inputType="numberDecimal"
+                        android:paddingLeft="10dp"
+                        android:hint="OTA Commission %"
+                        android:layout_weight="1"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                        android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                        android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                        android:background="@drawable/spinner_background"/>
 
 
-            </LinearLayout>
+                </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="5dp">
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="ZINGOHOTELS Commission"
-                    android:layout_weight="2"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#000000"/>
-                <EditText
-                    android:id="@+id/bill_zingo_com"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="OTA Commission (Incl GST)"
+                        android:layout_weight="2"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#000000"/>
+                    <EditText
+                        android:id="@+id/bill_booking_com"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:inputType="numberDecimal"
+                        android:paddingLeft="10dp"
+                        android:hint="OTA Commission(Incl GST)"
+                        android:layout_weight="1"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                        android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                        android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                        android:background="@drawable/spinner_background"/>
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:inputType="numberDecimal"
-                    android:paddingLeft="10dp"
-                    android:hint="ZINGOHOTELS.COM Commission"
-                    android:layout_weight="1"
-                    android:textColor="#000000"
-                    android:textStyle="bold"
-                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
-                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
-                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
-                    android:background="@drawable/spinner_background"/>
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/ota_service"
+                    android:layout_marginTop="5dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="OTA Service Fee"
+                        android:layout_weight="2"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#000000"/>
+                    <EditText
+                        android:id="@+id/bill_booking_com_service"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:inputType="numberDecimal"
+                        android:paddingLeft="10dp"
+                        android:hint="OTA Service Fee"
+                        android:layout_weight="1"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                        android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                        android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                        android:background="@drawable/spinner_background"/>
 
 
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/customer_pay_layout"
+                    android:layout_marginTop="5dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Customer payment at OTA"
+                        android:layout_weight="2"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#000000"/>
+                    <EditText
+                        android:id="@+id/bill_customer_pay"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:inputType="numberDecimal"
+                        android:paddingLeft="10dp"
+                        android:hint="Customer payment at OTA"
+                        android:layout_weight="1"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                        android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                        android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                        android:background="@drawable/spinner_background"/>
+
+
+                </LinearLayout>
             </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -1028,27 +1137,29 @@
 
             </LinearLayout>
 
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:id="@+id/customer_pay_layout"
+                android:id="@+id/part_payment"
                 android:layout_marginTop="5dp">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Customer payment at OTA"
+                    android:text="Customer Paid"
                     android:layout_weight="2"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
                     android:textColor="#000000"/>
                 <EditText
-                    android:id="@+id/bill_customer_pay"
+                    android:id="@+id/bill_part_paid"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:inputType="numberDecimal"
                     android:paddingLeft="10dp"
-                    android:hint="Customer payment at OTA"
+                    android:hint="Customer Paid"
                     android:layout_weight="1"
                     android:textColor="#000000"
                     android:textStyle="bold"
@@ -1059,8 +1170,6 @@
 
 
             </LinearLayout>
-
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -1113,6 +1222,37 @@
                     android:paddingLeft="10dp"
                     android:enabled="false"
                     android:hint="Total No of Nights"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ZINGOHOTELS Commission"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_zingo_com"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="ZINGOHOTELS.COM Commission"
                     android:layout_weight="1"
                     android:textColor="#000000"
                     android:textStyle="bold"

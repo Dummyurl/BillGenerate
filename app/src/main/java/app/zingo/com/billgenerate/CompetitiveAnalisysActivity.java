@@ -255,15 +255,15 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                         }
 
                     }else{
-                        //sendNotification(hotelNotification);
+                       sendNotification(hotelNotification);
 
-                        boolean isfilecreated = createPDF();
+                      /*  boolean isfilecreated = createPDF();
                         if(isfilecreated)
                         {
                             File sd = Environment.getExternalStorageDirectory();
                             sendEmail(sd.getAbsolutePath()+"/ZingoCompetitiveAnalysis/"+mEnteredHotelName.getText().toString()+
                                     " "+mDate.getText().toString()+ ".pdf");
-                        }
+                        }*/
                     }
 
 
