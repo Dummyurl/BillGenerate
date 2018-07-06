@@ -11,6 +11,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -39,8 +41,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,11 +67,16 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -102,12 +111,14 @@ public class BillDetails extends AppCompatActivity {
 
     Spinner mRoomCount, mPayment, mRate, mDesc, mProperty,mOTA,mDataBase,
             mSourceType,room_category_spinner,mRoom;
-    LinearLayout mDataLayout,mOtherLayout,mAddLayout,mCustomerLayout,mOtaService,mOtaGSTLay,mOTAComLay,mOTAPER,mRoomLay;
+    LinearLayout mDataLayout,mOtherLayout,mAddLayout,
+            mCustomerLayout,mOtaService,mOtaGSTLay,mOTAComLay,
+            mOTAPER,mRoomLay,mOtaTransaction;
     EditText mLocation, mCity, mMobile, mRoomType,
             mGuestCount, mTotal, mBooking, mZingo,mOtherProperty,
             mBookingID, mEmail,  mNet, mNights, mArr,mOtaFee,
             mRoomCharge,mExtraCharge,mHotelTaxes,mAdditional,mCustomerPay,mOTAPerce,
-            mOTACommison,mOTAGST,mOtherbookingSource;
+            mOTACommison,mOTAGST,mOtherbookingSource,mGuestEmail;
     TextView mBook, mCID, mCOD;
     CustomAutoCompleteView mGuest;
     Button mSave, mCalculate,mSendGuest;
@@ -126,7 +137,7 @@ public class BillDetails extends AppCompatActivity {
     RoomDataBase room;
     PlanDataBase plan;
     BillDataBase bill;
-    String zingoBookingId;
+    String zingoBookingId,bookingTime,bookingRoomType;
 
     boolean book = false;
 
@@ -170,6 +181,8 @@ public class BillDetails extends AppCompatActivity {
 
     private static Font small = new Font(Font.FontFamily.TIMES_ROMAN, 12,
             Font.NORMAL);
+    private static Font smallRed = new Font(Font.FontFamily.TIMES_ROMAN, 12,
+            Font.NORMAL,BaseColor.RED);
 
     File destination = new File(Environment.getExternalStorageDirectory(),
             System.currentTimeMillis() + ".pdf");
@@ -194,6 +207,17 @@ public class BillDetails extends AppCompatActivity {
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
 
+    //Guest Pdf
+    private BaseFont bfBold;
+    private BaseFont bf;
+    private int pageNumber = 0;
+    String guestpdfFilename = "";
+    String guestPdf;
+    String guestpdfFile;
+    int pdfMinLen;
+
+    public static Font greyFont = new Font(Font.FontFamily.TIMES_ROMAN, 12,
+            Font.NORMAL, BaseColor.GRAY);
 
 
 
@@ -202,6 +226,7 @@ public class BillDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         try{
             setContentView(R.layout.activity_bill_details);
+           //setContentView(R.layout.new_bill_booking_activity);
 
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -215,6 +240,7 @@ public class BillDetails extends AppCompatActivity {
             mOTAComLay = (LinearLayout)findViewById(R.id.ota_commision_amt_layout);
             mOTAPER = (LinearLayout)findViewById(R.id.ota_commision_per_layout);
             mRoomLay = (LinearLayout)findViewById(R.id.room_layout);
+            mOtaTransaction = (LinearLayout)findViewById(R.id.ota_transaction);
             mOtaGSTLay = (LinearLayout)findViewById(R.id.ota_gst_layout);
             mDataLayout = (LinearLayout)findViewById(R.id.data_property_layout);
             mOtherLayout = (LinearLayout)findViewById(R.id.other_property_layout);
@@ -231,6 +257,7 @@ public class BillDetails extends AppCompatActivity {
             mCity = (EditText) findViewById(R.id.bill_property_city);
             mGuest = (CustomAutoCompleteView) findViewById(R.id.bill_guest_name);
             mMobile = (EditText) findViewById(R.id.bill_guest_mobile);
+            mGuestEmail = (EditText) findViewById(R.id.bill_guest_email);
             mGuestCount = (EditText) findViewById(R.id.bill_property_guest_num);
             mDesc = (Spinner) findViewById(R.id.bill_plan_inclusion);
             mRoomCharge = (EditText) findViewById(R.id.bill_room_charge);
@@ -253,7 +280,7 @@ public class BillDetails extends AppCompatActivity {
             mCOD = (TextView) findViewById(R.id.bill_property_checkout);
             mSave = (Button) findViewById(R.id.send_email);
             mSendGuest = (Button) findViewById(R.id.send_sms);
-            mSendGuest.setVisibility(View.GONE);
+            //mSendGuest.setVisibility(View.GONE);
             mCalculate = (Button) findViewById(R.id.bill_calculate);
             mOtherbookingSource = (EditText) findViewById(R.id.other_booking_source);
             room_category_spinner = (Spinner) findViewById(R.id.room_category_spinner);
@@ -274,6 +301,7 @@ public class BillDetails extends AppCompatActivity {
 
                             PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
                             mOTA.setAdapter(spinneradapter);
+                            mOtaTransaction.setVisibility(View.VISIBLE);
                         }
                         else if(bookingSourceTitleStringArray[position].equals("B2B"))
                         {
@@ -281,6 +309,7 @@ public class BillDetails extends AppCompatActivity {
 
                             PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
                             mOTA.setAdapter(spinneradapter);
+                            mOtaTransaction.setVisibility(View.GONE);
                         }
                         else if(bookingSourceTitleStringArray[position].equals("Offline"))
                         {
@@ -288,6 +317,7 @@ public class BillDetails extends AppCompatActivity {
 
                             PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
                             mOTA.setAdapter(spinneradapter);
+                            mOtaTransaction.setVisibility(View.GONE);
                         }
                     }
                     catch (Exception ex)
@@ -601,6 +631,31 @@ public class BillDetails extends AppCompatActivity {
 
                 }
             });
+
+            mRate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    if(mRate.getSelectedItem().toString().equalsIgnoreCase("CP")){
+
+                        mDesc.setSelection(0);
+
+                    }else if(mRate.getSelectedItem().toString().equalsIgnoreCase("EP")){
+                        mDesc.setSelection(1);
+
+                    }else if(mRate.getSelectedItem().toString().equalsIgnoreCase("AP")){
+                        mDesc.setSelection(2);
+
+                    } else if(mRate.getSelectedItem().toString().equalsIgnoreCase("MAP")){
+                        mDesc.setSelection(3);
+
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
             //Database call
             dbHelper = new DataBaseHelper(this);
             room = new RoomDataBase(this);
@@ -654,7 +709,7 @@ public class BillDetails extends AppCompatActivity {
                     cit = mCID.getText().toString();
                     cot = mCOD.getText().toString();
                     total = mTotal.getText().toString();
-                    zingo = mZingo.getText().toString();
+                   // zingo = mZingo.getText().toString();
                     booking = mBooking.getText().toString();
                     roomCharge = mRoomCharge.getText().toString();
                     extraCharge = mExtraCharge.getText().toString();
@@ -672,12 +727,12 @@ public class BillDetails extends AppCompatActivity {
                         mBooking.setError("Should not be Empty");
                         mBooking.requestFocus();
 
-                    } else if (zingo == null || zingo.isEmpty()) {
+                    } /*else if (zingo == null || zingo.isEmpty()) {
                         //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
                         mZingo.setError("Should not be Empty");
                         mZingo.requestFocus();
 
-                    } else if (cit == null || cit.isEmpty()) {
+                    }*/ else if (cit == null || cit.isEmpty()) {
                         //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
                         mCID.setError("Should not be Empty");
                         mCID.requestFocus();
@@ -740,7 +795,51 @@ public class BillDetails extends AppCompatActivity {
                         DecimalFormat df = new DecimalFormat("#,###.##");
                         totals = Double.parseDouble(total);
                         otaAmt = Double.parseDouble(booking);
-                        zingoAmt = Double.parseDouble(zingo);
+                       // zingoAmt = Double.parseDouble(zingo);
+                        double zingoAmts=0;
+                        System.out.println(" Property == "+property);
+                        //Toast.makeText(BillDetails.this, "Property name"+property, Toast.LENGTH_SHORT).show();
+                        if(property.contains("Holiday Homes")){
+                            zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_holiday));
+                        }else if(property.equalsIgnoreCase("Zingo Nagananda Residency")){
+                            zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_naga));
+                        }else if(property.equalsIgnoreCase("RB Hospitality")){
+                            zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_rb));
+                        }else if(property.contains("SS Lumina Hotel")){
+                            zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_ssl));
+                        }else if(property.equalsIgnoreCase("Sanctum Manor")){
+                            zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_sanctum));
+                        }else if(property.equalsIgnoreCase("Hotel Ashapura International")){
+
+                            if(rooms.contains("Non")){
+                                zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_asha_nonac));
+                                System.out.println("Room spinner=="+rooms);
+                            }else{
+                                zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_asha_ac));
+                                System.out.println("Room spinner=="+room_category_spinner.getSelectedItem().toString());
+                            }
+
+
+                        }else if(property.equalsIgnoreCase("Farmers Corner")){
+                            zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_farmers));
+                        }else if(property.equalsIgnoreCase("Coffe Bean Inn")){
+                            zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_coffee));
+                        }else if(property.equalsIgnoreCase("Kalyan Residency")){
+                            zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_kalyan));
+                        }else if(property.equalsIgnoreCase("Emirates Suites")){
+                            zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_emirates));
+                        }else if(property.equalsIgnoreCase("Tranquil Homes")){
+                            zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_tranquil));
+                        }else if(property.contains("Woodlands Hotel")){
+                            zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_woodlands));
+                        }else if(property.equalsIgnoreCase("Airport Stay Inn")){
+                            zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_airport));
+                        }else{
+                            zingoAmts=0;
+                        }
+
+
+
                         if(addtional==null||addtional.isEmpty()){
                             addtionalChrg = 0;
                         }else{
@@ -772,6 +871,11 @@ public class BillDetails extends AppCompatActivity {
                             mArr.setText("" + df.format(arrRamt));
                         }
 
+                        zingoAmt = diffDays * zingoAmts;
+                        mZingo.setText(""+df.format(zingoAmt));
+                        zingo = mZingo.getText().toString();
+                        zingo = ""+df.format(zingoAmt);
+
                         commisionAmt = otaAmt + zingoAmt+otaFeeAmount;
                         double gst = commisionAmt*18;
                         commisionGST = gst/100;
@@ -801,7 +905,7 @@ public class BillDetails extends AppCompatActivity {
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
                     hotelId = chainsList.get(i).getHotelId();
-                    property = chainsList.get(i).getHotelDisplayName();
+                    property = chainsList.get(i).getHotelName();
 
                     mLocation.setText(chainsList.get(i).getLocalty());
                     mCity.setText(chainsList.get(i).getCity());
@@ -887,12 +991,32 @@ public class BillDetails extends AppCompatActivity {
             mSendGuest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String mobileNumber = mMobile.getText().toString();
-                    if(mobileNumber!=null && !mobileNumber.isEmpty()&&mobileNumber.length()>=0){
 
-                        startPhoneNumberVerification(mobileNumber);
+                    try{
 
+                        if(book){
+                            if(mGuestEmail.getText().toString()==null&&mGuestEmail.getText().toString().isEmpty()){
+                                Toast.makeText(BillDetails.this, "Guest Email should not be empty", Toast.LENGTH_SHORT).show();
+                                mGuestEmail.setError("Please fill the field");
+                            }else{
+
+                                boolean isfilecreated =  createPDFGuest();
+                                if (isfilecreated) {
+                                    sendEmailattacheGuest();
+                                }
+
+
+                            }
+
+                        }else{
+                            Toast.makeText(BillDetails.this, "After Booking only voucher send to Guest", Toast.LENGTH_SHORT).show();
+                        }
+
+
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
+
                 }
             });
 
@@ -1268,6 +1392,8 @@ public class BillDetails extends AppCompatActivity {
 
     }
 
+
+
     private void addMetaData(Document document) {
 
         document.addTitle("Title");
@@ -1276,6 +1402,8 @@ public class BillDetails extends AppCompatActivity {
         document.addAuthor("Lars Vogel");
         document.addCreator("Lars Vogel");
     }
+
+
 
     public void addTitles() {
 
@@ -1299,11 +1427,15 @@ public class BillDetails extends AppCompatActivity {
 
     }
 
+
+
     public void addFooter(Paragraph para) {
         para.setAlignment(Element.ALIGN_BOTTOM);
         paragraph.add(para);
 
     }
+
+
 
 
     public void addParagraph() {
@@ -1325,7 +1457,12 @@ public class BillDetails extends AppCompatActivity {
 
             //paragraph = new Paragraph(text,smallBold);
             addEmptyLine(paragraph, 2);
-            paragraph.add(new Paragraph("Booking ID: " + bookingID, smallBolds));
+            if(mOTA.getSelectedItem().toString().equalsIgnoreCase("ZINGO DIRECT")){
+                paragraph.add(new Paragraph("",smallBolds));
+            }else{
+                paragraph.add(new Paragraph("Booking ID: " + bookingID, smallBolds));
+            }
+
             paragraph.add(new Paragraph("Booking Source: " + ota, smallBolds));
             if(zingoBookingId!=null&&!zingoBookingId.isEmpty()){
                 paragraph.add(new Paragraph("Zingo Booking ID: " + zingoBookingId, smallBolds));
@@ -1338,11 +1475,16 @@ public class BillDetails extends AppCompatActivity {
             addEmptyLine(paragraph, 1);
             paragraph.add(new Paragraph("Payment Breakup", smallBold));
             addEmptyLine(paragraph, 1);
-            if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
-                createTablesPaymentHotel(paragraph);
+            if(mOTA.getSelectedItem().toString().equalsIgnoreCase("ZINGO DIRECT")){
+                createTablesPaymentDirect(paragraph);
             }else{
-                createTablesPayment(paragraph);
+                if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+                    createTablesPaymentHotel(paragraph);
+                }else{
+                    createTablesPayment(paragraph);
+                }
             }
+
 
             addEmptyLine(paragraph, 2);
             addChild(new Paragraph(important, subFont));
@@ -1383,7 +1525,12 @@ public class BillDetails extends AppCompatActivity {
         table.setHeaderRows(1);*/
 
         table.addCell("BOOKING ID");
-        table.addCell(bookingID);
+        if(mOTA.getSelectedItem().toString().equalsIgnoreCase("ZINGO DIRECT")){
+            table.addCell(zingoBookingId);
+        }else{
+            table.addCell(bookingID);
+        }
+
         table.addCell("Booking Source");
         table.addCell(ota);
         table.addCell("HOTEL NAME");
@@ -1431,8 +1578,7 @@ public class BillDetails extends AppCompatActivity {
 
     }
 
-    private void createTablesPayment(Paragraph para)
-            throws BadElementException {
+    private void createTablesPayment(Paragraph para) throws BadElementException {
         PdfPTable table = new PdfPTable(2);
 
         // t.setBorderColor(BaseColor.GRAY);
@@ -1473,11 +1619,11 @@ public class BillDetails extends AppCompatActivity {
         table.addCell("(B) OTA COMMISSION(Incl GST)");
         table.addCell("INR " + booking);
         table.addCell("(C) ZINGOHOTELS.COM COMMISION");
-        table.addCell("INR " + zingo);
+        table.addCell("INR " + mZingo.getText().toString());
         table.addCell("OTA to Pay Hotel(A-B)");
         table.addCell("INR " + dfs.format(otaToHotel));
         table.addCell("Hotel to Pay Zingo(C)");
-        table.addCell("INR " + zingo);
+        table.addCell("INR " +  mZingo.getText().toString());
         table.addCell("NET AMOUNT (A-B-C)");
         table.addCell("INR " + net);
         table.addCell("ARR");
@@ -1532,7 +1678,7 @@ public class BillDetails extends AppCompatActivity {
         table.addCell("(B) OTA COMMISSION(Incl GST)");
         table.addCell("INR " + booking);
         table.addCell("(C) ZINGOHOTELS.COM COMMISION");
-        table.addCell("INR " + zingo);
+        table.addCell("INR " +  mZingo.getText().toString());
         table.addCell("(D) Additional Charges");
         table.addCell("INR " + addtional);
         if(!mOTA.getSelectedItem().toString().equalsIgnoreCase("BOOKING.COM")&&!mOTA.getSelectedItem().toString().equalsIgnoreCase("EXPEDIA")){
@@ -1595,8 +1741,54 @@ public class BillDetails extends AppCompatActivity {
 
 
         table.addCell("Hotel to Pay Zingo(C)");
-        table.addCell("INR " + zingo);
+        table.addCell("INR " +  mZingo.getText().toString());
         table.addCell("NET AMOUNT (A-B-C)");
+        table.addCell("INR " + net);
+        table.addCell("ARR");
+        table.addCell("INR " + arr);
+
+        para.add(table);
+
+    }
+
+
+
+    private void createTablesPaymentDirect(Paragraph para) throws BadElementException {
+        PdfPTable table = new PdfPTable(2);
+
+
+        DecimalFormat dfs = new DecimalFormat("#.##");
+
+
+        PdfPCell c1 = new PdfPCell(new Phrase("Description", catFontw));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        c1.setBackgroundColor(BaseColor.GRAY);
+        table.addCell(c1);
+
+        c1 = new PdfPCell(new Phrase("Amount", catFontw));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        c1.setBackgroundColor(BaseColor.GRAY);
+        table.addCell(c1);
+        table.setHeaderRows(1);
+
+
+
+        table.addCell("(i) ROOM CHARGES\n"+roomNum+" Room, "+nights+" Night");
+        table.addCell("INR " + roomCharge);
+        table.addCell("(ii) EXTRA CHARGES");
+        table.addCell("INR " + extraCharge);
+        table.addCell("(iii) HOTEL TAXES");
+        table.addCell("INR " + hoteltaxes);
+        table.addCell("(A) HOTEL GROSS CHARGES (i+ii+iii)");
+        table.addCell("INR " + total);
+
+        table.addCell("ZINGOHOTELS.COM COMMISION(B)");
+        table.addCell("INR " +  mZingo.getText().toString());
+
+        table.addCell("Hotel to Pay Zingo");
+        table.addCell("INR " +  mZingo.getText().toString());
+
+        table.addCell("NET AMOUNT (A-B)");
         table.addCell("INR " + net);
         table.addCell("ARR");
         table.addCell("INR " + arr);
@@ -2034,6 +2226,8 @@ public class BillDetails extends AppCompatActivity {
                                 if (dto != null) {
                                     book = true;
                                     zingoBookingId = ""+response.body().getBookingId();
+                                    bookingTime = ""+response.body().getBookingTime();
+                                    bookingRoomType = ""+response.body().getRoomCategory();
 
                                     //Storing ota booking id for check of booking created or not
                                     PreferenceHandler.getInstance(BillDetails.this).setBookingRefNumber(bookings.getOTABookingID());
@@ -3088,6 +3282,475 @@ public class BillDetails extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+
+
+    //Guest Pdf
+
+    private boolean createPDFGuest () throws Exception{
+
+        Document doc = new Document();
+        PdfWriter docWriter = null;
+        initializeFonts();
+
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            guestPdf = System.currentTimeMillis() + ".pdf";
+
+            File directory = new File(sd.getAbsolutePath()+"/Bill Generate/Pdf/Guest/");
+            //create directory if not exist
+            if (!directory.exists() && !directory.isDirectory()) {
+                directory.mkdirs();
+            }
+
+            guestpdfFile = sd.getAbsolutePath()+"/Bill Generate/Pdf/Guest/"+guestPdf;
+
+            File file = new File(directory, guestPdf);
+            String path = "docs/" + guestpdfFilename;
+            docWriter = PdfWriter.getInstance(doc , new FileOutputStream(file));
+            doc.addAuthor("Lucida Hospitality Pvt Ltd");
+            doc.addCreationDate();
+            doc.addProducer();
+            doc.addCreator("zingohotels.com");
+            doc.addTitle("Invoice");
+            doc.setPageSize(PageSize.LETTER);
+
+            doc.open();
+            PdfContentByte cb = docWriter.getDirectContent();
+
+            boolean beginPage = true;
+            int y = 0;
+
+
+                if(beginPage){
+                    generateLayout(doc, cb);
+                    printPageNumber(cb);
+                    doc.newPage();
+                    generateLayoutNext(doc, cb);
+                    printPageNumber(cb);
+                }
+
+           // printPageNumber(cb);
+            return  true;
+
+        }
+        catch (DocumentException dex)
+        {
+            dex.printStackTrace();
+            return false;
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+            return false;
+        }
+        finally
+        {
+            if (doc != null)
+            {
+                doc.close();
+            }
+            if (docWriter != null)
+            {
+                docWriter.close();
+            }
+            return false;
+        }
+    }
+
+    private void generateLayout(Document doc, PdfContentByte cb)  {
+
+        try {
+
+            cb.setLineWidth(1f);
+
+            createHeadings(cb,400,730,"Hotel Confirmation Voucher");
+
+            cb.moveTo(25,680);
+            cb.lineTo(600,680);
+
+            createHeadingss(cb,50,665,"Guest Name: ");
+            createHeadings(cb,135,665,mGuest.getText().toString());
+
+            cb.moveTo(25,650);
+            cb.lineTo(600,650);
+            cb.stroke();
+
+            createHeadingsTitles(cb,50,630,property);
+            createHeadingsTitle(cb,50,610,mLocation.getText().toString());
+            createHeadingsTitle(cb,50,590,mCity.getText().toString());
+
+            createContent(cb,200,620, "Check IN",PdfContentByte.ALIGN_LEFT);
+            createHeadingsTitles(cb,200,605,mCID.getText().toString());
+
+
+            createContent(cb,450,620, "Check OUT",PdfContentByte.ALIGN_LEFT);
+            createHeadingsTitles(cb,450,605,mCOD.getText().toString());
+
+            cb.moveTo(25,580);
+            cb.lineTo(600,580);
+            cb.stroke();
+
+
+            createHeadingsContent(cb,50,550,"OTA Booking ID : ");
+            createHeadingsTitle(cb,200,550,mBookingID.getText().toString());
+
+            createHeadingsContent(cb,50,520,"Date of Booking : ");
+            createHeadingsTitle(cb,200,520,mBook.getText().toString()+","+bookingTime);
+            //createHeadingsTitle(cb,200,520,mBook.getText().toString()+",12:31 am");
+
+            createHeadingsContent(cb,50,490,"Room Type: ");
+            createHeadingsTitle(cb,200,490,bookingRoomType);
+            //createHeadingsTitle(cb,200,490,"Deluxe Executive Family");
+
+            createHeadingsContent(cb,50,460,"No of Rooms: ");
+            createHeadingsTitle(cb,200,460,mRoomCount.getSelectedItem().toString());
+
+            createHeadingsContent(cb,50,430,"No of PAX: ");
+            createHeadingsTitle(cb,200,430,mGuestCount.getText().toString());
+
+            createHeadingsContent(cb,50,400,"Inclusion: ");
+            createHeadingsTitle(cb,200,400,mDesc.getSelectedItem().toString());
+
+
+            cb.moveTo(25,380);
+            cb.lineTo(600,380);
+            cb.stroke();
+
+
+            createHeadingsContent(cb,200,360,"Payment BreakUp");
+
+            createHeadingsContent(cb,50,340,"Room Charges : ");
+            createHeadingsTitle(cb,200,340,"Rs "+mRoomCharge.getText().toString());
+
+            createHeadingsContent(cb,50,310,"Extra Charges : ");
+            createHeadingsTitle(cb,200,310,"Rs "+mExtraCharge.getText().toString());
+
+            createHeadingsContent(cb,50,280,"Hotel Taxes : ");
+            createHeadingsTitle(cb,200,280,"Rs "+mHotelTaxes.getText().toString());
+
+            createHeadingsContent(cb,50,250,"Net Amount : ");
+            createHeadingsTitle(cb,200,250,"Rs "+mTotal.getText().toString());
+
+         /*   createHeadingsContent(cb,50,220,"Balance Amount : ");
+            createHeadingsTitle(cb,200,220,"Rs "+mTotal.getText().toString());
+*/
+            if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PART PAYMENT")){
+                createHeadingsTitle(cb,200,220,"Rs "+mTotal.getText().toString());
+            }else if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+                createHeadingsTitle(cb,200,220,"Rs "+mTotal.getText().toString());
+            }else{
+                createHeadingsTitle(cb,200,220,"Rs "+mTotal.getText().toString());
+            }
+
+            createHeadingsContent(cb,400,340,"Payment Mode ");
+            createHeadingsTitle(cb,400,320, mPayment.getSelectedItem().toString());
+
+            cb.moveTo(25,205);
+            cb.lineTo(600,205);
+            cb.stroke();
+
+         /*   // Invoice Detail box layout
+            cb.rectangle(110,120,395,200);
+            cb.moveTo(110,340);
+            cb.lineTo(505,340);
+            cb.moveTo(110,120);
+            cb.lineTo(110,340);
+            cb.moveTo(340,120);
+            cb.lineTo(340,340);
+            cb.moveTo(505,120);
+            cb.lineTo(505,340);
+            cb.stroke();
+
+            // Invoice Detail box Text Headings
+
+            createHeadings(cb,210,323,"Particulars");
+            createHeadings(cb,420,323,"Amount");
+*/
+
+
+
+            createHeadings(cb,50,100,"Additional Information");
+            createHeadingsContent(cb,55,80,getResources().getString(R.string.hotel_policy));
+            createHeadingsContent(cb,55,60,getResources().getString(R.string.cancel_policy));
+
+          /*  // Invoice Header box layout
+            cb.rectangle(400,660,185,100);
+            cb.moveTo(400,680);
+            cb.lineTo(585,680);
+            cb.moveTo(400,720);
+            cb.lineTo(585,720);
+            cb.moveTo(400,740);
+            cb.lineTo(585,740);
+            cb.moveTo(400,700);
+            cb.lineTo(585,700);
+            cb.moveTo(480,660);
+            cb.lineTo(480,760);
+            cb.stroke();
+
+            // Invoice Header box Text Headings
+            createHeadings(cb,402,743,"GST#");
+            createHeadings(cb,402,723,"Room No");
+            createHeadings(cb,402,703,"CheckIn Date");
+            createHeadings(cb,402,683,"CheckOut Date");
+            createHeadings(cb,402,663,"Customer Support");
+
+            //Total
+            createHeadings(cb,422,300,"Total");
+            createHeadings(cb,422,280,"Amount Paid");
+            createHeadings(cb,422,260,"Balance Due");
+
+*/
+            //Add logo
+            Drawable d = getResources ().getDrawable (R.drawable.logo_zingo);
+            Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+            ByteArrayOutputStream streams = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, streams);
+            byte[] bitmapData = streams.toByteArray();
+
+            Image companyLogo = Image.getInstance(bitmapData);
+            // Image companyLogo = Image.getInstance("logo.png");
+            companyLogo.setAbsolutePosition(25,700);
+            companyLogo.scalePercent(75);
+            doc.add(companyLogo);
+        }
+
+
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+    }
+
+
+    private void generateLayoutNext(Document doc, PdfContentByte cb)  {
+
+        try {
+
+            cb.setLineWidth(1f);
+
+            /*createHeadingsTitles(cb,50,680,"Hotel Policy");
+            createHeadingss(cb,50,665,getResources().getString(R.string.hotel_policy_1));*/
+
+
+            doc.add(new Paragraph("Hotel Policy", subFont));
+            doc.add(new Paragraph(getResources().getString(R.string.hotel_policy_1), small));
+            doc.add(new Paragraph(getResources().getString(R.string.hotel_policy_2), small));
+            doc.add(new Paragraph(getResources().getString(R.string.hotel_policy_3), small));
+            doc.add(new Paragraph(getResources().getString(R.string.hotel_policy_4), small));
+            doc.add(new Paragraph(getResources().getString(R.string.hotel_policy_5), small));
+            doc.add(new Paragraph(getResources().getString(R.string.hotel_policy_6), small));
+            doc.add(new Paragraph(getResources().getString(R.string.hotel_policy_7), small));
+            doc.add(new Paragraph(getResources().getString(R.string.hotel_policy_8), small));
+            doc.add(new Paragraph(getResources().getString(R.string.hotel_policy_9), small));
+            doc.add(new Paragraph(getResources().getString(R.string.hotel_policy_10), small));
+            doc.add(new Paragraph(getResources().getString(R.string.hotel_policy_11), small));
+            doc.add(new Paragraph(getResources().getString(R.string.hotel_policy_12), small));
+
+            addEmptyLine(new Paragraph(), 2);
+            //doc.addE
+            //doc.add( addEmptyLine(new Paragraph(), 2));
+            doc.add(new Paragraph("Cancellation & Amendment Policy", subFont));
+            doc.add(new Paragraph(getResources().getString(R.string.cancel_policy_1), small));
+            doc.add(new Paragraph(getResources().getString(R.string.cancel_policy_2), small));
+            doc.add(new Paragraph(getResources().getString(R.string.cancel_policy_3), small));
+            doc.add(new Paragraph("    ", small));
+            doc.add(new Paragraph(getResources().getString(R.string.zingo_policy), smallRed));
+
+            cb.rectangle(50,20,550,90);
+
+
+            cb.moveTo(340,20);
+            cb.lineTo(340,110);
+
+
+            createHeadingss(cb,60,100,"Zingo Hotel Contact Info ");
+            createHeadingss(cb,60,80,"Lucida Hospitality Pvt Ltd");
+            createHeadingss(cb,60,65,"No 88,First Floor,Koramangala Industrial Layout ");
+            createHeadingss(cb,60,50,"5th Block Near Jyothi Niwas College., Bengaluru");
+            createHeadingss(cb,60,35,"Karanataka 560095");
+
+            createHeadingss(cb,360,70,"Email: hello@zingohotels.com");
+            createHeadingss(cb,360,50,"Telephone: +91-7065651651");
+            createHeadingss(cb,360,30,"Website: www.zingohotels.com ");
+
+            cb.stroke();
+
+
+
+
+        }
+
+
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+
+    }
+
+
+
+    private void initializeFonts(){
+
+
+        try {
+            bfBold = BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+            bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+    private void createHeadings(PdfContentByte cb, float x, float y, String text){
+
+
+        cb.beginText();
+        cb.setFontAndSize(bfBold, 12);
+        cb.setTextMatrix(x,y);
+        cb.showText(text.trim());
+        cb.endText();
+
+    }
+
+    private void createHeadingss(PdfContentByte cb, float x, float y, String text){
+
+
+        cb.beginText();
+        cb.setFontAndSize(bf, 12);
+        cb.setTextMatrix(x,y);
+        cb.showText(text.trim());
+        cb.endText();
+
+    }
+
+    private void createHeadingsContent(PdfContentByte cb, float x, float y, String text){
+
+
+        cb.beginText();
+        cb.setFontAndSize(bf, 18);
+        cb.setTextMatrix(x,y);
+        cb.showText(text.trim());
+        cb.endText();
+
+    }
+
+    private void createHeadingsTitle(PdfContentByte cb, float x, float y, String text){
+
+
+        cb.beginText();
+        cb.setFontAndSize(bfBold, 15);
+        cb.setTextMatrix(x,y);
+        cb.showText(text.trim());
+        cb.endText();
+
+    }
+
+    private void createHeadingsTitles(PdfContentByte cb, float x, float y, String text){
+
+
+        cb.beginText();
+        cb.setFontAndSize(bfBold, 18);
+        cb.setTextMatrix(x,y);
+        cb.showText(text.trim());
+        cb.endText();
+
+    }
+
+
+    private void printPageNumber(PdfContentByte cb){
+
+
+        cb.beginText();
+        cb.setFontAndSize(bfBold, 8);
+        cb.showTextAligned(PdfContentByte.ALIGN_RIGHT, "Page No. " + (pageNumber+1), 570 , 10, 0);
+        cb.endText();
+
+        pageNumber++;
+
+    }
+
+    private void createContent(PdfContentByte cb, float x, float y, String text, int align){
+
+
+        cb.beginText();
+        cb.setFontAndSize(bf, 8);
+        cb.showTextAligned(align, text.trim(), x , y, 0);
+        cb.endText();
+
+    }
+
+    private void createContentTariff(PdfContentByte cb, float x, float y, String text, int align){
+
+
+        cb.beginText();
+        cb.setFontAndSize(bf, 15);
+        cb.showTextAligned(align, text.trim(), x , y, 0);
+        cb.endText();
+
+    }
+
+    private void createTableZingoAddress(Paragraph para) throws BadElementException {
+        PdfPTable table = new PdfPTable(2);
+
+
+        DecimalFormat dfs = new DecimalFormat("#.##");
+
+
+        PdfPCell c1 = new PdfPCell(new Phrase("Zingo Hotel Contact Info \n Lucida Hospitality Pvt Ltd \n "+
+                "No 88,First Floor,Koramangala Industrial Layout \n"+
+                "5th Block Near Jyothi Niwas College., Bengaluru\n Karanataka 560095", small));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+        table.addCell(c1);
+
+        c1 = new PdfPCell(new Phrase("Email: hello@zingohotels.com \n Telephone: +91-7065651651 \n "+
+                "Website: www.zingohotels.com \n", small));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+        table.addCell(c1);
+        table.setHeaderRows(1);
+
+        para.add(table);
+
+    }
+
+    private void sendEmailattacheGuest() throws Exception {
+        String[] mailto = {mGuestEmail.getText().toString()};
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setType("application/pdf");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT,"Zingo Invoice");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear "+mGuest.getText().toString()+",\n" +
+
+                "Please find your Invoice attached to this email.\n\n" +"\n This is a Computer Generated Invoice.\n This hotel is powered by Zingo Hotels.");
+        File root = Environment.getExternalStorageDirectory();
+        String pathToMyAttachedFile = "/BillGenerate/Pdf/Guest/"+guestPdf;
+        File file = new File(root, pathToMyAttachedFile);
+        if (!file.exists() || !file.canRead()) {
+            return;
+        }
+        Uri uri = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            uri = FileProvider.getUriForFile(this, "app.zingo.com.billgenerate.fileprovider", file);
+        }else{
+            uri = Uri.fromFile(file);
+        }
+
+        //Uri uri = Uri.fromFile(file);
+        if(uri!=null){
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        }else{
+            Toast.makeText(BillDetails.this, "File cannot access", Toast.LENGTH_SHORT).show();
+        }
+        startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
     }
 
 

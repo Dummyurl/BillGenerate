@@ -80,9 +80,11 @@
     </string-array>
 
     <string-array name="plan_inclusion">
-        <item>ROOM ONLY</item>
         <item>Breakfast,WiFi,Taxes</item>
-        >
+        <item>Room Only,Taxes</item>
+        <item>Breakfast,Lunch,Dinner,Taxes</item>
+        <item>Breakfast,Lunch/Dinner,Taxes</item>
+
     </string-array>
 
 
@@ -199,5 +201,59 @@
     <string name="email_emir">emiratessuitesindia@gmail.com,info@emiratessuitesindia.com</string>
     <string name="email_naga">PRAKSHETTY29@gmail.com</string>
     <string name="email_ashapura">hotelaashapurainternational@yahoo.in,pankaj.jha53@gmail.com</string>
+
+    <string name="hotel_policy_1">• The standard check-in time is 12:00 PM and the standard check-out time is 11:00 AM. Early check-in or late check-out is strictly subjected to availability and may be chargeable by the hotel. Any early check-in or late check-out request must be directed and reconfirmed with hotel directly</string>
+    <string name="hotel_policy_2">• Guest need to present their ID\'s before check in</string>
+    <string name="hotel_policy_3">• Most hotels do not allow unmarried/unrelated couples to check-in. This is at the full discretion of the hotel management. No refund would be applicable in
+case the hotel denies check-in under such circumstances.</string>
+    <string name="hotel_policy_4">•  Any increase in the price due to taxes will be borne by you and payable at the hotel.</string>
+    <string name="hotel_policy_5"> • The primary age of the guest must be at least 18 years old to be able to check into this hotel</string>
+    <string name="hotel_policy_6"> • Your stay does not include additional personal expenses like telephone charges, meals that aren\'t part of your meal plan, any hotel services you use (like
+    laundry and room service) or tips. The hotel will charge you directly for these when you're checking out.</string>
+    <string name="hotel_policy_7">• It is mandatory for guests to present valid photo identification at the time of check-in. According to government regulations, a valid Photo ID has to be
+    carried by every person above the age of 18 staying at the hotel.</string>
+    <string name="hotel_policy_8"> • Hotels may charge a mandatory meal surcharge on festive periods e.g. Christmas, New Year\'s Eve etc... All additional charges (including mandatory meal
+    surcharges) need to be cleared directly at the hotel.</string>
+    <string name="hotel_policy_9">• Please note that it takes minimum of 4 to 8 working hours to confirm a reservation at the hotel for same day check-ins.</string>
+    <string name="hotel_policy_10">  • Hotels may not allow local residents as guests to check-in. This is strictly subjected to the Hotel Policies and goibibo will not be responsible for such
+    check-in denials.</string>
+    <string name="hotel_policy_11">  • For Invoice &amp; tax breakup please contact the Hotel as per the details provided or collect the same from the hotel during checkout.</string>
+    <string name="hotel_policy_12">• Hotels reserves the right of admission. Unmarried/unrelated couples may not be allowed to check-in. Similarly accommodation can be denied to guests
+    posing as a \'couple\' if suitable proof of identification is not presented at check-in. Goibibo will not be responsible for any check-in denied by the hotel due to
+    the aforesaid reason. No refund would be applicable in case the hotel denies check-in under such circumstances.</string>
+
+    <string name="hotel_policy"> • Hotel Policy</string>
+    <string name="cancel_policy"> • Cancellation &amp; Amendment Policy</string>
+    <string name="cancel_policy_1"> • Non-Refundable on cancellation or No Show</string>
+    <string name="cancel_policy_2"> • Any Add On charges are non-refundable</string>
+    <string name="cancel_policy_3"> • You can not change the check-in or check-out date</string>
+
+    <string name="zingo_policy"> Zingo Hotels only acts as a booking agent facilitating hotel room reservations between hotels
+which are the primary service providers with respect to hotel accommodation services and the
+customer who are the ultimate users of the hotel accommodation services rendered by the hotel.</string>
+
+
+
+
+    <string name="commission_holiday">150</string>
+    <string name="commission_naga">150</string>
+    <string name="commission_rb">100</string>
+    <string name="commission_ssl">100</string>
+    <string name="commission_sanctum">200</string>
+    <string name="commission_asha_nonac">100</string>
+    <string name="commission_asha_ac">150</string>
+    <string name="commission_farmers">200</string>
+    <string name="commission_coffee">200</string>
+    <string name="commission_kalyan">150</string>
+    <string name="commission_emirates">150</string>
+    <string name="commission_tranquil">150</string>
+    <string name="commission_woodlands">350</string>
+    <string name="commission_airport">150</string>
+
+
+
+
+
+
 
 </resources>

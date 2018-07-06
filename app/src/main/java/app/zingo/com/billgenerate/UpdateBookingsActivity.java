@@ -223,7 +223,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
             if(bundle!=null){
                 bookings = (Bookings1) bundle.getSerializable("BOOKINGS");
             }
-            
+
             if(bookings!=null){
                 
                 setFields(bookings);
@@ -242,24 +242,48 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                     try {
                         if(bookingSourceTitleStringArray[position].equals("OTA"))
                         {
-                            String[] bookingSourceArray = getResources().getStringArray(R.array.OTA_items);
+                            if(bookings!=null){
+                                String[] bookingSourceArray = getResources().getStringArray(R.array.OTA_items);
+                                mOTA.setAdapter(new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceArray));
+                                int i = Arrays.asList(bookingSourceArray).indexOf(bookings.getBookingSource());
+                                mOTA.setSelection(i);
+                            }else{
+                                String[] bookingSourceArray = getResources().getStringArray(R.array.OTA_items);
 
-                            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceArray);
-                            mOTA.setAdapter(spinneradapter);
+                                PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceArray);
+                                mOTA.setAdapter(spinneradapter);
+                            }
+
                         }
                         else if(bookingSourceTitleStringArray[position].equals("B2B"))
                         {
-                            String[] bookingSourceArray = getResources().getStringArray(R.array.B2B_items);
+                            if(bookings!=null){
+                                String[] bookingSourceArray = getResources().getStringArray(R.array.B2B_items);
+                                mOTA.setAdapter(new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceArray));
+                                int i = Arrays.asList(bookingSourceArray).indexOf(bookings.getBookingSource());
+                                mOTA.setSelection(i);
+                            }else{
+                                String[] bookingSourceArray = getResources().getStringArray(R.array.B2B_items);
 
-                            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceArray);
-                            mOTA.setAdapter(spinneradapter);
+                                PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceArray);
+                                mOTA.setAdapter(spinneradapter);
+                            }
+
                         }
                         else if(bookingSourceTitleStringArray[position].equals("Offline"))
                         {
-                            String[] bookingSourceArray = getResources().getStringArray(R.array.Offline_items);
+                            if(bookings!=null){
+                                String[] bookingSourceArray = getResources().getStringArray(R.array.Offline_items);
+                                mOTA.setAdapter(new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceArray));
+                                int i = Arrays.asList(bookingSourceArray).indexOf(bookings.getBookingSource());
+                                mOTA.setSelection(i);
+                            }else{
+                                String[] bookingSourceArray = getResources().getStringArray(R.array.Offline_items);
 
-                            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceArray);
-                            mOTA.setAdapter(spinneradapter);
+                                PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceArray);
+                                mOTA.setAdapter(spinneradapter);
+                            }
+
                         }
                     }
                     catch (Exception ex)
@@ -550,7 +574,35 @@ public class UpdateBookingsActivity extends AppCompatActivity {
 
                 }
             });
-            //Database call
+
+
+            mRate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    if(mRate.getSelectedItem().toString().equalsIgnoreCase("CP")){
+
+                        mDesc.setSelection(0);
+
+                    }else if(mRate.getSelectedItem().toString().equalsIgnoreCase("EP")){
+                        mDesc.setSelection(1);
+
+                    }else if(mRate.getSelectedItem().toString().equalsIgnoreCase("AP")){
+                        mDesc.setSelection(2);
+
+                    } else if(mRate.getSelectedItem().toString().equalsIgnoreCase("MAP")){
+                        mDesc.setSelection(3);
+
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+
+
+                //Database call
             dbHelper = new DataBaseHelper(this);
             room = new RoomDataBase(this);
             plan = new PlanDataBase(this);
@@ -2735,23 +2787,23 @@ public class UpdateBookingsActivity extends AppCompatActivity {
         {
             String[] otaArray = getResources().getStringArray(R.array.OTA_items);
 
-            mOTA.setAdapter(new GeneralAdapter(UpdateBookingsActivity.this,otaArray));
-            int i = Arrays.asList(bookingSourceTitleStringArray).indexOf(bookSource);
+            mOTA.setAdapter(new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,otaArray));
+            int i = Arrays.asList(otaArray).indexOf(booking.getBookingSource());
             System.out.println("Booking Plan=="+booking.getBookingSource()+" i = "+i);
             mOTA.setSelection(i);
         }
         else if(bookSource.equals("B2B"))
         {
             String[] otaArray = getResources().getStringArray(R.array.B2B_items);
-            mOTA.setAdapter(new GeneralAdapter(UpdateBookingsActivity.this,otaArray));
-            int i = Arrays.asList(bookingSourceTitleStringArray).indexOf(bookSource);
+            mOTA.setAdapter(new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,otaArray));
+            int i = Arrays.asList(otaArray).indexOf(booking.getBookingSource());
             mOTA.setSelection(i);
         }
         else if(bookSource.equals("Offline_items"))
         {
             String[] otaArray = getResources().getStringArray(R.array.Offline_items);
-            mOTA.setAdapter(new GeneralAdapter(UpdateBookingsActivity.this,otaArray));
-            int i = Arrays.asList(bookingSourceTitleStringArray).indexOf(bookSource);
+            mOTA.setAdapter(new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,otaArray));
+            int i = Arrays.asList(otaArray).indexOf(booking.getBookingSource());
             mOTA.setSelection(i);
         }
 
