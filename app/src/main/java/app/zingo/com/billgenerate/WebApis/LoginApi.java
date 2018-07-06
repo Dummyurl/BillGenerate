@@ -5,6 +5,7 @@ import java.util.ArrayList;
 /*import app.zingo.com.agentapp.Model.ReferCodeModel;
 import app.zingo.com.agentapp.Model.TravellerAgentProfiles;
 import app.zingo.com.agentapp.Utils.API;*/
+import app.zingo.com.billgenerate.Model.NotificationManager;
 import app.zingo.com.billgenerate.Model.TravellerAgentProfiles;
 import app.zingo.com.billgenerate.Utils.API;
 import retrofit2.Call;
@@ -78,4 +79,6 @@ public interface LoginApi {
     @PUT("TravellerAgentProfiles/{id}")
     Call<String> updateProfileById(@Header("Authorization") String authKey, @Path("id") int id, @Body TravellerAgentProfiles userProfile);
 
+    @GET("NotificationManger/GetNotificationManagersByHotelId/{HotelId}")
+    Call<ArrayList<NotificationManager>> getNotificationByHotelID(@Header("Authorization") String authKey, @Path("HotelId") int HotelId);
 }

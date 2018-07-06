@@ -19,6 +19,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,9 +37,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
 
@@ -56,6 +61,7 @@ import java.util.Date;
 import java.util.List;
 
 import app.zingo.com.billgenerate.Model.NotificationManager;
+import app.zingo.com.billgenerate.Utils.Constatnts;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -64,7 +70,7 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
 
     EditText mHotelName,mPrice;
     TextView mDate,mEnteredHotelName,mLowestPrice,mHighestPrice,mAveragePrice,mMarketLowPrice,mMarketHighPrice,
-            mMarketAvaragePrice,mLowestPriceText,mHighestPriceText,mMarketDemand,mAvgComparision;
+            mMarketAvaragePrice,mLowestPriceText,mHighestPriceText,mMarketDemand,mAvgComparision,mMessageText;
     FloatingActionButton fab;
     LinearLayout mCompitionLinearLayout,mRatesLinearlayout,mAvailableLinearLayout;
     Spinner mMarketDemandSpinner;
@@ -81,6 +87,8 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
     int hotelListSize;
     boolean notificationSend = false;
     String email="";
+     int hotelid,noofrooms;
+    int occupancy = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,10 +118,14 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
         mAvgComparision = (TextView)findViewById(R.id.average_price_comparision);
         mHighestPriceText = (TextView)findViewById(R.id.highest_price_text);
         mMarketDemand = (TextView)findViewById(R.id.remark_price_text);
+        mMessageText = (TextView)findViewById(R.id.message_line);
+        mMessageText.setVisibility(View.GONE);
         mMarketDemandSpinner= (Spinner)findViewById(R.id.market_demand_spinner);
         mGeneratePdf= (Button) findViewById(R.id.generate_pdf);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setVisibility(View.GONE);
+
+        getNotification();
 
         marketDemandArray = getResources().getStringArray(R.array.market_demand_array);
         GeneralAdapter adapter = new GeneralAdapter(CompetitiveAnalisysActivity.this,marketDemandArray);
@@ -123,7 +135,12 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
         mDate.setText(simpleDateFormat.format(new Date()));
 
         hotelName = getIntent().getStringExtra("HotelName");
-        final int hotelid = getIntent().getIntExtra("HotelId",0);
+        hotelid = getIntent().getIntExtra("HotelId",0);
+        String s = getIntent().getStringExtra("Rooms");
+        if(s != null && !s.trim().isEmpty())
+        {
+            noofrooms = Integer.parseInt(s);
+        }
 
         if(hotelName!=null&&!hotelName.isEmpty()){
             if(hotelName.equalsIgnoreCase("Holiday Homes ")){
@@ -323,6 +340,8 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                 }
                 else
                 {
+                    mMessageText.setVisibility(View.VISIBLE);
+                    System.out.println("occupancy = "+occupancy);
                     int i = mRatesLinearlayout.getChildCount();
                     int count = i;
                     System.out.println("childs = "+i);
@@ -357,29 +376,76 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                         }
                     }
                     Collections.sort(rates);
+
                     if(total != 0)
                     {
                     /*System.out.println(total/i);*/
                         mAveragePrice.setText("Rs. "+(total/count)+"");
                         mMarketAvaragePrice.setText("Rs. "+(total/count)+"");
                         double avgPrice = (total/count);
+                        double marketDemand = (((i*1.0)-(count*1.0))/(i*1.0))*100;
+                        System.out.println("marketDemand = "+marketDemand);
+                        if(marketDemand <= 40)
+                        {
+                            //System.out.println("Low");
+                            mMessageText.setText("The Current Market Demand in your Area is - Low ");
+                        }
+                        else if(marketDemand > 40 && marketDemand <= 60)
+                        {
+                            //System.out.println("average");
+                            mMessageText.setText("The Current Market Demand in your Area is - Average");
+                        }
+                        else
+                        {
+                            //System.out.println("high");
+                            mMessageText.setText("The Current Market Demand in your Area is - High");
+                        }
+
                         double price = Double.parseDouble(mPrice.getText().toString().trim());
                         double difference,percentage,value;
                         if(avgPrice>price){
                             difference = avgPrice - price;
                             percentage = difference/avgPrice;
                             value = percentage * 100;
-                            mAvgComparision.setText("Your Hotel price is "+df.format(difference)+"("+df.format(value)+"%) lower from Market Average Price");
+                            mAvgComparision.setText("Your Hotel price is Rs. "+df.format(difference)+"("+df.format(value)+"%) lower from Market Average Price.");
                         }else if(avgPrice<price){
 
                             difference = price - avgPrice;
                             percentage = difference/price;
                             value = percentage * 100;
-                            mAvgComparision.setText("Your Hotel price is "+df.format(difference)+"("+df.format(value)+"%) higher than Market Average Price");
+                            mAvgComparision.setText("Your Hotel price is Rs. "+df.format(difference)+"("+df.format(value)+"%) higher than Market Average Price.");
                         }else if(avgPrice==price){
 
                             mAvgComparision.setText("Your Hotel price is equal to Market Average Price");
                         }
+
+                        String s = mMessageText.getText().toString();
+                        double peroccu = 0;
+                        if(occupancy != 0)
+                        {
+                            peroccu = (((noofrooms-occupancy)*1.0)/(noofrooms*1.0))*100;
+                        }
+                        if(price == 0)
+                        {
+                            mMessageText.setText("Congratulations! "+s+",\n"+"Your hotel running sold out with 100% occupancy.");
+                        }
+                        else if(peroccu >= 60 )//&& avgPrice < price)
+                        {
+                            mMessageText.setText("Congratulations! "+s+",\n"+"You " +
+                                    "are ahead of your competition with other hotels");
+                                mMessageText.setText(mMessageText.getText()+" \nand maintaining "+df.format(peroccu)+" % of occupancy");
+
+                        }
+                        else
+                        {
+                            /*mMessageText.setText(s+",\n"+"You " +
+                                    "are ahead of your competition with other hotels.");*/
+                               // double peroccu = (((noofrooms-occupancy)*1.0)/(noofrooms*1.0))*100;
+                                mMessageText.setText(mMessageText.getText()+" \nYou are currently maintaining "+df.format(peroccu)+" % of occupancy");
+
+                        }
+
+
                     }
                     else
                     {
@@ -454,10 +520,125 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
             }
         });
 
+
     }
 
 
 
+
+    private void getNotification(){
+       /* final ProgressDialog progressDialog = new ProgressDialog(TabMainActivity.this);
+        progressDialog.setTitle("please wait..");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+*/
+
+
+        new ThreadExecuter().execute(new Runnable() {
+            @Override
+            public void run() {
+                app.zingo.com.billgenerate.WebApis.LoginApi apiService =
+                        Util.getClient().create(app.zingo.com.billgenerate.WebApis.LoginApi.class);
+                String authenticationString = Util.key;
+                Call<ArrayList<NotificationManager>> call = apiService.getNotificationByHotelID(authenticationString,hotelid)/*getRooms()*/;
+
+                call.enqueue(new Callback<ArrayList<NotificationManager>>() {
+                    @Override
+                    public void onResponse(Call<ArrayList<NotificationManager>> call, Response<ArrayList<NotificationManager>> response) {
+//                List<RouteDTO.Routes> list = new ArrayList<RouteDTO.Routes>();
+                        try{
+                            int statusCode = response.code();
+                            System.out.println("occupancy = "+statusCode);
+                      /*  if (progressDialog!=null) {
+                            progressDialog.dismiss();
+                        }*/
+                            if (statusCode == 200) {
+
+
+                                ArrayList<NotificationManager>  list =  response.body();
+                                ArrayList<NotificationManager> nfm = new ArrayList<>();
+
+//                            docList = list.get(1).getProfileList();
+                                if(list != null && list.size() != 0)
+                                {
+                                for (int i=0;i<list.size();i++)
+                                {
+                                    System.out.println("Inventary = "+list.get(i).getNotificationText()+" == "+
+                                            list.get(i).getNotificationFor());
+                                        if(list.get(i).getNotificationText().equalsIgnoreCase("Inventory Update"))
+                                        {
+                                            nfm.add(list.get(i));
+                                        }
+                                }
+
+                                if(nfm != null && nfm.size() != 0)
+                                {
+                                    System.out.println("occupancy = "+occupancy);
+                                    Collections.reverse(nfm);
+                                    String s = nfm.get(0).getNotificationFor();
+                                    System.out.println("occupancy = "+s);
+                                    System.out.println("occupancy = "+nfm.get(nfm.size()-1).getNotificationFor());
+                                    if(!s.isEmpty())
+                                    {
+                                        String[] sp = s.split("-");
+                                        if(sp != null && sp.length != 0)
+                                        {
+                                            String st = sp[1];
+
+                                            if(st != null && !st.isEmpty())
+                                            {
+                                                String[] sst = st.split(",");
+
+                                                if(sst != null && sst.length != 0)
+                                                {
+                                                    for (int i=0;i<sst.length;i++)
+                                                    {
+                                                        int j= Integer.parseInt(sst[i]);
+                                                        occupancy = occupancy+j;
+                                                        System.out.println("occupancy2 = "+occupancy);
+                                                    }
+                                                }
+
+
+                                            }
+                                        }
+                                    }
+                                }
+
+
+
+                                }
+
+
+
+//                            Object dto = response.body();
+//                            listCities.add(dto);
+
+
+
+                            }else {
+
+                                //Toast.makeText(TabMainActivity.this, " failed due to status code:"+statusCode, Toast.LENGTH_SHORT).show();
+                            }
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+//                callGetStartEnd();
+                    }
+
+                    @Override
+                    public void onFailure(Call<ArrayList<NotificationManager>> call, Throwable t) {
+                        // Log error here since request failed
+                        /*if (progressDialog!=null)
+                            progressDialog.dismiss();*/
+                        Log.e("TAG", t.toString());
+                    }
+                });
+            }
+
+
+        });
+    }
 
     public static boolean isNumeric(String str)
     {
@@ -765,8 +946,12 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
         initializeFonts();
 
         try {
+
             File sd = Environment.getExternalStorageDirectory();
-            csvFile = mEnteredHotelName.getText().toString()+" "+mDate.getText().toString()+ ".pdf";
+            SimpleDateFormat format = new SimpleDateFormat("MMM dd yyyy HHmmss");
+            csvFile = mEnteredHotelName.getText().toString()+
+                    " "+mDate.getText().toString()+ ".pdf";
+            //+" "+format.format(new Date())
 
             File directory = new File(sd.getAbsolutePath()+"/ZingoCompetitiveAnalysis/");
             //create directory if not exist
@@ -846,8 +1031,6 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
         }
     }
 
-
-
     private void generateLayout(Document doc, PdfContentByte cb)  {
 
         try {
@@ -873,13 +1056,23 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
             cb.lineTo(360,630);
             cb.stroke();
 
+            ColumnText ct = new ColumnText(cb);
+            ct.setSimpleColumn(30f, 590f, 700f, 30f);
+            //Font f = new Font();
+            Font f = new Font(Font.FontFamily.HELVETICA, 15, Font.BOLD);
+            f.setColor(new BaseColor(255,0,0));
+
+            Paragraph pz = new Paragraph(new Phrase(18, mMessageText.getText().toString(), f));
+            ct.addElement(pz);
+            ct.go();
+
             //hotel list
-            cb.rectangle(30,540,220,30);
+            cb.rectangle(30,500,220,30);
             //cb.moveTo(30,510);
             //cb.lineTo(230,510);
             cb.stroke();
 
-            cb.rectangle(250,540,100,30);
+            cb.rectangle(250,500,100,30);
             //cb.moveTo(230,510);
             //cb.lineTo(310,510);
             /*cb.stroke();
@@ -887,23 +1080,25 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
             //cb.moveTo(230,510);
             //cb.lineTo(310,510);
             cb.stroke();
-            cb.rectangle(350,540,60,30);
+            cb.rectangle(350,500,65,30);
             //cb.moveTo(310,510);
             //cb.lineTo(360,510);
             cb.stroke();
 
-            cb.rectangle(410,540,60,30);
+            cb.rectangle(415,500,65,30);
 //            cb.moveTo(360,510);
-  //          cb.lineTo(410,510);
+            //          cb.lineTo(410,510);
             cb.stroke();
 
-            cb.rectangle(470,540,60,30);
-    //        cb.moveTo(410,510);
-      //      cb.lineTo(460,510);
+            cb.rectangle(480,500,65,30);
+            //        cb.moveTo(410,510);
+            //      cb.lineTo(460,510);
             cb.stroke();
 
-            int y=520;
-            int x=520;
+
+
+            int y=480;
+            int x=480;
 
             for(int i=0;i<mRatesLinearlayout.getChildCount();i++)
             {
@@ -930,35 +1125,35 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                 //x = y;
             }
 
-            cb.rectangle(350,y+20,60,x-y);
+            cb.rectangle(350,y+20,65,x-y);
             cb.stroke();
             createContent(cb,355,(y+20)+((x-y)/2)-10,mLowestPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
-            cb.rectangle(410,y+20,60,x-y);
+            cb.rectangle(415,y+20,65,x-y);
             cb.stroke();
-            createContent(cb,415,(y+20)+((x-y)/2)-10,mHighestPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
-            cb.rectangle(470,y+20,60,x-y);
+            createContent(cb,420,(y+20)+((x-y)/2)-10,mHighestPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            cb.rectangle(480,y+20,65,x-y);
             cb.stroke();
-            createContent(cb,475,(y+20)+((x-y)/2)-10,mAveragePrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            createContent(cb,485,(y+20)+((x-y)/2)-10,mAveragePrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
 
             System.out.println("y value = "+y);
 
 
             //market lowest elling price
-            cb.rectangle(100,270,300,30);
+            cb.rectangle(100,230,300,30);
             cb.stroke();
-            cb.rectangle(300,270,100,30);
+            cb.rectangle(300,230,100,30);
             cb.stroke();
 
             //Market highest selling price
-            cb.rectangle(100,240,300,30);
+            cb.rectangle(100,200,300,30);
             cb.stroke();
-            cb.rectangle(300,240,100,30);
+            cb.rectangle(300,200,100,30);
             cb.stroke();
 
             //Market average price
-            cb.rectangle(100,210,300,30);
+            cb.rectangle(100,170,300,30);
             cb.stroke();
-            cb.rectangle(300,210,100,30);
+            cb.rectangle(300,170,100,30);
             cb.stroke();
 
             //cb.rectangle();
@@ -1016,67 +1211,77 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
 
     }
 
-    /*public void addTable(Document document, PdfContentByte canvas, PdfPTable table) throws DocumentException {
-        Rectangle pagedimension = new Rectangle(36, 36, 559, 806);
-        drawColumnText(document, canvas, pagedimension, table, true);
-        Rectangle rect;
-        if (ColumnText.hasMoreText(status)) {
-            rect = pagedimension;
-        }
-        else {
-            rect = new Rectangle(36, 36, 559, 806 - ((y_position - 36) / 2));
-        }
-        drawColumnText(document, canvas, rect, table, false);
-    }
 
-    public void drawColumnText(Document document, PdfContentByte canvas, Rectangle rect, PdfPTable table, boolean simulate) throws DocumentException {
-        ColumnText ct = new ColumnText(canvas);
-        //ct.setSimpleColumn(rect);
-        ct.setSimpleColumn(300f, 500f, 430f, 780f);
-        ct.addElement(table);
-        status = ct.go(simulate);
-        y_position = ct.getYLine();
-        while (!simulate && ColumnText.hasMoreText(status)) {
-            document.newPage();
-            //ct.setSimpleColumn(rect);
-            ct.setSimpleColumn(300f, 500f, 430f, 780f);
-            status = ct.go(simulate);
-        }
-    }
 
-    private int status = ColumnText.START_COLUMN;
-    private float y_position = 0;*/
     private void generateDetail(Document doc, PdfContentByte cb) {
 
         try {
             createHeadingsTitle(cb,35,730, mEnteredHotelName.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.RED);
-            createHeadingsTitle(cb,100,310, "Competitive Overview",PdfContentByte.ALIGN_LEFT,BaseColor.RED);
-            createHeadingsTitle(cb,35,550, "Hotel Name",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
-            createHeadingsTitle(cb,255,550, "Rates",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
+            createHeadingsTitle(cb,100,270, "Competitive Overview",PdfContentByte.ALIGN_LEFT,BaseColor.RED);
+            createHeadingsTitle(cb,35,515, "Hotel Name",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
+            createHeadingsTitle(cb,255,515, "Rates",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
             //createHeadingsTitle(cb,285,550, "Rates",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
-            createHeadingsTitle(cb,355,550, "Lowest P.",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
-            createHeadingsTitle(cb,415,550, "Highest P.",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
-            createHeadingsTitle(cb,475,550, "Average",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
+            createHeadingsTitle(cb,355,515, "Lowest P.",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
+            createHeadingsTitle(cb,420,515, "Highest P.",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
+            createHeadingsTitle(cb,485,515, "Average",PdfContentByte.ALIGN_CENTER,BaseColor.BLACK);
 
 
             createContent(cb,35,613, mEnteredHotelName.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
             createContent(cb,335,613,"Rs. "+mPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
             //market selling price
-            createContent(cb,110,280, "Market Lowest Selling Price",PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
-            createContent(cb,310,280, mMarketLowPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            createContent(cb,110,245, "Market Lowest Selling Price",PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            createContent(cb,310,245, mMarketLowPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
 
             //Market highest selling price
-            createContent(cb,110,250, "Market Highest Selling Price",PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
-            createContent(cb,310,250, mMarketHighPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            createContent(cb,110,215, "Market Highest Selling Price",PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            createContent(cb,310,215, mMarketHighPrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
 
             //Market average price
-            createContent(cb,110,220, "Average Market Selling Price",PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
-            createContent(cb,310,220, mMarketAvaragePrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            createContent(cb,110,185, "Average Market Selling Price",PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
+            createContent(cb,310,185, mMarketAvaragePrice.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
 
-            createContent2(cb,30,180, mLowestPriceText.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.RED);
-            createContent2(cb,30,160, mHighestPriceText.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.RED);
-            createContent2(cb,30,130, mMarketDemand.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.RED);
-            createContent2(cb,30,110, mAvgComparision.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.RED);
+            ColumnText ct = new ColumnText(cb);
+            ct.setSimpleColumn(30f, 150f, 700f, 30f);
+            /*Font f = new Font();*/
+            Font f = new Font(Font.FontFamily.HELVETICA, 15, Font.BOLD);
+            f.setColor(new BaseColor(255,0,0));
+
+            Paragraph pz = new Paragraph(new Phrase(18, mLowestPriceText.getText().toString(), f));
+            ct.addElement(pz);
+            ct.go();
+
+            ColumnText ct1 = new ColumnText(cb);
+            ct1.setSimpleColumn(30f, 130f, 700f, 30f);
+            /*Font f = new Font();*/
+            /*Font f1 = new Font(Font.FontFamily.HELVETICA, 15, Font.BOLD);
+            f.setColor(new BaseColor(255,0,0));*/
+
+            Paragraph pz1 = new Paragraph(new Phrase(18, mHighestPriceText.getText().toString(), f));
+            ct1.addElement(pz1);
+            ct1.go();
+
+            ColumnText ct2 = new ColumnText(cb);
+            ct2.setSimpleColumn(30f, 100, 700f, 30f);
+            Font f1 = new Font(Font.FontFamily.HELVETICA, 15, Font.BOLD);
+            f.setColor(new BaseColor(51,51,255));
+
+            Paragraph pz2 = new Paragraph(new Phrase(18, mAvgComparision.getText().toString(), f));
+            ct2.addElement(pz2);
+            ct2.go();
+
+            /*ColumnText ct3 = new ColumnText(cb);
+            ct3.setSimpleColumn(30f, 80, 750f, 30f);
+            Font f2 = new Font(Font.FontFamily.HELVETICA, 15, Font.BOLD);
+            f.setColor(new BaseColor(102,0,204));
+
+            Paragraph pz3 = new Paragraph(new Phrase(18, mAvgComparision.getText().toString(), f2));
+            ct3.addElement(pz3);
+            ct3.go();
+*/
+            //createContent2(cb,30,150, mLowestPriceText.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.RED);
+            //createContent2(cb,30,130, mHighestPriceText.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.RED);
+            //createContent2(cb,30,100, mMarketDemand.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.RED);
+            //createContent2(cb,30,80, mAvgComparision.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.RED);
 
             createHeadingsTitle(cb,35,700, mDate.getText().toString(),PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);
             createHeadingsTitle(cb,35,670, "Performance Intelligence Report",PdfContentByte.ALIGN_LEFT,BaseColor.BLACK);

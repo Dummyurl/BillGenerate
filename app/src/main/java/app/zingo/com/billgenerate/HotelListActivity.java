@@ -66,6 +66,7 @@ public class HotelListActivity extends AppCompatActivity {
                         Intent intent = new Intent(HotelListActivity.this,CompetitiveAnalisysActivity.class);
                         intent.putExtra("HotelName",hotelDetailsArrayList.get(position).getHotelName());
                         intent.putExtra("HotelId",hotelDetailsArrayList.get(position).getHotelId());
+                        intent.putExtra("Rooms",hotelDetailsArrayList.get(position).getNoOfRoomsInHotel());
                         startActivity(intent);
                     }
                     else
