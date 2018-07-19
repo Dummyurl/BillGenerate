@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="5dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:padding="5dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000000"
+                    android:text="From"/>
+                <TextView
+                    android:id="@+id/all_book_from_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:drawableRight="@drawable/calendar"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/spinner_background"
+                    android:paddingLeft="10dp"
+                    android:textColor="#000" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:padding="5dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="To"
+                    android:textColor="#000000"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:id="@+id/all_book_to_date"
+                    android:background="@drawable/spinner_background"
+                    android:drawableRight="@drawable/calendar"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:textColor="#000" />
+            </LinearLayout>
+            <!---->
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/btn"
+                android:text="Search"
+                android:id="@+id/all_search_bookings"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="2dp"
+                android:textColor="#ffffff"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="2dp">
+
+            <EditText
+                android:id="@+id/advance_payment"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:inputType="numberDecimal"
+                android:layout_marginRight="5dp"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:background="@drawable/spinner_background"
+                android:paddingLeft="10dp"
+                android:textColor="#000" />
+
+            <Button
+                android:id="@+id/advance_payment_button"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/btn"
+                android:text="Submit"
+                android:layout_marginRight="2dp"
+                android:layout_marginLeft="5dp"
+                android:textColor="#ffffff"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/generate_activebooking_report_btn"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary"
+        android:text="Generate Report"
+        android:textColor="#fff"/>
+
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_above="@+id/generate_activebooking_report_btn"
+        android:layout_below="@+id/card_view1"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:id="@+id/ui_layout"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_below="@+id/card_view1">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/settle_sno"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:gravity="start"
+                        android:layout_weight="1"
+                        android:text="S.No"
+                        android:textColor="#000000"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/settle_roomno"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Room No"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_guest"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Guest Name"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_cit"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+
+                        android:text="C-InDate"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_cot"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+
+                        android:text="C-OutDate"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_sell"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Sell Rate"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_gst"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="GST Amount"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_extra"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Extra Charges"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_total"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Total Amount"
+                        android:textColor="#000000" />
+
+
+                    <TextView
+                        android:id="@+id/settle_mode"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Payment Mode"
+                        android:textColor="#000000" />
+
+
+
+
+
+                    <TextView
+                        android:id="@+id/settle_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Payment Status"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_audit_sell"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Auditing Sell Rate"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_audit_gst"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Auditing Gst"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_audit_extra"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Auditing Extra"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_audit_diff"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:gravity="start"
+                        android:layout_weight="1"
+                        android:text="Difference Amount"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_audit_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:gravity="start"
+                        android:layout_weight="1"
+                        android:text="Audit Date"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_audit_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Audit Time"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_audit_user"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Audit By"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_audit_remark"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Remarks"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/settle_audit_edit"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Check Details"
+                        android:textColor="#000000" />
+
+                    <!--<TextView
+                        android:id="@+id/account_balnz"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:text="Balance"
+                        android:textColor="#000000" />-->
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/settle_list"
+                        android:layout_width="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_height="match_parent"
+                        app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!--  <ScrollView
+          android:id="@+id/details_scroll_view"
+          android:layout_width="match_parent"
+          android:visibility="gone"
+          android:layout_height="match_parent"
+          android:scrollbars="none">
+
+          <HorizontalScrollView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginRight="5dp"
+              android:layout_marginLeft="5dp"
+              android:scrollbars="none">
+
+
+              <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:orientation="vertical">
+
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="50dp"
+                      android:layout_marginBottom="10dp"
+                      android:orientation="horizontal"
+                      >
+
+                      <TextView
+                          android:id="@+id/settle_sno"
+                          android:layout_width="0dp"
+                          android:layout_height="wrap_content"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="0.3"
+                          android:gravity="center"
+                          android:text="S.No"
+                          android:textColor="#000000"
+                          android:textSize="14sp" />
+
+                      <TextView
+                          android:id="@+id/settle_roomno"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Room No"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_guest"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Guest Name"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_cit"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="C-InDate"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_cot"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="C-OutDate"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_sell"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Sell Rate"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_gst"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="GST Amount"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_extra"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Extra Charges"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_total"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Total Amount"
+                          android:textColor="#000000" />
+
+
+                      <TextView
+                          android:id="@+id/settle_mode"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Payment Mode"
+                          android:textColor="#000000" />
+
+
+
+
+
+                      <TextView
+                          android:id="@+id/settle_status"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Payment Status"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_audit_sell"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Auditing Sell Rate"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_audit_gst"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Auditing Gst"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_audit_extra"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Auditing Extra"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_audit_diff"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Difference Amount"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_audit_date"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Audit Date"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_audit_time"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Audit Time"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_audit_user"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Audit By"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_audit_remark"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Remarks"
+                          android:textColor="#000000" />
+
+                      <TextView
+                          android:id="@+id/settle_audit_edit"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="3dp"
+                          android:layout_weight="1"
+                          android:gravity="center"
+                          android:text="Check Details"
+                          android:textColor="#000000" />
+
+                      &lt;!&ndash;<TextView
+                          android:id="@+id/account_balnz"
+                          android:layout_width="0dp"
+                          android:layout_height="match_parent"
+                          android:layout_marginRight="5dp"
+                          android:layout_weight="1"
+                          android:gravity="center_horizontal"
+                          android:text="Balance"
+                          android:textColor="#000000" />&ndash;&gt;
+                  </LinearLayout>
+
+                  <android.support.v7.widget.RecyclerView
+                      android:id="@+id/settle_list"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+
+              </LinearLayout>
+
+          </HorizontalScrollView>
+
+      </ScrollView>-->
+</RelativeLayout>

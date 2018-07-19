@@ -1102,6 +1102,110 @@
 
 
                 </LinearLayout>
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add-On Services"
+                    android:id="@+id/add_on_check"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/add_on_layout"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/add_on_services"
+                        android:layout_marginTop="5dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Add-On Services"
+                            android:layout_weight="2"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="10dp"
+                            android:textColor="#000000"/>
+                        <EditText
+                            android:id="@+id/bill_add_on_service"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:inputType="text"
+                            android:paddingLeft="10dp"
+                            android:hint="Add-On Services"
+                            android:layout_weight="1"
+                            android:textColor="#000000"
+                            android:textStyle="bold"
+                            android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                            android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                            android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                            android:background="@drawable/spinner_background"/>
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/add_on_amount"
+                        android:layout_marginTop="5dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Add-On Services Amount"
+                            android:layout_weight="2"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="10dp"
+                            android:textColor="#000000"/>
+                        <EditText
+                            android:id="@+id/bill_add_on_service_amount"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:inputType="numberDecimal"
+                            android:paddingLeft="10dp"
+                            android:hint="Add-On Amount"
+                            android:layout_weight="1"
+                            android:textColor="#000000"
+                            android:textStyle="bold"
+                            android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                            android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                            android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                            android:background="@drawable/spinner_background"/>
+
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="5dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Add-on Mode"
+                            android:layout_weight="2"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="10dp"
+                            android:textColor="#000000"/>
+                        <Spinner
+                            android:id="@+id/bill_add_on_payment"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_weight="1"
+                            android:entries="@array/ota_payment_mode"
+                            android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                            android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                            android:background="@drawable/spinner_background"/>
+
+
+                    </LinearLayout>
+                </LinearLayout>
+
+
             </LinearLayout>
 
 
@@ -1328,6 +1432,39 @@
 
             </LinearLayout>
 
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Comments"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"
+                    android:gravity="left|top"
+                    android:hint="Comments"
+                    android:inputType="textPostalAddress|textMultiLine"
+                    android:lines="5"
+                    android:maxLines="5"
+                    android:layout_weight="1"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="10dp"
+                     />
+            </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -1371,7 +1508,15 @@
 
         </LinearLayout>
 
-
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/device_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:layout_below="@+id/btns"
+                android:layout_margin="8dp"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                />
 
         </LinearLayout>
 

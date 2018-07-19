@@ -21,6 +21,24 @@
             android:layout_margin="10dp"
             android:orientation="vertical"
             >
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="By Zingo Booking Id"
+                    android:id="@+id/zingo_id"
+                    />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ota_id"
+                    android:text="By OTA Id"/>
+            </RadioGroup>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -127,6 +145,14 @@
                             android:visibility="gone"
                             android:id="@+id/pay_at_hotel"/>
                     </LinearLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="#878787"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="2dp"
+                        android:id="@+id/ota_booking_id"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

@@ -3,6 +3,7 @@ package app.zingo.com.billgenerate;
 import java.util.ArrayList;
 
 import app.zingo.com.billgenerate.Model.NotificationManager;
+import app.zingo.com.billgenerate.Utils.API;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -33,6 +34,9 @@ public interface HotelOperations {
     @POST("NotificationManagers")
     Call<NotificationManager> saveNotification(@Header("Authorization") String auth, @Body NotificationManager hotelNotification);
 
+
+    @GET(API.HOTELS+"/{HotelId}")
+    Call<HotelDetails> getHotelByHotelId(@Header("Authorization") String authKey,@Path("HotelId") int HotelId);
 
 
 

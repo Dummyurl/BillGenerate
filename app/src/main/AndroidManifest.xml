@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
     <application
         android:allowBackup="true"
@@ -97,7 +98,9 @@
         <activity android:name=".AllHotelNotification" />
         <activity android:name=".DailyRevenueTagetActivity" />
         <activity android:name=".NotificationDetailsActivity" />
-        <activity android:name=".UpdateBookingsActivity"></activity>
+        <activity android:name=".UpdateBookingsActivity" />
+        <activity android:name=".TillDateBookings" />
+        <activity android:name=".SettleAudit"></activity>
     </application>
 
 </manifest>

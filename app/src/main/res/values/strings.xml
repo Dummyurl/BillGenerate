@@ -22,6 +22,19 @@
         <item>PART PAYMENT</item>
     </string-array>
 
+    <string-array name="ota_payment_mode">
+        <item>PaY@HOTEL</item>
+        <item>PREPAID/ONLINE</item>
+
+    </string-array>
+
+    <string-array name="advance_payment_mode">
+        <item>Cash</item>
+        <item>PREPAID/ONLINE</item>
+
+    </string-array>
+
+
     <string-array name="database_name">
         <item>DATABASE</item>
         <item>OTHERS</item>
@@ -59,16 +72,15 @@
     </array>
 
     <array name="B2B_items">
-        <item>COR</item>
+        <item>CORPORATE</item>
         <item>BOSH</item>
         <item>TA</item>
         <item>Other</item>
     </array>
 
     <array name="Offline_items">
-        <item>WAL</item>
+        <item>WALK IN</item>
         <item>ZINGO DIRECT</item>
-        <item>AGT</item>
         <item>Other</item>
     </array>
 
@@ -102,7 +114,7 @@
     </array>
 
     <array name="competitor_hotel_hoilday">
-        <item>Hotel  janpath-Kalasipalyam</item>
+        <item>Hotel janpath-Kalasipalyam</item>
         <item>Hotel Nandhini(Minerva Circle)</item>
         <item>Hotel Raaj Residency</item>
         <item>Tap Gold Crest</item>
@@ -233,8 +245,6 @@ which are the primary service providers with respect to hotel accommodation serv
 customer who are the ultimate users of the hotel accommodation services rendered by the hotel.</string>
 
 
-
-
     <string name="commission_holiday">150</string>
     <string name="commission_naga">150</string>
     <string name="commission_rb">100</string>
@@ -251,9 +261,13 @@ customer who are the ultimate users of the hotel accommodation services rendered
     <string name="commission_airport">150</string>
 
 
-
-
-
-
+    <array name="audit_payment_status">
+        <item>Received By OTA</item>
+        <item>Received By ZINGO</item>
+        <item>Received By Hotel</item>
+        <item>Zingo to Hotel</item>
+        <item>Payment Done</item>
+        <item>Pending</item>
+    </array>
 
 </resources>

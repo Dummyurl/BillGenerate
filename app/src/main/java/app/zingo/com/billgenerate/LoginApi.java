@@ -3,6 +3,7 @@ package app.zingo.com.billgenerate;
 import java.util.ArrayList;
 
 import app.zingo.com.billgenerate.Model.Bookings1;
+import app.zingo.com.billgenerate.Model.BookingsNotificationManagers;
 import app.zingo.com.billgenerate.Model.ContactDetails;
 import app.zingo.com.billgenerate.Model.Documents;
 import app.zingo.com.billgenerate.Model.FireBaseModel;
@@ -15,6 +16,7 @@ import app.zingo.com.billgenerate.Model.Rooms;
 import app.zingo.com.billgenerate.Model.SearchBook;
 import app.zingo.com.billgenerate.Model.SearchBooking;
 import app.zingo.com.billgenerate.Model.Traveller;
+import app.zingo.com.billgenerate.Utils.API;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -63,6 +65,9 @@ public interface LoginApi {
     @POST("Calculation/SendNotificationForMultipleDeviceByHotelId")
     Call<ArrayList<String>> send(@Header("Authorization") String authKey, @Body FireBaseModel body);
 
+    @POST("Notification/SendBookingNotification")
+    Call<ArrayList<String>> sendBookingNotification(@Header("Authorization") String authKey, @Body FireBaseModel body);
+
     @GET("Travellers/GetTravellerByPhoneNumber/{PhoneNumber}")
     Call<ArrayList<Traveller>> fetchTravelerByPhone(@Header("Authorization") String authKey, @Path("PhoneNumber") String PhoneNumber);
 
@@ -71,8 +76,12 @@ public interface LoginApi {
 
     @PUT("Travellers/{id}")
     Call<Traveller> updateTravellerDetails(@Header("Authorization") String authKey,@Path("id") int id,@Body Traveller body);
+
     @POST("NotificationManagers")
     Call<NotificationManager> saveNotification(@Header("Authorization") String auth, @Body NotificationManager hotelNotification);
+
+    @POST("BookingsNotificationManagers")
+    Call<BookingsNotificationManagers> saveBookingNotification(@Header("Authorization") String auth, @Body BookingsNotificationManagers hotelNotification);
 
     @GET("RoomBookings/{id}")
     Call<Bookings1> getBookingById(@Header("Authorization") String authKey,@Path("id") int id);
@@ -102,5 +111,8 @@ public interface LoginApi {
     @GET("NotificationManagers")
     Call<ArrayList<NotificationManager>> getNotification(@Header("Authorization") String authKey);
 
+
+    @GET(API.ROOMS+"/{id}")
+    Call<Rooms> getRoom(@Header("Authorization") String authKey,@Path("id") int id);
 
 }

@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,8 +40,10 @@ public class ShowBookingById extends AppCompatActivity {
     Button mGet;
     LinearLayout mLayout;
     HotelDetails list;
+    RadioButton mOTAId,mZingoId;
 
-    TextView mBookedPersonName,mBookedDate,mBookingDates,mNoofRooms,mNetAmount,mShortName,mCall,mPayAtHotel,mBookedRoom,mBookingSourceType;
+    TextView mBookedPersonName,mBookedDate,mBookingDates,mNoofRooms,
+            mNetAmount,mShortName,mCall,mPayAtHotel,mBookedRoom,mBookingSourceType,mOtaBookingId;
     LinearLayout mparent;
     int bookingId;
     Bookings1 updateBooking;
@@ -60,9 +63,13 @@ public class ShowBookingById extends AppCompatActivity {
             mGet = (Button)findViewById(R.id.search_booking);
 
             mBookedPersonName = (TextView) findViewById(R.id.booked_person_name);
+            mOTAId = (RadioButton) findViewById(R.id.ota_id);
+            mZingoId = (RadioButton) findViewById(R.id.zingo_id);
+            mZingoId.setChecked(true);
             mLayout = (LinearLayout) findViewById(R.id.layout_booking);
             mBookedDate = (TextView) findViewById(R.id.booked_date);
             mBookingDates = (TextView) findViewById(R.id.booked_from_to_date);
+            mOtaBookingId = (TextView) findViewById(R.id.ota_booking_id);
             mNoofRooms = (TextView) findViewById(R.id.booked_no_rooms_night);
             mNetAmount = (TextView) findViewById(R.id.net_amount);
             mShortName = (TextView) findViewById(R.id.person_short_name);
@@ -82,7 +89,21 @@ public class ShowBookingById extends AppCompatActivity {
                         mBookingID.requestFocus();
                     }else{
                         //bookingId = Integer.parseInt(id);
-                        getBookings(id);
+                        if(mOTAId.isChecked()){
+                            getBookings(id);
+                        }else if(mZingoId.isChecked()){
+                            try{
+
+                                getBookingsByZingoId(Integer.parseInt(id));
+
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+
+                        }else{
+                            Toast.makeText(ShowBookingById.this, "Please Select any option", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
                 }
             });
@@ -90,40 +111,46 @@ public class ShowBookingById extends AppCompatActivity {
             mLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    try{
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(ShowBookingById.this);
-                        builder.setTitle("Do you want to edit Booking");
-                        builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(ShowBookingById.this,UpdateBookingsActivity.class);
-                                Bundle bundle = new Bundle();
-                                bundle.putSerializable("BOOKINGS",updateBooking);
-                                intent.putExtras(bundle);
-                                startActivity(intent);
 
-                            }
-                        });
+                    if(updateBooking==null){
+                        Toast.makeText(ShowBookingById.this, "No Bookings Found", Toast.LENGTH_SHORT).show();
+                    }else{
+                        try{
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(ShowBookingById.this);
+                            builder.setTitle("Do you want to edit Booking");
+                            builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(ShowBookingById.this,UpdateBookingsActivity.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable("BOOKINGS",updateBooking);
+                                    intent.putExtras(bundle);
+                                    startActivity(intent);
 
-                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                cancelBooking();
-                            }
-                        });
+                                }
+                            });
 
-                        builder.setNeutralButton("Dismiss", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
+                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    cancelBookingBox();
+                                }
+                            });
 
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                    }catch (Exception e){
-                        e.printStackTrace();
+                            builder.setNeutralButton("Dismiss", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
+
                 }
             });
 
@@ -131,6 +158,36 @@ public class ShowBookingById extends AppCompatActivity {
         }catch (Exception e){
             e.printStackTrace();
         }
+
+    }
+
+    private void cancelBookingBox(){
+
+        try{
+            final AlertDialog.Builder builder = new AlertDialog.Builder(ShowBookingById.this);
+            builder.setTitle("Do you want to cancel Booking");
+            builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    cancelBooking();
+                }
+            });
+
+            builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -260,6 +317,68 @@ public class ShowBookingById extends AppCompatActivity {
         }
     }
 
+    public  void getBookingsByZingoId(final int bookingId)
+    {
+        LoginApi api = Util.getClient().create(LoginApi.class);
+        String authenticationString = Util.getToken(ShowBookingById.this);
+        Call<Bookings1> getBooking = api.getBookingById(authenticationString,bookingId);
+
+        getBooking.enqueue(new Callback<Bookings1>() {
+            @Override
+            public void onResponse(Call<Bookings1> call, Response<Bookings1> response) {
+                if(response.code() == 200)
+                {
+                    try{
+
+
+                        if(response.body() != null)
+                        {
+                            updateBooking = response.body();
+                            mBookedDate.setText("Booked On: "+getBookedOnDateFormate(response.body().getBookingDate()));
+                            if(response.body().getCheckInDate()!=null && !response.body().getCheckInDate().isEmpty()&&response.body().getCheckOutDate()!=null && !response.body().getCheckOutDate().isEmpty()){
+                                mBookingDates.setText(getBookingDateFormate(response.body().getCheckInDate())
+                                        +" To "+getBookingDateFormate(response.body().getCheckOutDate()));
+                            }
+                            mNetAmount.setText("Net Amount: ₹ "+response.body().getTotalAmount());
+                            if(response.body().getBookingSourceType() != null)
+                            {
+                                mBookingSourceType.setText(response.body().getBookingSourceType());
+                            }
+
+                            if(response.body().getOTABookingID()!=null&&!response.body().getOTABookingID().isEmpty()){
+                                mOtaBookingId.setText(""+response.body().getOTABookingID());
+                            }
+
+                            mNoofRooms.setText((long)getDays(response.body().getCheckInDate(),response.body().getCheckOutDate())+" Night(s)");
+                            getTravellerDetails(response.body().getTravellerId());
+                            getHotelName(response.body().getHotelId());
+
+                        }else{
+                            Toast.makeText(ShowBookingById.this, "No Bookings Found", Toast.LENGTH_SHORT).show();
+                        }
+
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                }
+                else
+                {
+                    System.out.println(response.message());
+                    Toast.makeText(ShowBookingById.this, response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Bookings1> call, Throwable t) {
+                System.out.println(t.getMessage());
+                Toast.makeText(ShowBookingById.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
     public  void getBookings(final String bookingId)
     {
         LoginApi api = Util.getClient().create(LoginApi.class);
@@ -288,10 +407,16 @@ public class ShowBookingById extends AppCompatActivity {
                                 mBookingSourceType.setText(response.body().get(0).getBookingSourceType());
                             }
 
+                            if(response.body().get(0).getOTABookingID()!=null&&!response.body().get(0).getOTABookingID().isEmpty()){
+                                mOtaBookingId.setText(""+response.body().get(0).getOTABookingID());
+                            }
+
                             mNoofRooms.setText((long)getDays(response.body().get(0).getCheckInDate(),response.body().get(0).getCheckOutDate())+" Night(s)");
                             getTravellerDetails(response.body().get(0).getTravellerId());
                             getHotelName(response.body().get(0).getHotelId());
 
+                        }else{
+                            Toast.makeText(ShowBookingById.this, "There is no Booking", Toast.LENGTH_SHORT).show();
                         }
 
 
@@ -303,12 +428,14 @@ public class ShowBookingById extends AppCompatActivity {
                 else
                 {
                     System.out.println(response.message());
+                    Toast.makeText(ShowBookingById.this, response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ArrayList<Bookings1>> call, Throwable t) {
                 System.out.println(t.getMessage());
+                Toast.makeText(ShowBookingById.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

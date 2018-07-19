@@ -94,13 +94,22 @@
                 android:id="@+id/cancel_booking"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:text="Cancel Booking"
+                android:text="Modify/Cancel Booking"
                 android:layout_marginTop="10dp"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/create_bill"
                 />
 
 
+            <Button
+                android:id="@+id/payment"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Payment"
+                android:layout_marginTop="10dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/hotel_list"
+                />
 
 
 

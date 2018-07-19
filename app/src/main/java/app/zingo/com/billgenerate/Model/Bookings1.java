@@ -30,10 +30,8 @@ public class Bookings1 implements Serializable {
     @SerializedName("TravellerId")
     private int TravellerId;
 
-/*
-
     @SerializedName("travellerList")
-    private ArrayList<Traveller> travellerList;*/
+    private ArrayList<Traveller> travellerList;
 
     @SerializedName("BookingDate")
     private String BookingDate;
@@ -120,8 +118,8 @@ public class Bookings1 implements Serializable {
     @SerializedName("Company")
     private String Company ;
 
-    /*@SerializedName("servicesList")
-    private ArrayList<Service> servicesList;*/
+    @SerializedName("servicesList")
+    private ArrayList<Service> servicesList;
 
     @SerializedName("HourlyCharges")
     private int HourlyCharges ;
@@ -129,8 +127,8 @@ public class Bookings1 implements Serializable {
     @SerializedName("CommisionGSTAmount")
     private double CommisionGSTAmount ;
 
-   /* @SerializedName("paymentList")
-    private ArrayList<Payment> paymentList;*/
+    @SerializedName("paymentList")
+    private ArrayList<Payment> paymentList;
 
     @SerializedName("Reason")
     private String Reason ;
@@ -144,11 +142,11 @@ public class Bookings1 implements Serializable {
     @SerializedName("NoOfRooms")
     private int NoOfRooms ;
 
-  /*  @SerializedName("rooms")
+    @SerializedName("rooms")
     private ArrayList<Rooms> rooms;
 
     @SerializedName("auditSettlementList")
-    private ArrayList<AuditSettlement> auditSettlementList;*/
+    private ArrayList<AuditSettlement> auditSettlementList;
 
     @SerializedName("ProfileId")
     private int ProfileId ;
@@ -160,15 +158,8 @@ public class Bookings1 implements Serializable {
     private int NoOfHoursStayed ;
 
 
-
-   /* @SerializedName("RoomId")
-    private ArrayList<Integer> RoomId ;*/
-
-    @SerializedName("room")
-    private String room;
-
-    @SerializedName("netAmount")
-    private String netAmount;
+    @SerializedName("TravellerAgentId")
+    private int TravellerAgentId ;
 
     @SerializedName("OTACommissionAmount")
     private double OTACommissionAmount;
@@ -186,25 +177,18 @@ public class Bookings1 implements Serializable {
     private double OTAToPayHotel;
 
     @SerializedName("HotelToPayOTA")
-    private double HotelToPayOTA;
+    private double HotelToPayOTA;//
 
-    @SerializedName("ZingoToHotel")
-    private double ZingoToHotel;
+    @SerializedName("MultipleProfileId")
+    private String MultipleProfileId;
 
-    @SerializedName("HotelToZingo")
-    private double HotelToZingo;
+    public String getMultipleProfileId() {
+        return MultipleProfileId;
+    }
 
-    @SerializedName("ZingoCommision")
-    private double ZingoCommision;
-
-    @SerializedName("CustomerPaymentAtOTA")
-    private double CustomerPaymentAtOTA;
-
-    @SerializedName("AdditionalCharges")
-    private double AdditionalCharges;
-
-    @SerializedName("OTABookingID")
-    private String OTABookingID;
+    public void setMultipleProfileId(String multipleProfileId) {
+        MultipleProfileId = multipleProfileId;
+    }
 
     public double getOTACommissionAmount() {
         return OTACommissionAmount;
@@ -302,8 +286,45 @@ public class Bookings1 implements Serializable {
         this.OTABookingID = OTABookingID;
     }
 
-    /*  @SerializedName("travellerDocument")
-    private ArrayList<TravellerDocuments> travellerDocument;*/
+    @SerializedName("ZingoToHotel")
+    private double ZingoToHotel;
+
+    @SerializedName("HotelToZingo")
+    private double HotelToZingo;
+
+    @SerializedName("ZingoCommision")
+    private double ZingoCommision;
+
+    @SerializedName("CustomerPaymentAtOTA")
+    private double CustomerPaymentAtOTA;
+
+    @SerializedName("AdditionalCharges")
+    private double AdditionalCharges;
+
+    @SerializedName("OTABookingID")
+    private String OTABookingID;
+
+    public int getTravellerAgentId() {
+        return TravellerAgentId;
+    }
+
+    public void setTravellerAgentId(int travellerAgentId) {
+        TravellerAgentId = travellerAgentId;
+    }
+
+   /* @SerializedName("RoomId")
+    private ArrayList<Integer> RoomId ;*/
+
+    @SerializedName("room")
+    private String room;
+
+
+
+    @SerializedName("netAmount")
+    private String netAmount;
+
+    @SerializedName("travellerDocument")
+    private ArrayList<TravellerDocuments> travellerDocument;
 
     public int getHourlyCharges() {
         return HourlyCharges;
@@ -321,13 +342,13 @@ public class Bookings1 implements Serializable {
         CommisionGSTAmount = commisionGSTAmount;
     }
 
-   /* public ArrayList<AuditSettlement> getAuditSettlementList() {
+    public ArrayList<AuditSettlement> getAuditSettlementList() {
         return auditSettlementList;
     }
 
     public void setAuditSettlementList(ArrayList<AuditSettlement> auditSettlementList) {
         this.auditSettlementList = auditSettlementList;
-    }*/
+    }
 
     public int getProfileId() {
         return ProfileId;
@@ -460,13 +481,13 @@ public class Bookings1 implements Serializable {
         HotelId = hotelId;
     }
 
-  /*  public ArrayList<Traveller> getTravellerList() {
+    public ArrayList<Traveller> getTravellerList() {
         return travellerList;
     }
 
     public void setTravellerList(ArrayList<Traveller> travellerList) {
         this.travellerList = travellerList;
-    }*/
+    }
 
     public String getNetAmount() {
         return netAmount;
@@ -548,7 +569,7 @@ public class Bookings1 implements Serializable {
         DeclaredRate = declaredRate;
     }
 
-    
+
     public int getSellRate() {
         return SellRate;
     }
@@ -613,13 +634,13 @@ public class Bookings1 implements Serializable {
         CheckOutTime = checkOutTime;
     }
 
-    /*public ArrayList<Rooms> getRooms() {
+    public ArrayList<Rooms> getRooms() {
         return rooms;
     }
 
     public void setRooms(ArrayList<Rooms> rooms) {
         this.rooms = rooms;
-    }*/
+    }
 
     public int getRoomId() {
         return RoomId;
@@ -637,15 +658,15 @@ public class Bookings1 implements Serializable {
         this.room = room;
     }
 
-   /* public ArrayList<Service> getServicesList() {
+    public ArrayList<Service> getServicesList() {
         return servicesList;
     }
 
     public void setServicesList(ArrayList<Service> servicesList) {
         this.servicesList = servicesList;
-    }*/
+    }
 
-  /*  public ArrayList<Payment> getPaymentList() {
+    public ArrayList<Payment> getPaymentList() {
         return paymentList;
     }
 
@@ -659,7 +680,7 @@ public class Bookings1 implements Serializable {
 
     public void setTravellerDocument(ArrayList<TravellerDocuments> travellerDocument) {
         this.travellerDocument = travellerDocument;
-    }*/
+    }
 
     public void setNoOfChild(int noOfChild) {
         NoOfChild = noOfChild;

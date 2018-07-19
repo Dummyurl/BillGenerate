@@ -219,6 +219,9 @@ public class UpdateBookingsActivity extends AppCompatActivity {
 
             bookingSourceTitleStringArray = getResources().getStringArray(R.array.booking_source_title);
 
+            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceTitleStringArray);
+            mSourceType.setAdapter(spinneradapter);
+
             Bundle bundle = getIntent().getExtras();
             if(bundle!=null){
                 bookings = (Bookings1) bundle.getSerializable("BOOKINGS");
@@ -233,8 +236,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
 
 
 
-            PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(UpdateBookingsActivity.this,bookingSourceTitleStringArray);
-            mSourceType.setAdapter(spinneradapter);
+
 
             mSourceType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -1176,10 +1178,10 @@ public class UpdateBookingsActivity extends AppCompatActivity {
 
             //paragraph = new Paragraph(text,smallBold);
             addEmptyLine(paragraph, 2);
-            paragraph.add(new Paragraph("Booking ID: " + bookingID, smallBolds));
+           // paragraph.add(new Paragraph("Booking ID: " + bookingID, smallBolds));
             paragraph.add(new Paragraph("Booking Source: " + ota, smallBolds));
             if(zingoBookingId!=null&&!zingoBookingId.isEmpty()){
-                paragraph.add(new Paragraph("Zingo Booking ID: " + zingoBookingId, smallBolds));
+                paragraph.add(new Paragraph("Booking ID: " + zingoBookingId, smallBolds));
             }
 
             addEmptyLine(paragraph, 1);
@@ -1234,7 +1236,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
         table.setHeaderRows(1);*/
 
         table.addCell("BOOKING ID");
-        table.addCell(bookingID);
+        table.addCell(zingoBookingId);
         table.addCell("Booking Source");
         table.addCell(ota);
         table.addCell("HOTEL NAME");
@@ -2326,7 +2328,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                         }else{
                             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "ZINGO- Confirm Prepaid -"+ota+" voucher - "+property);
                         }*/
-                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, ota+" -Modified Booking!("+mBookingID.getText().toString()+","+mCID.getText().toString()+")");
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, ota+" -Modified Booking!("+zingoBookingId+","+mCID.getText().toString()+")");
                         emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Hotel Partner,\n" +
                                 "We Thank you for your continued support in ensuring the highest level of service Standards. \n" +
                                 "\n" +

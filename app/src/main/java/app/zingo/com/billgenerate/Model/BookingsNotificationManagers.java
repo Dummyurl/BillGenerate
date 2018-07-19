@@ -2,37 +2,22 @@ package app.zingo.com.billgenerate.Model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
- * Created by ZingoHotels.com on 4/7/2018.
+ * Created by ZingoHotels Tech on 09-07-2018.
  */
 
+public class BookingsNotificationManagers {
 
-public class FireBaseModel implements Serializable {
-
-    @SerializedName("HotelId")
-    private int HotelId;
-
-    public int getHotelId() {
-        return HotelId;
-    }
-
-    public void setHotelId(int hotelId) {
-        HotelId = hotelId;
-    }
+    @SerializedName("BookingNotificationManagerId")
+    private int BookingNotificationManagerId;
 
     @SerializedName("Title")
     private String Title;
 
     @SerializedName("Message")
     private String Message;
-
-    @SerializedName("ServerId")
-    private String ServerId;
-
-    @SerializedName("SenderId")
-    private String SenderId;
 
     //New Custom model for notification for data pay
     @SerializedName("TravellerName")
@@ -65,7 +50,36 @@ public class FireBaseModel implements Serializable {
     @SerializedName("BookingDateTime")
     private String BookingDateTime;
 
+    @SerializedName("ProfileId")
+    private int ProfileId;
 
+    @SerializedName("HotelId")
+    private int HotelId;
+
+    @SerializedName("TravellerAgentId")
+    private int TravellerAgentId;
+
+    @SerializedName("TravellerId")
+    private int TravellerId;
+
+    @SerializedName("Booking")
+    private String Booking;
+
+    public String getBooking() {
+        return Booking;
+    }
+
+    public void setBooking(String booking) {
+        Booking = booking;
+    }
+
+    public int getBookingNotificationManagerId() {
+        return BookingNotificationManagerId;
+    }
+
+    public void setBookingNotificationManagerId(int bookingNotificationManagerId) {
+        BookingNotificationManagerId = bookingNotificationManagerId;
+    }
 
     public String getTitle() {
         return Title;
@@ -82,25 +96,6 @@ public class FireBaseModel implements Serializable {
     public void setMessage(String message) {
         Message = message;
     }
-
-    public String getServerId() {
-        return ServerId;
-    }
-
-    public void setServerId(String serverId) {
-        ServerId = serverId;
-    }
-
-    public String getSenderId() {
-        return SenderId;
-    }
-
-    public void setSenderId(String senderId) {
-        SenderId = senderId;
-    }
-
-    //New
-
 
     public String getTravellerName() {
         return TravellerName;
@@ -180,5 +175,37 @@ public class FireBaseModel implements Serializable {
 
     public void setBookingDateTime(String bookingDateTime) {
         BookingDateTime = bookingDateTime;
+    }
+
+    public int getProfileId() {
+        return ProfileId;
+    }
+
+    public void setProfileId(int profileId) {
+        ProfileId = profileId;
+    }
+
+    public int getHotelId() {
+        return HotelId;
+    }
+
+    public void setHotelId(int hotelId) {
+        HotelId = hotelId;
+    }
+
+    public int getTravellerAgentId() {
+        return TravellerAgentId;
+    }
+
+    public void setTravellerAgentId(int travellerAgentId) {
+        TravellerAgentId = travellerAgentId;
+    }
+
+    public int getTravellerId() {
+        return TravellerId;
+    }
+
+    public void setTravellerId(int travellerId) {
+        TravellerId = travellerId;
     }
 }

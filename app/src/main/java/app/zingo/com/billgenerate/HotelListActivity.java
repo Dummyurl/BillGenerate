@@ -69,8 +69,13 @@ public class HotelListActivity extends AppCompatActivity {
                         intent.putExtra("Rooms",hotelDetailsArrayList.get(position).getNoOfRoomsInHotel());
                         startActivity(intent);
                     }
-                    else
-                    {
+                    else if(screen.equalsIgnoreCase("Payment")){
+                        Intent intent = new Intent(HotelListActivity.this,TillDateBookings.class);
+                        intent.putExtra("HotelId",hotelDetailsArrayList.get(position).getHotelId());
+                        startActivity(intent);
+
+
+                    }else{
                         Intent intent = new Intent(HotelListActivity.this,NotificationDetailsActivity.class);
                         intent.putExtra("HotelName",hotelDetailsArrayList.get(position).getHotelName());
                         intent.putExtra("HotelId",hotelDetailsArrayList.get(position).getHotelId());

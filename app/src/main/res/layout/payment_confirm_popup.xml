@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main_contenier"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center"
+    android:layout_gravity="center"
+    android:layout_marginTop="15dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:id="@+id/booking_info"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            />
+
+        <EditText
+            android:id="@+id/advance_payment"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:hint="Enter the Payment Amount"
+            android:inputType="numberDecimal"
+            android:layout_margin="5dp"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:background="@drawable/spinner_background"
+            android:paddingLeft="10dp"
+            android:textColor="#000" />
+
+        <EditText
+            android:id="@+id/advance_payment_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:hint="Re-enter the Payment Amount"
+            android:inputType="numberDecimal"
+            android:layout_margin="5dp"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:background="@drawable/spinner_background"
+            android:paddingLeft="10dp"
+            android:textColor="#000" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/payment_mode_layout"
+            android:layout_marginTop="10dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Payment Mode"
+                android:layout_weight="2"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/black"/>
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="50dp"
+                android:background="@drawable/spinner_background"
+                android:layout_margin="5dp"
+                android:entries="@array/advance_payment_mode"
+                android:id="@+id/payment_mode"/>
+
+        </LinearLayout>
+
+
+
+        <Button
+            android:id="@+id/submit_payment"
+            android:layout_below="@+id/text_internal"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:text="Submit"
+            android:layout_centerInParent="true"
+            android:layout_margin="10dp"
+            android:background="#ff0000"
+            android:textColor="#ffffff"/>
+    </LinearLayout>
+
+
+
+
+</RelativeLayout>

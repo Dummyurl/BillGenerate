@@ -4,6 +4,9 @@ import android.Manifest;
 import android.app.DatePickerDialog;
 
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.LabeledIntent;
@@ -16,6 +19,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -24,6 +28,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -34,6 +39,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -45,6 +52,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,6 +61,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -82,7 +93,10 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 
+import app.zingo.com.billgenerate.Adapter.AdapterDevices;
 import app.zingo.com.billgenerate.Adapter.AutocompleteCustomArrayAdapter;
+import app.zingo.com.billgenerate.CustomViews.RecyclerTouchListener;
+import app.zingo.com.billgenerate.Model.BookingsNotificationManagers;
 import app.zingo.com.billgenerate.Utils.BillDataBase;
 import app.zingo.com.billgenerate.Model.Bookings1;
 import app.zingo.com.billgenerate.Model.ContactDetails;
@@ -110,15 +124,16 @@ import retrofit2.Response;
 public class BillDetails extends AppCompatActivity {
 
     Spinner mRoomCount, mPayment, mRate, mDesc, mProperty,mOTA,mDataBase,
-            mSourceType,room_category_spinner,mRoom;
+            mSourceType,room_category_spinner,mRoom,mAddOnMode;
     LinearLayout mDataLayout,mOtherLayout,mAddLayout,
             mCustomerLayout,mOtaService,mOtaGSTLay,mOTAComLay,
-            mOTAPER,mRoomLay,mOtaTransaction;
+            mOTAPER,mRoomLay,mOtaTransaction,mPartPayment,mAddOnLayout;
+    CheckBox mAddOnCheck;
     EditText mLocation, mCity, mMobile, mRoomType,
             mGuestCount, mTotal, mBooking, mZingo,mOtherProperty,
             mBookingID, mEmail,  mNet, mNights, mArr,mOtaFee,
             mRoomCharge,mExtraCharge,mHotelTaxes,mAdditional,mCustomerPay,mOTAPerce,
-            mOTACommison,mOTAGST,mOtherbookingSource,mGuestEmail;
+            mOTACommison,mOTAGST,mOtherbookingSource,mGuestEmail,mComments,mPartPay,mAddOnServices,mAddonCharges;
     TextView mBook, mCID, mCOD;
     CustomAutoCompleteView mGuest;
     Button mSave, mCalculate,mSendGuest;
@@ -130,7 +145,7 @@ public class BillDetails extends AppCompatActivity {
     double commisionAmt,commisionGST;
     HotelDetails list;
     ArrayList<Traveller> tlist;
-    String[] bookingSourceTitleStringArray;
+    String[] bookingSourceTitleStringArray,otaPaymentMode;
 
     //Databaases
     DataBaseHelper dbHelper;
@@ -153,10 +168,10 @@ public class BillDetails extends AppCompatActivity {
     //pdf
     String property, email, ota, city, location, guest,
             mobile, bdate, cit, cot, rooms, roomNum, count, plans,
-            payment, desc, total, booking, zingo, net, nights,
+            payment, desc, total, booking, zingo, net, nights,comments,
             arr, cits, cots,roomCharge,extraCharge,hoteltaxes,addtional,customer,otaFee,otaCommission,otaGST;
-    double totals,otaAmt,zingoAmt,otaToHotel,addtionalChrg,payCustomer,
-            customerToHotel,otaToHotelPay,otaFeeAmount,gstValue,otaComAmount,otaGstAmount;
+    double addOnTotals,totals,otaAmt,zingoAmt,otaToHotel,addtionalChrg,payCustomer,
+            customerToHotel,otaToHotelPay,otaFeeAmount,gstValue,otaComAmount,otaGstAmount,partPaid,partBalance,addOnChargesPayment;
     Document document;
     Paragraph paragraph;
     String propertyN;
@@ -173,6 +188,9 @@ public class BillDetails extends AppCompatActivity {
             Font.NORMAL, BaseColor.RED);
     private static Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 16,
             Font.BOLD);
+
+    private static Font subFontColor = new Font(Font.FontFamily.TIMES_ROMAN, 16,
+            Font.BOLD,BaseColor.BLUE);
     private static Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12,
             Font.BOLD);
     private static Font smallBolds = new Font(Font.FontFamily.TIMES_ROMAN, 12,
@@ -181,6 +199,8 @@ public class BillDetails extends AppCompatActivity {
 
     private static Font small = new Font(Font.FontFamily.TIMES_ROMAN, 12,
             Font.NORMAL);
+    private static Font smallColor = new Font(Font.FontFamily.TIMES_ROMAN, 12,
+            Font.NORMAL,BaseColor.BLUE);
     private static Font smallRed = new Font(Font.FontFamily.TIMES_ROMAN, 12,
             Font.NORMAL,BaseColor.RED);
 
@@ -221,6 +241,26 @@ public class BillDetails extends AppCompatActivity {
 
 
 
+    //Print pdf from Bluetooth
+    // android built in classes for bluetooth operations
+    BluetoothAdapter mBluetoothAdapter;
+    BluetoothSocket mmSocket;
+    BluetoothDevice mmDevice;
+
+    // needed for communication to bluetooth device / network
+    OutputStream mmOutputStream;
+    InputStream mmInputStream;
+    Thread workerThread;
+
+    byte[] readBuffer;
+    int readBufferPosition;
+    ArrayList<BluetoothDevice> deviceList;
+    volatile boolean stopWorker;
+
+    RecyclerView mDeviceList;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -232,6 +272,8 @@ public class BillDetails extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             setTitle("Create Bill");
 
+            mDeviceList = (RecyclerView) findViewById(R.id.device_list);
+
             mProperty = (Spinner) findViewById(R.id.bill_property_name);
             mDataBase = (Spinner) findViewById(R.id.bill_data_base);
             mAddLayout = (LinearLayout)findViewById(R.id.additional_layout);
@@ -241,6 +283,7 @@ public class BillDetails extends AppCompatActivity {
             mOTAPER = (LinearLayout)findViewById(R.id.ota_commision_per_layout);
             mRoomLay = (LinearLayout)findViewById(R.id.room_layout);
             mOtaTransaction = (LinearLayout)findViewById(R.id.ota_transaction);
+            mPartPayment = (LinearLayout)findViewById(R.id.part_payment);
             mOtaGSTLay = (LinearLayout)findViewById(R.id.ota_gst_layout);
             mDataLayout = (LinearLayout)findViewById(R.id.data_property_layout);
             mOtherLayout = (LinearLayout)findViewById(R.id.other_property_layout);
@@ -258,6 +301,8 @@ public class BillDetails extends AppCompatActivity {
             mGuest = (CustomAutoCompleteView) findViewById(R.id.bill_guest_name);
             mMobile = (EditText) findViewById(R.id.bill_guest_mobile);
             mGuestEmail = (EditText) findViewById(R.id.bill_guest_email);
+            mComments = (EditText) findViewById(R.id.bill_comment);
+            mPartPay = (EditText) findViewById(R.id.bill_part_paid);
             mGuestCount = (EditText) findViewById(R.id.bill_property_guest_num);
             mDesc = (Spinner) findViewById(R.id.bill_plan_inclusion);
             mRoomCharge = (EditText) findViewById(R.id.bill_room_charge);
@@ -285,11 +330,20 @@ public class BillDetails extends AppCompatActivity {
             mOtherbookingSource = (EditText) findViewById(R.id.other_booking_source);
             room_category_spinner = (Spinner) findViewById(R.id.room_category_spinner);
             mRoom = (Spinner) findViewById(R.id.room_spinner);
+            mAddonCharges = (EditText)findViewById(R.id.bill_add_on_service_amount);
+            mAddOnServices = (EditText)findViewById(R.id.bill_add_on_service);
+            mAddOnMode = (Spinner) findViewById(R.id.bill_add_on_payment);
+            mAddOnLayout = (LinearLayout) findViewById(R.id.add_on_layout);
+            mAddOnLayout.setVisibility(View.GONE);
+            mAddOnCheck = (CheckBox) findViewById(R.id.add_on_check);
 
             bookingSourceTitleStringArray = getResources().getStringArray(R.array.booking_source_title);
+            otaPaymentMode = getResources().getStringArray(R.array.ota_payment_mode);
 
             PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceTitleStringArray);
             mSourceType.setAdapter(spinneradapter);
+
+          //  findBT();
 
             mSourceType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -301,6 +355,9 @@ public class BillDetails extends AppCompatActivity {
 
                             PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
                             mOTA.setAdapter(spinneradapter);
+
+                            PaidStatusSpinnerAdapter adapterS = new PaidStatusSpinnerAdapter(BillDetails.this,otaPaymentMode);
+                            mPayment.setAdapter(adapterS);
                             mOtaTransaction.setVisibility(View.VISIBLE);
                         }
                         else if(bookingSourceTitleStringArray[position].equals("B2B"))
@@ -309,7 +366,14 @@ public class BillDetails extends AppCompatActivity {
 
                             PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
                             mOTA.setAdapter(spinneradapter);
+
+                            String[] otherPayment = getResources().getStringArray(R.array.payment_mode);
+
+                            PaidStatusSpinnerAdapter adapters = new PaidStatusSpinnerAdapter(BillDetails.this,otherPayment);
+                            mPayment.setAdapter(adapters);
+
                             mOtaTransaction.setVisibility(View.GONE);
+
                         }
                         else if(bookingSourceTitleStringArray[position].equals("Offline"))
                         {
@@ -318,6 +382,12 @@ public class BillDetails extends AppCompatActivity {
                             PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
                             mOTA.setAdapter(spinneradapter);
                             mOtaTransaction.setVisibility(View.GONE);
+                            String[] otherPayment = getResources().getStringArray(R.array.payment_mode);
+
+                            PaidStatusSpinnerAdapter adapters = new PaidStatusSpinnerAdapter(BillDetails.this,otherPayment);
+                            mPayment.setAdapter(adapters);
+                            String bookingnumber = randomByDate();
+                            mBookingID.setText(""+bookingnumber);
                         }
                     }
                     catch (Exception ex)
@@ -332,6 +402,16 @@ public class BillDetails extends AppCompatActivity {
                 }
             });
 
+            mAddOnCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if(mAddOnCheck.isChecked()){
+                        mAddOnLayout.setVisibility(View.VISIBLE);
+                    }else{
+                        mAddOnLayout.setVisibility(View.GONE);
+                    }
+                }
+            });
             //bookingSourceArray = getResources().getStringArray(R.array.OTA_items);
             /*PaidStatusSpinnerAdapter spinneradapter = new PaidStatusSpinnerAdapter(BillDetails.this,bookingSourceArray);
             mOTA.setAdapter(spinneradapter);*/
@@ -549,6 +629,27 @@ public class BillDetails extends AppCompatActivity {
 
                 }
             });
+
+            mZingo.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+
+                    generalCalculation();
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
             mDataBase.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -618,11 +719,18 @@ public class BillDetails extends AppCompatActivity {
                         mCustomerLayout.setVisibility(View.VISIBLE);
                         mAddLayout.setVisibility(View.VISIBLE);
                         mOtaService.setVisibility(View.VISIBLE);
+                        mPartPayment.setVisibility(View.GONE);
 
+                    }else if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PART PAYMENT")){
+                        mCustomerLayout.setVisibility(View.GONE);
+                        mAddLayout.setVisibility(View.GONE);
+                        mOtaService.setVisibility(View.GONE);
+                        mPartPayment.setVisibility(View.VISIBLE);
                     }else{
                         mCustomerLayout.setVisibility(View.GONE);
                         mAddLayout.setVisibility(View.GONE);
                         mOtaService.setVisibility(View.GONE);
+                        mPartPayment.setVisibility(View.GONE);
                     }
                 }
 
@@ -706,10 +814,13 @@ public class BillDetails extends AppCompatActivity {
                 public void onClick(View v) {
 
 
+                    String partPayment = mPartPay.getText().toString();
+                    String addOnCharges = mAddonCharges.getText().toString();
                     cit = mCID.getText().toString();
                     cot = mCOD.getText().toString();
                     total = mTotal.getText().toString();
                    // zingo = mZingo.getText().toString();
+                    roomNum = mRoomCount.getSelectedItem().toString();
                     booking = mBooking.getText().toString();
                     roomCharge = mRoomCharge.getText().toString();
                     extraCharge = mExtraCharge.getText().toString();
@@ -722,17 +833,17 @@ public class BillDetails extends AppCompatActivity {
 
                     String source = mOTA.getSelectedItem().toString();
 
-                    if (booking == null || booking.isEmpty()) {
+                   /* if (booking == null || booking.isEmpty()) {
                         //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
                         mBooking.setError("Should not be Empty");
                         mBooking.requestFocus();
 
-                    } /*else if (zingo == null || zingo.isEmpty()) {
+                    }*/ /*else if (zingo == null || zingo.isEmpty()) {
                         //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
                         mZingo.setError("Should not be Empty");
                         mZingo.requestFocus();
 
-                    }*/ else if (cit == null || cit.isEmpty()) {
+                    }*/  if (cit == null || cit.isEmpty()) {
                         //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
                         mCID.setError("Should not be Empty");
                         mCID.requestFocus();
@@ -777,6 +888,9 @@ public class BillDetails extends AppCompatActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                        //178.57
+                        //333.33
+                        //159
 
                         if(otaCommission==null||otaCommission.isEmpty()){
                             otaComAmount = 0;
@@ -790,11 +904,28 @@ public class BillDetails extends AppCompatActivity {
                             otaGstAmount = Double.parseDouble(otaGST);
                         }
 
+                        if(mAddOnCheck.isChecked()){
+                            if(addOnCharges==null||addOnCharges.isEmpty()){
+                                addOnChargesPayment =0;
+                            }else{
+                                addOnChargesPayment = Double.parseDouble(addOnCharges);
+                            }
+                        }else{
+                            addOnChargesPayment=0;
+                        }
+
                         //Net Amount
 
                         DecimalFormat df = new DecimalFormat("#,###.##");
                         totals = Double.parseDouble(total);
-                        otaAmt = Double.parseDouble(booking);
+                        addOnTotals = totals+addOnChargesPayment;
+                        System.out.println("Totals=="+totals);
+                        if(booking==null||booking.isEmpty()){
+                            otaAmt = 0;
+                        }else{
+                            otaAmt = Double.parseDouble(booking);
+                        }
+
                        // zingoAmt = Double.parseDouble(zingo);
                         double zingoAmts=0;
                         System.out.println(" Property == "+property);
@@ -862,16 +993,17 @@ public class BillDetails extends AppCompatActivity {
 
                         double rooms = Double.parseDouble(mRoomCount.getSelectedItem().toString());
                         if (diffDays != 0) {
-                            double arrAmt = totals / diffDays;
+                            double arrAmt = addOnTotals / diffDays;
                             double arrRamt = arrAmt / rooms;
                             mArr.setText("" + df.format(arrRamt));
                         } else {
                             //double arrAmt = total/diffDays;
-                            double arrRamt = totals / rooms;
+                            double arrRamt = addOnTotals / rooms;
                             mArr.setText("" + df.format(arrRamt));
                         }
 
-                        zingoAmt = diffDays * zingoAmts;
+                        double roomCount = Double.parseDouble(roomNum);
+                        zingoAmt = diffDays * zingoAmts * roomCount * 1.0;
                         mZingo.setText(""+df.format(zingoAmt));
                         zingo = mZingo.getText().toString();
                         zingo = ""+df.format(zingoAmt);
@@ -879,19 +1011,34 @@ public class BillDetails extends AppCompatActivity {
                         commisionAmt = otaAmt + zingoAmt+otaFeeAmount;
                         double gst = commisionAmt*18;
                         commisionGST = gst/100;
-                        otaToHotel = totals-otaAmt;
+                        otaToHotel = addOnTotals-otaAmt;
 
 
+
+
+
+                        if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PART PAYMENT")){
+                            if(partPayment==null||partPayment.isEmpty()){
+                                partPaid = 0;
+                            }else{
+                                partPaid = Double.parseDouble(partPayment);
+                            }
+                        }else{
+                            partPaid=0;
+                        }
+
+
+                        partBalance = addOnTotals- partPaid;
                         //hotelToZingo = otaToHotel-
-                        double netAmt = totals - (commisionAmt);
+                        double netAmt = addOnTotals - (commisionAmt);
                         mNet.setText("" + df.format(netAmt));
 
                         if(source!=null&&source.equalsIgnoreCase("MAKEMY TRIP")){
                             otaToHotelPay = (payCustomer) - (otaAmt+otaFeeAmount);
-                            customerToHotel = (totals+addtionalChrg+otaFeeAmount)-payCustomer;
+                            customerToHotel = (addOnTotals+addtionalChrg+otaFeeAmount)-payCustomer;
                         }else{
                             otaToHotelPay = payCustomer - otaAmt;
-                            customerToHotel = (totals+addtionalChrg)-payCustomer;
+                            customerToHotel = (addOnTotals+addtionalChrg)-payCustomer;
                         }
 
                     }
@@ -994,6 +1141,15 @@ public class BillDetails extends AppCompatActivity {
 
                     try{
 
+                        //Print
+                      /*  boolean isfilecreated =  createPDFGuest();
+                        if (isfilecreated) {
+                            sendData();
+                        }
+*/
+
+                        //Uncomment
+
                         if(book){
                             if(mGuestEmail.getText().toString()==null&&mGuestEmail.getText().toString().isEmpty()){
                                 Toast.makeText(BillDetails.this, "Guest Email should not be empty", Toast.LENGTH_SHORT).show();
@@ -1004,6 +1160,7 @@ public class BillDetails extends AppCompatActivity {
                                 if (isfilecreated) {
                                     sendEmailattacheGuest();
                                 }
+
 
 
                             }
@@ -1020,45 +1177,29 @@ public class BillDetails extends AppCompatActivity {
                 }
             });
 
-            mAuth = FirebaseAuth.getInstance();
-            mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+
+            mDeviceList.addOnItemTouchListener(new RecyclerTouchListener(this,mDeviceList, new RecyclerTouchListener.ClickListener(){
 
                 @Override
-                public void onVerificationCompleted(PhoneAuthCredential credential) {
-                    Log.d(TAG, "onVerificationCompleted:" + credential);
-                    mVerificationInProgress = false;
-
-                    String code = credential.getSmsCode();
-
-                        signInWithPhoneAuthCredential(credential);//<---hard code---->
+                public void onClick(View view, int position) {
 
 
-
-                }
-
-                @Override
-                public void onVerificationFailed(FirebaseException e) {
-                    Log.w(TAG, "onVerificationFailed", e);
-                    mVerificationInProgress = false;
-
-                    if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                    } else if (e instanceof FirebaseTooManyRequestsException) {
-                        Snackbar.make(findViewById(android.R.id.content), "Quota exceeded.",
-                                Snackbar.LENGTH_SHORT).show();
+                    try {
+                        mmDevice = deviceList.get(position);
+                        openBT();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+
                 }
 
                 @Override
-                public void onCodeSent(String verificationId,
-                                       PhoneAuthProvider.ForceResendingToken token) {
-                    Log.d(TAG, "onCodeSent:" + verificationId);
-
-                    mVerificationId = verificationId;
-                    mResendToken = token;
-                    Toast.makeText(BillDetails.this, "Sms Sent successfully", Toast.LENGTH_SHORT).show();
+                public void onLongClick(View view, int position) {
 
                 }
-            };
+            }));
+
 
         }catch (Exception e){
             e.printStackTrace();
@@ -1101,6 +1242,7 @@ public class BillDetails extends AppCompatActivity {
             cit = mCID.getText().toString();
             cot = mCOD.getText().toString();
             ota = mOTA.getSelectedItem().toString();
+            comments = mComments.getText().toString();
 
             System.out.println("Print" + String.valueOf(path));
 
@@ -1118,9 +1260,9 @@ public class BillDetails extends AppCompatActivity {
                 Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             } else if (total == null || total.isEmpty()) {
                 Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } else if (booking == null || booking.isEmpty()) {
+            } /*else if (booking == null || booking.isEmpty()) {
                 Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-            } else if (zingo == null || zingo.isEmpty()) {
+            }*/ else if (zingo == null || zingo.isEmpty()) {
                 Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
             } else if (bdate == null || bdate.isEmpty()) {
                 Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
@@ -1268,6 +1410,7 @@ public class BillDetails extends AppCompatActivity {
             bookings.setAdditionalCharges(addtionalChrg);
             bookings.setOTABookingID(bookingID);
             bookings.setGstAmount((int)gstValue);
+            bookings.setReason(comments);
             DecimalFormat df = new DecimalFormat("##.##");
             bookings.setCommisionGSTAmount(commisionGST);
             if(mRoomCharge.getText().toString()==null||mRoomCharge.getText().toString().isEmpty()){
@@ -1443,6 +1586,9 @@ public class BillDetails extends AppCompatActivity {
             paragraph = new Paragraph();
 
             String text = "Dear Hotel Partner,\n" + "We Thank you for your continued support in ensuring the highest level of service Standards. Please find the reservation for you. ";
+
+            String additional = "ADDITIONAL NOTE:";
+            String addFooter = comments;
             String important = "IMPORTANT NOTE:";
             String footer =
                     "                                                                         ZingoHotels.com\n" +
@@ -1457,15 +1603,15 @@ public class BillDetails extends AppCompatActivity {
 
             //paragraph = new Paragraph(text,smallBold);
             addEmptyLine(paragraph, 2);
-            if(mOTA.getSelectedItem().toString().equalsIgnoreCase("ZINGO DIRECT")){
+           /* if(mOTA.getSelectedItem().toString().equalsIgnoreCase("ZINGO DIRECT")){
                 paragraph.add(new Paragraph("",smallBolds));
             }else{
                 paragraph.add(new Paragraph("Booking ID: " + bookingID, smallBolds));
-            }
+            }*/
 
             paragraph.add(new Paragraph("Booking Source: " + ota, smallBolds));
             if(zingoBookingId!=null&&!zingoBookingId.isEmpty()){
-                paragraph.add(new Paragraph("Zingo Booking ID: " + zingoBookingId, smallBolds));
+                paragraph.add(new Paragraph("Booking ID: " + zingoBookingId, smallBolds));
             }
 
             addEmptyLine(paragraph, 1);
@@ -1475,16 +1621,46 @@ public class BillDetails extends AppCompatActivity {
             addEmptyLine(paragraph, 1);
             paragraph.add(new Paragraph("Payment Breakup", smallBold));
             addEmptyLine(paragraph, 1);
-            if(mOTA.getSelectedItem().toString().equalsIgnoreCase("ZINGO DIRECT")){
-                createTablesPaymentDirect(paragraph);
-            }else{
-                if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
-                    createTablesPaymentHotel(paragraph);
+            if(!mSourceType.getSelectedItem().toString().equalsIgnoreCase("OTA")){
+
+                if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PART PAYMENT")){
+                    createTablesPaymentDirectPart(paragraph);
                 }else{
+                    createTablesPaymentDirect(paragraph);
+                }
+
+
+            }else{
+                if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")||mPayment.getSelectedItem().toString().equalsIgnoreCase("B2C POSTPAID")){
+                    createTablesPaymentHotel(paragraph);
+                }else if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PREPAID/ONLINE")||mPayment.getSelectedItem().toString().equalsIgnoreCase("B2C PREPAID")){
                     createTablesPayment(paragraph);
                 }
             }
 
+
+            if(comments!=null&&!comments.isEmpty()){
+                addEmptyLine(paragraph, 2);
+                addChild(new Paragraph(additional, subFontColor));
+                if(mAddOnCheck.isChecked()){
+                    if(mAddOnMode.getSelectedItem().toString().equalsIgnoreCase("PREPAID/ONLINE")){
+                        if(mAddOnServices.getText().toString()!=null&&!mAddOnServices.getText().toString().isEmpty()){
+                            addChild(new Paragraph("Customer have already paid Rs."+addOnChargesPayment+" for "+mAddOnServices.getText().toString(), subFontColor));
+                           // createTablesAdditional(paragraph);
+                        }
+
+                    }else{
+
+                        if(mAddOnServices.getText().toString()!=null&&!mAddOnServices.getText().toString().isEmpty()){
+                            addChild(new Paragraph("Collect Rs."+addOnChargesPayment+" for "+mAddOnServices.getText().toString()+" From Customer", subFontColor));
+                           // createTablesAdditionalPayAt(paragraph);
+                        }
+                    }
+
+                }
+
+                addChild(new Paragraph(comments, smallColor));
+            }
 
             addEmptyLine(paragraph, 2);
             addChild(new Paragraph(important, subFont));
@@ -1528,7 +1704,7 @@ public class BillDetails extends AppCompatActivity {
         if(mOTA.getSelectedItem().toString().equalsIgnoreCase("ZINGO DIRECT")){
             table.addCell(zingoBookingId);
         }else{
-            table.addCell(bookingID);
+            table.addCell(zingoBookingId);
         }
 
         table.addCell("Booking Source");
@@ -1612,6 +1788,16 @@ public class BillDetails extends AppCompatActivity {
         table.addCell("INR " + hoteltaxes);
         table.addCell("(A) HOTEL GROSS CHARGES (i+ii+iii)");
         table.addCell("INR " + total);
+        if(mAddOnCheck.isChecked()){
+
+            PdfPCell ac = new PdfPCell(new Phrase("(AA) Add-On Charges", smallColor));
+            table.addCell(ac);
+            ac = new PdfPCell(new Phrase("INR " + addOnChargesPayment, smallColor));
+            table.addCell(ac);
+
+            table.addCell("Total Amount(A+AA)");
+            table.addCell("INR " + addOnTotals);
+        }
         table.addCell("OTA Commission");
         table.addCell("INR " + otaComAmount);
         table.addCell("OTA GST @ 18 %\n(Incl IGST/CGST/SGST)");
@@ -1668,6 +1854,17 @@ public class BillDetails extends AppCompatActivity {
         table.addCell("INR " + hoteltaxes);
         table.addCell("(A) HOTEL GROSS CHARGES (i+ii+iii)");
         table.addCell("INR " + total);
+
+        if(mAddOnCheck.isChecked()){
+
+            PdfPCell ac = new PdfPCell(new Phrase("(AA) Add-On Charges", smallColor));
+            table.addCell(ac);
+            ac = new PdfPCell(new Phrase("INR " + addOnChargesPayment, smallColor));
+            table.addCell(ac);
+
+            table.addCell("Total Amount(A+AA)");
+            table.addCell("INR " + addOnTotals);
+        }
         if(!mOTA.getSelectedItem().toString().equalsIgnoreCase("BOOKING.COM")&&!mOTA.getSelectedItem().toString().equalsIgnoreCase("EXPEDIA")){
             table.addCell("OTA Commission");
             table.addCell("INR " + otaComAmount);
@@ -1685,6 +1882,8 @@ public class BillDetails extends AppCompatActivity {
             table.addCell("(E) Customer payment at OTA\n Customer Pre-Payment includes discount coupons offered by OTA or payments made through Wallet.");
             table.addCell("INR " + customer);
         }
+
+
 
 
        /* else{
@@ -1752,6 +1951,50 @@ public class BillDetails extends AppCompatActivity {
     }
 
 
+    private void createTablesAdditional(Paragraph para) throws BadElementException {
+        PdfPTable table = new PdfPTable(1);
+
+
+        DecimalFormat dfs = new DecimalFormat("#.##");
+       // addChild(new Paragraph("Customer have already paid Rs."+addOnChargesPayment+" for "+mAddOnServices.getText().toString(), subFontColor));
+
+        PdfPCell c1 = new PdfPCell(new Phrase("Customer have already paid Rs."+addOnChargesPayment+" for "+mAddOnServices.getText().toString(), subFontColor));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        c1.setBackgroundColor(BaseColor.GRAY);
+        table.addCell(c1);
+
+
+        table.setHeaderRows(1);
+
+
+
+
+
+        para.add(table);
+
+    }
+
+    private void createTablesAdditionalPayAt(Paragraph para) throws BadElementException {
+        PdfPTable table = new PdfPTable(1);
+
+
+        DecimalFormat dfs = new DecimalFormat("#.##");
+        // addChild(new Paragraph("Customer have already paid Rs."+addOnChargesPayment+" for "+mAddOnServices.getText().toString(), subFontColor));
+        PdfPCell c1 = new PdfPCell(new Phrase("Collect Rs."+addOnChargesPayment+" for "+mAddOnServices.getText().toString()+" From Customer", subFontColor));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        c1.setBackgroundColor(BaseColor.BLUE);
+        table.addCell(c1);
+
+
+        table.setHeaderRows(1);
+
+
+
+
+
+        para.add(table);
+
+    }
 
     private void createTablesPaymentDirect(Paragraph para) throws BadElementException {
         PdfPTable table = new PdfPTable(2);
@@ -1790,6 +2033,54 @@ public class BillDetails extends AppCompatActivity {
 
         table.addCell("NET AMOUNT (A-B)");
         table.addCell("INR " + net);
+        table.addCell("ARR");
+        table.addCell("INR " + arr);
+
+        para.add(table);
+
+    }
+
+    private void createTablesPaymentDirectPart(Paragraph para) throws BadElementException {
+        PdfPTable table = new PdfPTable(2);
+
+
+        DecimalFormat dfs = new DecimalFormat("#.##");
+
+
+        PdfPCell c1 = new PdfPCell(new Phrase("Description", catFontw));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        c1.setBackgroundColor(BaseColor.GRAY);
+        table.addCell(c1);
+
+        c1 = new PdfPCell(new Phrase("Amount", catFontw));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        c1.setBackgroundColor(BaseColor.GRAY);
+        table.addCell(c1);
+        table.setHeaderRows(1);
+
+
+
+        table.addCell("(i) ROOM CHARGES\n"+roomNum+" Room, "+nights+" Night");
+        table.addCell("INR " + roomCharge);
+        table.addCell("(ii) EXTRA CHARGES");
+        table.addCell("INR " + extraCharge);
+        table.addCell("(iii) HOTEL TAXES");
+        table.addCell("INR " + hoteltaxes);
+        table.addCell("(A) HOTEL GROSS CHARGES (i+ii+iii)");
+        table.addCell("INR " + total);
+
+        table.addCell("ZINGOHOTELS.COM COMMISION(B)");
+        table.addCell("INR " +  mZingo.getText().toString());
+
+        table.addCell("Hotel to Pay Zingo");
+        table.addCell("INR " +  mZingo.getText().toString());
+
+        table.addCell("NET AMOUNT (A-B)");
+        table.addCell("INR " + net);
+        table.addCell("AMOUNT PAID On ONLINE");
+        table.addCell("INR " + partPaid);
+        table.addCell("BALANCE AMOUNT Payable at Hotel");
+        table.addCell("INR " + partBalance);
         table.addCell("ARR");
         table.addCell("INR " + arr);
 
@@ -2241,7 +2532,20 @@ public class BillDetails extends AppCompatActivity {
                                     fm.setTitle("New Booking from Zingo Hotels");
                                     fm.setMessage("Congrats! "+property+" got one new booking for "+nights +" nights from "+cit+" to "+cot+"\nBooking Number:"+dto.getBookingNumber());
                                     //registerTokenInDB(fm);
-                                    sendNotification(fm);
+                                    fm.setTravellerName(guest);
+                                    fm.setNoOfGuest("No of Guest: "+dto.getNoOfAdults());
+                                    fm.setCheckInDate(mCID.getText().toString());
+                                    fm.setCheckOutDate(mCOD.getText().toString());
+                                    fm.setTotalAmount("Rs. "+dto.getTotalAmount());
+                                    fm.setCommissionAmount("Rs. "+dto.getCommissionAmount());
+                                    fm.setNetAmount("Rs. "+net);
+                                    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy, hh:mm a");
+                                    SimpleDateFormat sdft = new SimpleDateFormat("hh:mm a");
+                                    fm.setNotificationDate(sdf.format(new Date()));
+                                    fm.setNotificationTime(sdft.format(new Date()));
+                                    fm.setBookingDateTime(mBook.getText().toString()+","+dto.getBookingTime());
+
+                                    sendNotification(fm,dto.getBookingStatus());
                                     double roomCount = Double.parseDouble(mRoomCount.getSelectedItem().toString());
                                     if(roomCount>1){
 
@@ -2295,7 +2599,7 @@ public class BillDetails extends AppCompatActivity {
         });
     }
 
-    public void sendNotification(final FireBaseModel fireBaseModel) {
+    public void sendNotification(final FireBaseModel fireBaseModel,final String bookingStatus) {
 
 
         new ThreadExecuter().execute(new Runnable() {
@@ -2329,6 +2633,23 @@ public class BillDetails extends AppCompatActivity {
                                 nf.setNotificationFor(fireBaseModel.getMessage());
                                 nf.setHotelId(fireBaseModel.getHotelId());
                                 savenotification(nf);
+
+                              /*  BookingsNotificationManagers nf = new BookingsNotificationManagers();
+                                nf.setTitle(fireBaseModel.getTitle());
+                                nf.setMessage(fireBaseModel.getMessage());
+                                nf.setHotelId(fireBaseModel.getHotelId());
+                                nf.setTravellerName(fireBaseModel.getTravellerName());
+                                nf.setCheckInDate(fireBaseModel.getCheckInDate());
+                                nf.setCheckOutDate(fireBaseModel.getCheckOutDate());
+                                nf.setTotalAmount(fireBaseModel.getTotalAmount());
+                                nf.setCommissionAmount(fireBaseModel.getCommissionAmount());
+                                nf.setNetAmount(fireBaseModel.getNetAmount());
+                                nf.setNoOfGuest(fireBaseModel.getNoOfGuest());
+                                nf.setNotificationDate(fireBaseModel.getNotificationDate());
+                                nf.setNotificationTime(fireBaseModel.getNotificationTime());
+                                nf.setBookingDateTime(fireBaseModel.getBookingDateTime());
+                                nf.setBooking(bookingStatus);
+                                saveBookingnotification(nf);*/
 
 
 
@@ -2874,6 +3195,72 @@ public class BillDetails extends AppCompatActivity {
         });
     }
 
+    private void saveBookingnotification(final BookingsNotificationManagers notification) {
+
+        final ProgressDialog dialog = new ProgressDialog(BillDetails.this);
+        dialog.setMessage("Loading");
+        dialog.setCancelable(false);
+        dialog.show();
+
+        new ThreadExecuter().execute(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Hotel id = "+notification.getHotelId());
+                String auth_string = Util.getToken(BillDetails.this);
+                LoginApi travellerApi = Util.getClient().create(LoginApi.class);
+                Call<BookingsNotificationManagers> response = travellerApi.saveBookingNotification(auth_string,notification);
+
+                response.enqueue(new Callback<BookingsNotificationManagers>() {
+                    @Override
+                    public void onResponse(Call<BookingsNotificationManagers> call, Response<BookingsNotificationManagers> response) {
+
+                        if(dialog != null)
+                        {
+                            dialog.dismiss();
+                        }
+                        try{
+                            System.out.println(response.code());
+                            if(response.code() == 200||response.code() == 201)
+                            {
+                                if(response.body() != null)
+                                {
+                                /*Toast.makeText(BillDetails.this,"Thank you for selecting room. Your request has been sent to hotel. " +
+                                        "Please wait for there reply.",Toast.LENGTH_SHORT).show();*/
+                                    //SelectRoom.this.finish();
+                                    boolean fileCreated = createPdf();
+                                    if(fileCreated){
+                                        onShareClick();
+                                    }else{
+                                        Toast.makeText(BillDetails.this, "File not created", Toast.LENGTH_SHORT).show();
+                                        createPdf();
+                                    }
+
+
+                                    //Toast.makeText(BillDetails.this, "Save Notification", Toast.LENGTH_SHORT).show();
+
+
+
+
+                                }
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<BookingsNotificationManagers> call, Throwable t) {
+                        if(dialog != null)
+                        {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -3208,82 +3595,6 @@ public class BillDetails extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(KEY_VERIFY_IN_PROGRESS, mVerificationInProgress);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        mVerificationInProgress = savedInstanceState.getBoolean(KEY_VERIFY_IN_PROGRESS);
-    }
-
-    private void startPhoneNumberVerification(String phoneNumber) {
-        System.out.println("PhoneNumber - "+phoneNumber);
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                phoneNumber,
-                75,
-                TimeUnit.SECONDS,
-                this,
-                mCallbacks);
-
-        mVerificationInProgress = true;
-    }
-
-    private void verifyPhoneNumberWithCode(String verificationId, String code) {
-
-        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
-
-        signInWithPhoneAuthCredential(credential);
-
-    }
-
-    private void resendVerificationCode(String phoneNumber,
-                                        PhoneAuthProvider.ForceResendingToken token) {
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                phoneNumber,
-                60,
-                TimeUnit.SECONDS,
-                this,
-                mCallbacks,
-                token);
-    }
-
-    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "signInWithCredential:success");
-
-                            FirebaseUser user = task.getResult().getUser();
-                            Toast.makeText(BillDetails.this, "Sucess verification", Toast.LENGTH_SHORT).show();
-
-                            try{
-
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-
-
-
-                        } else {
-
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-
-
-                                Toast.makeText(BillDetails.this, "Message Not Send", Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                    }
-                });
-    }
-
 
 
     //Guest Pdf
@@ -3298,13 +3609,13 @@ public class BillDetails extends AppCompatActivity {
             File sd = Environment.getExternalStorageDirectory();
             guestPdf = System.currentTimeMillis() + ".pdf";
 
-            File directory = new File(sd.getAbsolutePath()+"/Bill Generate/Pdf/Guest/");
+            File directory = new File(sd.getAbsolutePath()+"/BillGenerate/Pdf/Guest/");
             //create directory if not exist
             if (!directory.exists() && !directory.isDirectory()) {
                 directory.mkdirs();
             }
 
-            guestpdfFile = sd.getAbsolutePath()+"/Bill Generate/Pdf/Guest/"+guestPdf;
+            guestpdfFile = sd.getAbsolutePath()+"/BillGenerate/Pdf/Guest/"+guestPdf;
 
             File file = new File(directory, guestPdf);
             String path = "docs/" + guestpdfFilename;
@@ -3355,7 +3666,7 @@ public class BillDetails extends AppCompatActivity {
             {
                 docWriter.close();
             }
-            return false;
+
         }
     }
 
@@ -3377,9 +3688,12 @@ public class BillDetails extends AppCompatActivity {
             cb.lineTo(600,650);
             cb.stroke();
 
+            // createHeadingsTitles(cb,50,630,"Zingo Premium Hotel Richmond Road");
+
             createHeadingsTitles(cb,50,630,property);
             createHeadingsTitle(cb,50,610,mLocation.getText().toString());
             createHeadingsTitle(cb,50,590,mCity.getText().toString());
+
 
             createContent(cb,200,620, "Check IN",PdfContentByte.ALIGN_LEFT);
             createHeadingsTitles(cb,200,605,mCID.getText().toString());
@@ -3393,8 +3707,10 @@ public class BillDetails extends AppCompatActivity {
             cb.stroke();
 
 
-            createHeadingsContent(cb,50,550,"OTA Booking ID : ");
-            createHeadingsTitle(cb,200,550,mBookingID.getText().toString());
+
+            //Normal
+            createHeadingsContent(cb,50,550,"Booking ID : ");
+            createHeadingsTitle(cb,200,550,zingoBookingId);
 
             createHeadingsContent(cb,50,520,"Date of Booking : ");
             createHeadingsTitle(cb,200,520,mBook.getText().toString()+","+bookingTime);
@@ -3433,41 +3749,21 @@ public class BillDetails extends AppCompatActivity {
             createHeadingsContent(cb,50,250,"Net Amount : ");
             createHeadingsTitle(cb,200,250,"Rs "+mTotal.getText().toString());
 
-         /*   createHeadingsContent(cb,50,220,"Balance Amount : ");
-            createHeadingsTitle(cb,200,220,"Rs "+mTotal.getText().toString());
-*/
+
             if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PART PAYMENT")){
-                createHeadingsTitle(cb,200,220,"Rs "+mTotal.getText().toString());
-            }else if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
-                createHeadingsTitle(cb,200,220,"Rs "+mTotal.getText().toString());
-            }else{
-                createHeadingsTitle(cb,200,220,"Rs "+mTotal.getText().toString());
+                createHeadingsContent(cb,50,220,"Paid Amount : ");
+                createHeadingsTitle(cb,200,220,"Rs "+partPaid);
+                createHeadingsContent(cb,50,190,"Balance Amount : ");
+                createHeadingsTitle(cb,200,190,"Rs "+partBalance);
             }
 
             createHeadingsContent(cb,400,340,"Payment Mode ");
             createHeadingsTitle(cb,400,320, mPayment.getSelectedItem().toString());
 
-            cb.moveTo(25,205);
-            cb.lineTo(600,205);
+            cb.moveTo(25,175);
+            cb.lineTo(600,175);
             cb.stroke();
 
-         /*   // Invoice Detail box layout
-            cb.rectangle(110,120,395,200);
-            cb.moveTo(110,340);
-            cb.lineTo(505,340);
-            cb.moveTo(110,120);
-            cb.lineTo(110,340);
-            cb.moveTo(340,120);
-            cb.lineTo(340,340);
-            cb.moveTo(505,120);
-            cb.lineTo(505,340);
-            cb.stroke();
-
-            // Invoice Detail box Text Headings
-
-            createHeadings(cb,210,323,"Particulars");
-            createHeadings(cb,420,323,"Amount");
-*/
 
 
 
@@ -3475,33 +3771,7 @@ public class BillDetails extends AppCompatActivity {
             createHeadingsContent(cb,55,80,getResources().getString(R.string.hotel_policy));
             createHeadingsContent(cb,55,60,getResources().getString(R.string.cancel_policy));
 
-          /*  // Invoice Header box layout
-            cb.rectangle(400,660,185,100);
-            cb.moveTo(400,680);
-            cb.lineTo(585,680);
-            cb.moveTo(400,720);
-            cb.lineTo(585,720);
-            cb.moveTo(400,740);
-            cb.lineTo(585,740);
-            cb.moveTo(400,700);
-            cb.lineTo(585,700);
-            cb.moveTo(480,660);
-            cb.lineTo(480,760);
-            cb.stroke();
 
-            // Invoice Header box Text Headings
-            createHeadings(cb,402,743,"GST#");
-            createHeadings(cb,402,723,"Room No");
-            createHeadings(cb,402,703,"CheckIn Date");
-            createHeadings(cb,402,683,"CheckOut Date");
-            createHeadings(cb,402,663,"Customer Support");
-
-            //Total
-            createHeadings(cb,422,300,"Total");
-            createHeadings(cb,422,280,"Amount Paid");
-            createHeadings(cb,422,260,"Balance Due");
-
-*/
             //Add logo
             Drawable d = getResources ().getDrawable (R.drawable.logo_zingo);
             Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
@@ -3727,10 +3997,17 @@ public class BillDetails extends AppCompatActivity {
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setType("application/pdf");
         emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT,"Zingo Invoice");
-        emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear "+mGuest.getText().toString()+",\n" +
-
-                "Please find your Invoice attached to this email.\n\n" +"\n This is a Computer Generated Invoice.\n This hotel is powered by Zingo Hotels.");
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT,"Your Hotel Booking is Confirmed at "+property+","+location+", "+city+",India "+" - "+zingoBookingId);
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Booking ID:"+zingoBookingId+"\n"
+                +"Booked on:"+mBook.getText().toString()+","+bookingTime+"\n"
+                +"BOOKING CONFIRMED\n"+
+                "Dear "+mGuest.getText().toString()+",\n" +
+                    "Thank you for choosing "+property+" sold and Marketed by ZingoHotels. \n\n"
+                +"Your hotel booking is confirmed. No need to call us to reconfirm this booking. \n" +
+                "Your eTicket is attached with the email sent to your email-Id.\n\n" +
+                "\n Hotel Details:\n\n"+
+                property+"\n"+location+"\n"+city+"\n"+email+
+                "\n\n\nThis hotel is powered by Zingo Hotels.\n Customer care-number: \n+91-7065651651");
         File root = Environment.getExternalStorageDirectory();
         String pathToMyAttachedFile = "/BillGenerate/Pdf/Guest/"+guestPdf;
         File file = new File(root, pathToMyAttachedFile);
@@ -3753,6 +4030,377 @@ public class BillDetails extends AppCompatActivity {
         startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
     }
 
+    public void generalCalculation(){
+
+
+
+        cit = mCID.getText().toString();
+        cot = mCOD.getText().toString();
+        total = mTotal.getText().toString();
+        zingo = mZingo.getText().toString();
+        roomNum = mRoomCount.getSelectedItem().toString();
+        booking = mBooking.getText().toString();
+        roomCharge = mRoomCharge.getText().toString();
+        extraCharge = mExtraCharge.getText().toString();
+        hoteltaxes = mHotelTaxes.getText().toString();
+        addtional = mAdditional.getText().toString();
+        customer = mCustomerPay.getText().toString();
+        otaFee = mOtaFee.getText().toString();
+        otaCommission = mOTACommison.getText().toString();
+        otaGST = mOTAGST.getText().toString();
+
+        if(zingo.contains(",")){
+            zingo = zingo.replace(",","");
+        }
+
+        String source = mOTA.getSelectedItem().toString();
+
+                   /* if (booking == null || booking.isEmpty()) {
+                        //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                        mBooking.setError("Should not be Empty");
+                        mBooking.requestFocus();
+
+                    }*/ /*else if (zingo == null || zingo.isEmpty()) {
+                        //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                        mZingo.setError("Should not be Empty");
+                        mZingo.requestFocus();
+
+                    }*/  if (cit == null || cit.isEmpty()) {
+            //Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+            mCID.setError("Should not be Empty");
+            mCID.requestFocus();
+
+        } else if (cot == null || cot.isEmpty()) {
+            // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+            mCOD.setError("Should not be Empty");
+            mCOD.requestFocus();
+
+        } else if (total == null || total.isEmpty()) {
+            // Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+            mTotal.setError("Should not be Empty");
+            mTotal.requestFocus();
+
+        } else if (roomCharge == null || roomCharge.isEmpty()) {
+            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+
+
+        } else if (extraCharge == null || extraCharge.isEmpty()) {
+            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+
+        } else if (hoteltaxes == null || hoteltaxes.isEmpty()) {
+            Toast.makeText(BillDetails.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+
+        } else {
+
+            //Date Calculation
+            String from = cits + " 00:00:00";
+            String to = cots + " 00:00:00";
+
+            SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
+            Date d1 = null;
+            Date d2 = null;
+            long diffDays = 0;
+            try {
+                d1 = format.parse(from);
+                d2 = format.parse(to);
+                long diff = d2.getTime() - d1.getTime();
+                diffDays = diff / (24 * 60 * 60 * 1000);
+                mNights.setText(String.valueOf(diffDays));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if(otaCommission==null||otaCommission.isEmpty()){
+                otaComAmount = 0;
+            }else{
+                otaComAmount = Double.parseDouble(otaCommission);
+            }
+
+            if(otaGST==null||otaGST.isEmpty()){
+                otaGstAmount = 0;
+            }else{
+                otaGstAmount = Double.parseDouble(otaGST);
+            }
+
+            if(mAddOnCheck.isChecked()){
+                if(mAddonCharges.getText().toString()==null||mAddonCharges.getText().toString().isEmpty()){
+                    addOnChargesPayment =0;
+                }else{
+                    addOnChargesPayment = Double.parseDouble(mAddonCharges.getText().toString());
+                }
+            }else{
+                addOnChargesPayment=0;
+            }
+
+            //Net Amount
+
+            DecimalFormat df = new DecimalFormat("#,###.##");
+            totals = Double.parseDouble(total);
+            addOnTotals = totals+addOnChargesPayment;
+            //Net Amount
+
+//            DecimalFormat df = new DecimalFormat("#,###.##");
+//            totals = Double.parseDouble(total);
+            if(booking==null||booking.isEmpty()){
+                otaAmt = 0;
+            }else{
+                otaAmt = Double.parseDouble(booking);
+            }
+
+            if(zingo!=null&&!zingo.isEmpty()){
+                zingoAmt = Double.parseDouble(zingo);
+            }else{
+                zingoAmt = 0;
+            }
+
+            //double zingoAmts=0;
+            System.out.println(" Property == "+property);
+            //Toast.makeText(BillDetails.this, "Property name"+property, Toast.LENGTH_SHORT).show();
+
+
+
+            if(addtional==null||addtional.isEmpty()){
+                addtionalChrg = 0;
+            }else{
+                addtionalChrg = Double.parseDouble(mAdditional.getText().toString());
+            }
+
+            if(otaFee==null||otaFee.isEmpty()){
+                otaFeeAmount = 0;
+            }else{
+                otaFeeAmount = Double.parseDouble(otaFee);
+            }
+
+            if(customer==null||customer.isEmpty()){
+                payCustomer = 0;
+            }else{
+                payCustomer = Double.parseDouble(mCustomerPay.getText().toString());
+            }
+
+            gstValue = Double.parseDouble(hoteltaxes);
+
+            double rooms = Double.parseDouble(mRoomCount.getSelectedItem().toString());
+            if (diffDays != 0) {
+                double arrAmt = addOnTotals / diffDays;
+                double arrRamt = arrAmt / rooms;
+                mArr.setText("" + df.format(arrRamt));
+            } else {
+                //double arrAmt = total/diffDays;
+                double arrRamt = addOnTotals / rooms;
+                mArr.setText("" + df.format(arrRamt));
+            }
+
+            double roomCount = Double.parseDouble(roomNum);
+           // zingoAmt = diffDays * zingoAmts * roomCount;
+          //  mZingo.setText(""+df.format(zingoAmt));
+            zingo = mZingo.getText().toString();
+            zingo = ""+df.format(zingoAmt);
+
+            commisionAmt = otaAmt + zingoAmt+otaFeeAmount;
+            double gst = commisionAmt*18;
+            commisionGST = gst/100;
+            otaToHotel = addOnTotals-otaAmt;
+
+
+            //hotelToZingo = otaToHotel-
+            double netAmt = addOnTotals - (commisionAmt);
+            mNet.setText("" + df.format(netAmt));
+
+            if(source!=null&&source.equalsIgnoreCase("MAKEMY TRIP")){
+                otaToHotelPay = (payCustomer) - (otaAmt+otaFeeAmount);
+                customerToHotel = (addOnTotals+addtionalChrg+otaFeeAmount)-payCustomer;
+            }else{
+                otaToHotelPay = payCustomer - otaAmt;
+                customerToHotel = (addOnTotals+addtionalChrg)-payCustomer;
+            }
+
+        }
+    }
+
+
+    void findBT() {
+
+        try {
+            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+            if(mBluetoothAdapter == null) {
+                Toast.makeText(BillDetails.this, "No bluetooth adapter available", Toast.LENGTH_SHORT).show();
+            }
+
+            if(!mBluetoothAdapter.isEnabled()) {
+                Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBluetooth, 0);
+            }
+
+            deviceList = new ArrayList<>();
+
+            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+            // Set<BluetoothDevice> getDevices = mBluetoothAdapter.get();
+
+            if(pairedDevices.size() > 0) {
+                for (BluetoothDevice device : pairedDevices) {
+
+                    // RPP300 is the name of the bluetooth printer device
+                    // we got this name from the list of paired devices
+                    deviceList.add(device);
+                    System.out.println("UUID == "+device.getUuids().toString());
+                   /* if (device.getName().equals("Bluetooth music")) {
+                        mmDevice = device;
+                        break;
+                    }*/
+                }
+            }
+
+            if(deviceList!=null&&deviceList.size()!=0){
+                AdapterDevices adapterDevices = new AdapterDevices(BillDetails.this,deviceList);
+                mDeviceList.setAdapter(adapterDevices);
+            }
+            Toast.makeText(BillDetails.this, "Bluetooth device found.", Toast.LENGTH_SHORT).show();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    // tries to open a connection to the bluetooth printer device
+    void openBT() throws IOException {
+        try {
+
+            // Standard SerialPortService ID
+            UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+            mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+            mmSocket.connect();
+            mmOutputStream = mmSocket.getOutputStream();
+            mmInputStream = mmSocket.getInputStream();
+
+          //  beginListenForData();
+
+            Toast.makeText(this, "Bluetooth Opened", Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void beginListenForData() {
+        try {
+            final Handler handler = new Handler();
+
+            // this is the ASCII code for a newline character
+            final byte delimiter = 10;
+
+            stopWorker = false;
+            readBufferPosition = 0;
+            readBuffer = new byte[1024];
+
+            workerThread = new Thread(new Runnable() {
+                public void run() {
+
+                    while (!Thread.currentThread().isInterrupted() && !stopWorker) {
+
+                        try {
+
+                            int bytesAvailable = mmInputStream.available();
+
+                            if (bytesAvailable > 0) {
+
+                                byte[] packetBytes = new byte[bytesAvailable];
+                                mmInputStream.read(packetBytes);
+
+                                for (int i = 0; i < bytesAvailable; i++) {
+
+                                    byte b = packetBytes[i];
+                                    if (b == delimiter) {
+
+                                        byte[] encodedBytes = new byte[readBufferPosition];
+                                        System.arraycopy(
+                                                readBuffer, 0,
+                                                encodedBytes, 0,
+                                                encodedBytes.length
+                                        );
+
+                                        // specify US-ASCII encoding
+                                        final String data = new String(encodedBytes, "US-ASCII");
+                                        readBufferPosition = 0;
+
+                                        // tell the user data were sent to bluetooth printer device
+                                        handler.post(new Runnable() {
+                                            public void run() {
+                                                Toast.makeText(BillDetails.this, "Data sent"+data, Toast.LENGTH_SHORT).show();
+
+
+                                            }
+                                        });
+
+                                    } else {
+                                        readBuffer[readBufferPosition++] = b;
+                                    }
+                                }
+                            }
+
+                        } catch (IOException ex) {
+                            stopWorker = true;
+                        }
+
+                    }
+                }
+            });
+
+            workerThread.start();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    // this will send text data to be printed by the bluetooth printer
+    void sendData() throws IOException {
+        try {
+
+            // the text typed by the user
+            //String msg = myTextbox.getText().toString();
+            //msg += "\n";
+
+            InputStream is = this.openFileInput(guestpdfFile); // Where this is Activity
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            byte[] b = new byte[1024];
+            int bytesRead = is.read(b);
+            while (bytesRead != -1) {
+                bos.write(b, 0, bytesRead);
+            }
+            byte[] bytes = bos.toByteArray();
+
+            byte[] printformat = { 27, 33, 0 }; //try adding this print format
+
+            mmOutputStream.write(printformat);
+            mmOutputStream.write(bytes);
+
+            // tell the user data were sent
+            Toast.makeText(this, "Data Sent", Toast.LENGTH_SHORT).show();
+
+            closeBT();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // close the connection to bluetooth printer.
+    void closeBT() throws IOException {
+        try {
+            stopWorker = true;
+            mmOutputStream.close();
+            mmInputStream.close();
+            mmSocket.close();
+
+            Toast.makeText(this, "Bluetooth Closed", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }
 
