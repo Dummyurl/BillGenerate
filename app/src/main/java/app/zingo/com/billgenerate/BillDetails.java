@@ -1030,15 +1030,29 @@ public class BillDetails extends AppCompatActivity {
 
                         partBalance = addOnTotals- partPaid;
                         //hotelToZingo = otaToHotel-
-                        double netAmt = addOnTotals - (commisionAmt);
+                        double netAmt = addOnTotals - (commisionAmt-otaFeeAmount);
                         mNet.setText("" + df.format(netAmt));
 
                         if(source!=null&&source.equalsIgnoreCase("MAKEMY TRIP")){
-                            otaToHotelPay = (payCustomer) - (otaAmt+otaFeeAmount);
-                            customerToHotel = (addOnTotals+addtionalChrg+otaFeeAmount)-payCustomer;
+
+                            if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+                                otaToHotelPay = (payCustomer) - (otaAmt+otaFeeAmount);
+                                customerToHotel = (addOnTotals+addtionalChrg+otaFeeAmount)-payCustomer;
+                            }else{
+                                otaToHotelPay = (otaAmt+otaFeeAmount);
+                                customerToHotel = (addOnTotals+addtionalChrg+otaFeeAmount);
+                            }
+
                         }else{
-                            otaToHotelPay = payCustomer - otaAmt;
-                            customerToHotel = (addOnTotals+addtionalChrg)-payCustomer;
+
+                            if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+                                otaToHotelPay = payCustomer - otaAmt;
+                                customerToHotel = (addOnTotals+addtionalChrg)-payCustomer;
+                            }else{
+                                otaToHotelPay =  otaAmt;
+                                customerToHotel = (addOnTotals+addtionalChrg);
+                            }
+
                         }
 
                     }
@@ -1398,11 +1412,22 @@ public class BillDetails extends AppCompatActivity {
                 bookings.setRoomId(roomId);
             }
 
-            if(otaToHotelPay<0){
-                bookings.setOTAToPayHotel(0);
-                bookings.setHotelToPayOTA(Math.abs(otaToHotelPay));
+            double otaHotel=0;
+            double netAmount =  (Double.parseDouble(total)-otaAmt);
+
+            if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+                otaHotel = netAmount - customerToHotel;
             }else{
-                bookings.setOTAToPayHotel(Math.abs(otaToHotelPay));
+                otaHotel = netAmount;
+            }
+
+            System.out.println("Ota hotel == "+otaHotel);
+            Toast.makeText(this, "Ota hotel == "+otaHotel, Toast.LENGTH_SHORT).show();
+            if(otaHotel<0){
+                bookings.setOTAToPayHotel(otaHotel);
+                bookings.setHotelToPayOTA(Math.abs(otaHotel));
+            }else{
+                bookings.setOTAToPayHotel(Math.abs(otaHotel));
                 bookings.setHotelToPayOTA(0);
             }
             bookings.setZingoCommision(zingoAmt);
@@ -1432,7 +1457,7 @@ public class BillDetails extends AppCompatActivity {
             bookings.setDurationOfStay(Integer.parseInt(nights));
             bookings.setTotalAmount((int) Double.parseDouble(total));
             if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
-                bookings.setBalanceAmount((int) Double.parseDouble(total));
+                bookings.setBalanceAmount(((int) customerToHotel));
                 bookings.setHotelToZingo(zingoAmt);
             }else{
                 bookings.setBalanceAmount(0);
@@ -1486,7 +1511,7 @@ public class BillDetails extends AppCompatActivity {
                 }
 
             }else{
-                updateRoomBooking(bookings);
+              updateRoomBooking(bookings);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -2554,7 +2579,7 @@ public class BillDetails extends AppCompatActivity {
                                     }else{
                                         if(roomObject!=null&&roomId!=0){
 
-                                            bookedRoom();
+                                           // bookedRoom();
                                         }
                                     }
 
@@ -4204,7 +4229,7 @@ public class BillDetails extends AppCompatActivity {
 
 
             //hotelToZingo = otaToHotel-
-            double netAmt = addOnTotals - (commisionAmt);
+            double netAmt = addOnTotals - (commisionAmt-otaFeeAmount);
             mNet.setText("" + df.format(netAmt));
 
             if(source!=null&&source.equalsIgnoreCase("MAKEMY TRIP")){

@@ -270,4 +270,16 @@ customer who are the ultimate users of the hotel accommodation services rendered
         <item>Pending</item>
     </array>
 
+    <array name="filter_bookings">
+        <item>All</item>
+        <item>Confirmed</item>
+        <item>Completed</item>
+        <item>No Show</item>
+        <item>Cancelled</item>
+        <item>Quick</item>
+        <item>Delay</item>
+        <item>Active</item>
+
+    </array>
+
 </resources>

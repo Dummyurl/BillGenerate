@@ -30,6 +30,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
@@ -37,6 +39,7 @@ import app.zingo.com.billgenerate.Adapter.SettlementAdapters;
 import app.zingo.com.billgenerate.Model.BookingAndTraveller;
 import app.zingo.com.billgenerate.Model.Bookings1;
 import app.zingo.com.billgenerate.Model.Payment;
+import app.zingo.com.billgenerate.Model.Rooms;
 import app.zingo.com.billgenerate.Model.Traveller;
 import app.zingo.com.billgenerate.Utils.PreferenceHandler;
 import app.zingo.com.billgenerate.WebApis.AccountApi;
@@ -66,6 +69,7 @@ public class TillDateBookings extends AppCompatActivity {
     EditText mAdvancePayment;
     TextView allfromDate,alltoDate;
     Button mSearchallBookings,mAdvanceButton;
+    Spinner mFilter;
 
     Button mGenerateReport;
 
@@ -107,6 +111,7 @@ public class TillDateBookings extends AppCompatActivity {
             mGenerateReport = (Button) findViewById(R.id.generate_activebooking_report_btn);
             mAdvanceButton = (Button) findViewById(R.id.advance_payment_button);
             mAdvancePayment = (EditText) findViewById(R.id.advance_payment);
+            mFilter = (Spinner) findViewById(R.id.filter_search);
             //mTillList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
             setTitle("Till Date Settlement");
 
@@ -218,6 +223,13 @@ public class TillDateBookings extends AppCompatActivity {
                     if(bookingAndTravellerArrayList != null && details != null)
                     {
                         System.out.println("Booking Size = "+bookingAndTravellerArrayList.size());
+
+                        Collections.sort(bookingAndTravellerArrayList, new Comparator<BookingAndTraveller>() {
+                            @Override
+                            public int compare(BookingAndTraveller o1, BookingAndTraveller o2) {
+                                return o2.getRoomBooking().getCheckInDate().compareTo(o1.getRoomBooking().getCheckInDate());
+                            }
+                        });
                         boolean isfilecreated = generateReport(bookingAndTravellerArrayList);
                         if(isfilecreated)
                         {
@@ -362,8 +374,16 @@ public class TillDateBookings extends AppCompatActivity {
                                 if(response.body() != null && response.body().size() != 0)
                                 {
                                     ArrayList<Bookings1> list = response.body();
+                                    String filter = mFilter.getSelectedItem().toString();
 
                                     ArrayList<Bookings1> till = new ArrayList<>();
+                                    ArrayList<Bookings1> noShow = new ArrayList<>();
+                                    ArrayList<Bookings1> cancel = new ArrayList<>();
+                                    ArrayList<Bookings1> quick = new ArrayList<>();
+                                    ArrayList<Bookings1> delay = new ArrayList<>();
+                                    ArrayList<Bookings1> completed = new ArrayList<>();
+                                    ArrayList<Bookings1> active = new ArrayList<>();
+                                    ArrayList<Bookings1> confirmed = new ArrayList<>();
                                 /*adapter = new SettlementAdapters(TillDateBookings.this,list);
                                 mWeekList.setAdapter(adapter);*/
                                     for (int i=0;i<list.size();i++)
@@ -439,6 +459,36 @@ public class TillDateBookings extends AppCompatActivity {
                                             if((froms.getTime() <= checkinDate.getTime() && too.getTime() >= checkinDate.getTime()))
                                             {
                                                 till.add(list.get(i));
+
+                                                if(list.get(i).getBookingStatus().equalsIgnoreCase("Abandoned")){
+
+                                                    noShow.add(list.get(i));
+
+                                                }else  if(list.get(i).getBookingStatus().equalsIgnoreCase("Cancelled")){
+
+                                                    cancel.add(list.get(i));
+
+                                                }else  if(list.get(i).getBookingStatus().equalsIgnoreCase("Quick")){
+
+                                                    quick.add(list.get(i));
+                                                    confirmed.add(list.get(i));
+
+                                                }else  if(list.get(i).getBookingStatus().equalsIgnoreCase("Delay")){
+
+                                                    delay.add(list.get(i));
+                                                    confirmed.add(list.get(i));
+
+                                                }else  if(list.get(i).getBookingStatus().equalsIgnoreCase("Completed")){
+
+                                                    completed.add(list.get(i));
+                                                    confirmed.add(list.get(i));
+
+                                                }else  if(list.get(i).getBookingStatus().equalsIgnoreCase("Active")){
+
+                                                    active.add(list.get(i));
+                                                    confirmed.add(list.get(i));
+
+                                                }
                                             }
 
 
@@ -451,8 +501,50 @@ public class TillDateBookings extends AppCompatActivity {
 
                                     if(till.size() != 0)
                                     {
-                                        adapter = new SettlementAdapters(TillDateBookings.this,till);
-                                        mTillList.setAdapter(adapter);
+
+                                        if(filter.equalsIgnoreCase("All")){
+
+                                            adapter = new SettlementAdapters(TillDateBookings.this,till);
+                                            mTillList.setAdapter(adapter);
+
+                                        }else if(filter.equalsIgnoreCase("No Show")){
+
+                                            adapter = new SettlementAdapters(TillDateBookings.this,noShow);
+                                            mTillList.setAdapter(adapter);
+
+
+                                        }else  if(filter.equalsIgnoreCase("Cancelled")){
+
+                                            adapter = new SettlementAdapters(TillDateBookings.this,cancel);
+                                            mTillList.setAdapter(adapter);
+
+                                        }else  if(filter.equalsIgnoreCase("Quick")){
+
+                                            adapter = new SettlementAdapters(TillDateBookings.this,quick);
+                                            mTillList.setAdapter(adapter);
+
+                                        }else  if(filter.equalsIgnoreCase("Delay")){
+
+                                            adapter = new SettlementAdapters(TillDateBookings.this,delay);
+                                            mTillList.setAdapter(adapter);
+
+                                        }else  if(filter.equalsIgnoreCase("Completed")){
+
+                                            adapter = new SettlementAdapters(TillDateBookings.this,completed);
+                                            mTillList.setAdapter(adapter);
+
+                                        }else  if(filter.equalsIgnoreCase("Active")){
+
+                                            adapter = new SettlementAdapters(TillDateBookings.this,active);
+                                            mTillList.setAdapter(adapter);
+
+                                        }else  if(filter.equalsIgnoreCase("Confirmed")){
+
+                                            adapter = new SettlementAdapters(TillDateBookings.this,confirmed);
+                                            mTillList.setAdapter(adapter);
+
+                                        }
+
 
                                         bookingAndTravellerArrayList = new ArrayList<>();
                                         paymentBookings = new ArrayList<>();
@@ -463,12 +555,13 @@ public class TillDateBookings extends AppCompatActivity {
                                             Bookings1 bookings1 = till.get(i);
 
 
-                                            getTravellerName(till.get(i).getTravellerId(),till.get(i));
+
 
 
                                             if(bookings1.getBookingStatus().equalsIgnoreCase("Cancelled")||bookings1.getBookingStatus().equalsIgnoreCase("Abandoned")){
 
                                             }else{
+                                                getTravellerName(till.get(i).getTravellerId(),till.get(i));
                                                 paymentBookings.add(bookings1);
                                                 totalRoomNights = totalRoomNights +(bookings1.getNoOfRooms()*bookings1.getDurationOfStay());
                                                 totalGrossRevenue = totalGrossRevenue+bookings1.getTotalAmount();
@@ -487,7 +580,7 @@ public class TillDateBookings extends AppCompatActivity {
                                                 System.out.println("Added to list");
                                                 if(bookings1.getTotalAmount()==bookings1.getBalanceAmount()||bookings1.getBalanceAmount()!=0){
 
-                                                    payHotelRevenue = payHotelRevenue+((bookings1.getTotalAmount()-bookings1.getOTATotalCommissionAmount()-bookings1.getOTAToPayHotel()+bookings1.getHotelToPayOTA()));
+                                                    payHotelRevenue = payHotelRevenue+(((bookings1.getTotalAmount()-bookings1.getOTATotalCommissionAmount())-bookings1.getOTAToPayHotel()));
 
                                                 }else {
 
@@ -847,7 +940,7 @@ public class TillDateBookings extends AppCompatActivity {
                         sheet.addCell(new Label(20, i+7, bookings1.getBalanceAmount()+"",cellFormatsRight));
                     }else if(bookings1.getBalanceAmount()==0){
                         sheet.addCell(new Label(19, i+7, "Prepaid",cellFormatsRight));
-                        sheet.addCell(new Label(20, i+7, bookings1.getBalanceAmount()+"",cellFormatsRight));
+                        sheet.addCell(new Label(20, i+7, ((bookings1.getTotalAmount()-bookings1.getOTATotalCommissionAmount())-bookings1.getOTAToPayHotel())+"",cellFormatsRight));
                     }
 
 
