@@ -2,6 +2,8 @@ package app.zingo.com.billgenerate;
 
 import java.util.ArrayList;
 
+import app.zingo.com.billgenerate.Activiies.HotelDetails;
+import app.zingo.com.billgenerate.Activiies.HotelNotification;
 import app.zingo.com.billgenerate.Model.NotificationManager;
 import app.zingo.com.billgenerate.Utils.API;
 import retrofit2.Call;

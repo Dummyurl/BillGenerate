@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import app.zingo.com.billgenerate.InventoryCategoryDetailsActivity;
+import app.zingo.com.billgenerate.Activiies.InventoryCategoryDetailsActivity;
 import app.zingo.com.billgenerate.LoginApi;
 import app.zingo.com.billgenerate.Model.HotelDetails;
 import app.zingo.com.billgenerate.Model.NotificationManager;

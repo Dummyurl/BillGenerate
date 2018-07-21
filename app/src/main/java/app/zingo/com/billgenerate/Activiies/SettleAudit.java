@@ -1,7 +1,6 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -24,11 +23,13 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import app.zingo.com.billgenerate.LoginApi;
 import app.zingo.com.billgenerate.Model.AuditSettlement;
 import app.zingo.com.billgenerate.R;
 import app.zingo.com.billgenerate.Model.Bookings1;
 import app.zingo.com.billgenerate.Model.Rooms;
 import app.zingo.com.billgenerate.Model.Traveller;
+import app.zingo.com.billgenerate.ThreadExecuter;
 import app.zingo.com.billgenerate.Utils.Util;
 import app.zingo.com.billgenerate.WebApis.AuditApi;
 import app.zingo.com.billgenerate.WebApis.BookingApi;

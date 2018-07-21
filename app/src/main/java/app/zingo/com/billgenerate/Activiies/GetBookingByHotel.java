@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import app.zingo.com.billgenerate.LoginApi;
 import app.zingo.com.billgenerate.Model.Bookings1;
 import app.zingo.com.billgenerate.Model.FireBaseModel;
 import app.zingo.com.billgenerate.Model.HotelDetails;
@@ -35,6 +36,7 @@ import app.zingo.com.billgenerate.Adapter.PropertyAdapter;
 import app.zingo.com.billgenerate.Model.SearchBook;
 import app.zingo.com.billgenerate.Model.SearchBooking;
 import app.zingo.com.billgenerate.Model.Traveller;
+import app.zingo.com.billgenerate.R;
 import app.zingo.com.billgenerate.Utils.ThreadExecuter;
 import app.zingo.com.billgenerate.Utils.Util;
 import retrofit2.Call;

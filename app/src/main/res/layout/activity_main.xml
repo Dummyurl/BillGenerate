@@ -20,100 +20,180 @@
             android:layout_gravity="center"
             >
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp"
+                    android:orientation="horizontal"
+                    android:padding="2dp"
+                    android:weightSum="2"
+                    android:layout_weight="1">
+
+                    <Button
+                        android:id="@+id/create_bill"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:text="Create Bill"
+                        android:layout_marginTop="10dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/create_property"
+                        />
+
+                    <Button
+                        android:id="@+id/cancel_booking"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:text="Modify/Cancel Booking"
+                        android:layout_marginTop="10dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/create_bill"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp"
+                    android:orientation="horizontal"
+                    android:padding="2dp"
+                    android:weightSum="2"
+                    android:layout_weight="1">
+                <Button
+                    android:id="@+id/create_room"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="10dp"
+                    android:layout_height="match_parent"
+                    android:text="Inventory"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/cancel_booking"
+                    />
+
+                <Button
+                    android:id="@+id/competitive_analysis"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="10dp"
+                    android:layout_height="match_parent"
+                    android:text="Competitive Analysis"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/create_room"
+                    />
+            </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp"
+                    android:orientation="horizontal"
+                    android:padding="2dp"
+                    android:weightSum="2"
+                    android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/send_notification"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:text="Send Notification"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/competitive_analysis"
+                    />
+
+                <Button
+                    android:id="@+id/hotel_list"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:text="Notification Details"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/create_plan"
+                    />
+
+
+
+
+            </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp"
+                    android:orientation="horizontal"
+                    android:padding="2dp"
+                    android:weightSum="2"
+                    android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/payment"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:text="Payment"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/hotel_list"
+                    />
+
+                <Button
+                    android:id="@+id/ota_booking_confirm"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:text="OTA Confirm"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/hotel_list"
+                    />
+
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/create_property"
                 android:layout_width="200dp"
+                android:visibility="gone"
                 android:layout_marginTop="10dp"
                 android:layout_height="wrap_content"
                 android:text="Create Property"
                 android:layout_centerHorizontal="true"
                 />
 
-            <Button
-                android:id="@+id/create_room"
-                android:layout_width="200dp"
-                android:layout_marginTop="10dp"
-                android:layout_height="wrap_content"
-                android:text="Inventory"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/cancel_booking"
-                />
 
-            <Button
-                android:id="@+id/competitive_analysis"
-                android:layout_width="200dp"
-                android:layout_marginTop="10dp"
-                android:layout_height="wrap_content"
-                android:text="Competitive Analysis"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/create_room"
-                />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp"
+                    android:orientation="horizontal"
+                    android:padding="2dp"
+                    android:weightSum="2"
+                    android:layout_weight="1">
 
-            <Button
-                android:id="@+id/send_notification"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:text="Send Notification"
-                android:layout_marginTop="10dp"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/competitive_analysis"
-                />
+                <Button
+                    android:id="@+id/create_plan"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:text="Logout"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/send_notification"
+                    />
 
-            <Button
-                android:id="@+id/create_plan"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:text="Logout"
-                android:layout_marginTop="10dp"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/send_notification"
-                />
-            <Button
-                android:id="@+id/hotel_list"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:text="Notification Details"
-                android:layout_marginTop="10dp"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/create_plan"
-                />
-
-
-            <Button
-                android:id="@+id/create_bill"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:text="Create Bill"
-                android:layout_marginTop="10dp"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/create_property"
-                />
-
-            <Button
-                android:id="@+id/cancel_booking"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:text="Modify/Cancel Booking"
-                android:layout_marginTop="10dp"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/create_bill"
-                />
-
-
-            <Button
-                android:id="@+id/payment"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:text="Payment"
-                android:layout_marginTop="10dp"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/hotel_list"
-                />
+            </LinearLayout>
 
 
 
 
+
+
+
+
+            </LinearLayout>
 
 
         </RelativeLayout>

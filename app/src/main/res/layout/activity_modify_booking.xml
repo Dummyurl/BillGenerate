@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="app.zingo.com.billgenerate.ModifyBooking">
+    tools:context="app.zingo.com.billgenerate.Activiies.ModifyBooking">
 
 </android.support.constraint.ConstraintLayout>

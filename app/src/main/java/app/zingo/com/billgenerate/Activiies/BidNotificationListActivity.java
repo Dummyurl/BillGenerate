@@ -1,25 +1,21 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
-import java.util.Collections;
+
 import app.zingo.com.billgenerate.Model.NotificationManager;
 
 import app.zingo.com.billgenerate.Adapter.BidNotificationManagerAdapter;
 /*import app.zingo.com.hotelmanagement.Adapter.NotificationManagerAdapter;
 import app.zingo.com.hotelmanagement.Util.PreferenceHandler;*/
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import app.zingo.com.billgenerate.R;
 
 public class BidNotificationListActivity extends AppCompatActivity {
 

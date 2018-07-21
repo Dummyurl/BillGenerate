@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.dd.processbutton.FlatButton;
 
+import app.zingo.com.billgenerate.R;
 import app.zingo.com.billgenerate.Utils.RoomDataBase;
 
 public class RoomDetail extends AppCompatActivity {

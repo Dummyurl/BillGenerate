@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -12,9 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import app.zingo.com.billgenerate.Model.NotificationManager;
+import app.zingo.com.billgenerate.NotificationManagerApi;
+import app.zingo.com.billgenerate.R;
+import app.zingo.com.billgenerate.ThreadExecuter;
 import app.zingo.com.billgenerate.Utils.Util;
 
 import retrofit2.Call;

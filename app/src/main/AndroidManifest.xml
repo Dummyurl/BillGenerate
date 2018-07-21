@@ -15,7 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity">
+        <activity android:name=".Activiies.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,39 +23,39 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PropertyDetail"
+            android:name=".Activiies.PropertyDetail"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".RoomDetail"
+            android:name=".Activiies.RoomDetail"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".PlanDetails"
+            android:name=".Activiies.PlanDetails"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".BillDetails"
+            android:name=".Activiies.BillDetails"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".HotelListActivity"
+            android:name=".Activiies.HotelListActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".RoomBookingNotifyActivity"
+            android:name=".Activiies.RoomBookingNotifyActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".CompetitiveAnalisysActivity"
+            android:name=".Activiies.CompetitiveAnalisysActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".BidNotificationListActivity"
+            android:name=".Activiies.BidNotificationListActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".AgentBookingRequestActivity"
+            android:name=".Activiies.AgentBookingRequestActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
 
@@ -83,24 +83,25 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".MainActivity" />
-        <activity android:name=".CancelOptions" />
-        <activity android:name=".ShowBookingById" />
-        <activity android:name=".ModifyBooking" />
-        <activity android:name=".GetBookingByHotel" />
-        <activity android:name=".BilllDetails" />
-        <activity android:name=".InventoryOptionsActivity" />
-        <activity android:name=".OneHotelInventoryActivity" />
-        <activity android:name=".NotificationListActivity" />
-        <activity android:name=".InventoryCategoryDetailsActivity" />
-        <activity android:name=".NotificationOptions" />
-        <activity android:name=".OneHotelOtheNotification" />
+        <activity android:name=".Activiies.MainActivity" />
+        <activity android:name=".Activiies.CancelOptions" />
+        <activity android:name=".Activiies.ShowBookingById" />
+        <activity android:name=".Activiies.ModifyBooking" />
+        <activity android:name=".Activiies.GetBookingByHotel" />
+        <activity android:name=".Activiies.BilllDetails" />
+        <activity android:name=".Activiies.InventoryOptionsActivity" />
+        <activity android:name=".Activiies.OneHotelInventoryActivity" />
+        <activity android:name=".Activiies.NotificationListActivity" />
+        <activity android:name=".Activiies.InventoryCategoryDetailsActivity" />
+        <activity android:name=".Activiies.NotificationOptions" />
+        <activity android:name=".Activiies.OneHotelOtheNotification" />
         <activity android:name=".AllHotelNotification" />
-        <activity android:name=".DailyRevenueTagetActivity" />
-        <activity android:name=".NotificationDetailsActivity" />
-        <activity android:name=".UpdateBookingsActivity" />
-        <activity android:name=".TillDateBookings" />
-        <activity android:name=".SettleAudit"></activity>
+        <activity android:name=".Activiies.DailyRevenueTagetActivity" />
+        <activity android:name=".Activiies.NotificationDetailsActivity" />
+        <activity android:name=".Activiies.UpdateBookingsActivity" />
+        <activity android:name=".Activiies.TillDateBookings" />
+        <activity android:name=".Activiies.SettleAudit" />
+        <activity android:name=".Activiies.BookingLIstActivity"></activity>
     </application>
 
 </manifest>

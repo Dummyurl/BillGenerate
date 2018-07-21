@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import app.zingo.com.billgenerate.R;
 import app.zingo.com.billgenerate.Utils.DataBaseHelper;
 import app.zingo.com.billgenerate.Utils.PreferenceHandler;
 

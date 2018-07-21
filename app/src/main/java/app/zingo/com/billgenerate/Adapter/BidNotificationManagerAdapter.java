@@ -1,6 +1,5 @@
 package app.zingo.com.billgenerate.Adapter;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -29,7 +28,7 @@ import app.zingo.com.hotelmanagement.WebApi.BookingApi;
 import app.zingo.com.hotelmanagement.WebApi.TravellerApi;
 import app.zingo.com.hotelmanagement.activities.AgentBookingRequestActivity;
 import app.zingo.com.hotelmanagement.activities.RoomBookingNotifyActivity;*/
-import app.zingo.com.billgenerate.AgentBookingRequestActivity;
+import app.zingo.com.billgenerate.Activiies.AgentBookingRequestActivity;
 
 import app.zingo.com.billgenerate.Model.Bookings1;
 import app.zingo.com.billgenerate.Model.NotificationManager;

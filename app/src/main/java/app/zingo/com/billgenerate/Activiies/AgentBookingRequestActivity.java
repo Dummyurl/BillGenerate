@@ -1,25 +1,16 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 /*import app.zingo.com.hotelmanagement.Customviews.CustomFontTextView;
@@ -31,10 +22,7 @@ import app.zingo.com.hotelmanagement.Util.PreferenceHandler;
 import app.zingo.com.hotelmanagement.WebApi.FireBaseApi;
 import app.zingo.com.hotelmanagement.WebApi.NotificationManagerApi;
 import app.zingo.com.hotelmanagement.login.IRegistrasionService;*/
-import app.zingo.com.billgenerate.Utils.PreferenceHandler;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import app.zingo.com.billgenerate.R;
 
 public class AgentBookingRequestActivity extends AppCompatActivity {
 

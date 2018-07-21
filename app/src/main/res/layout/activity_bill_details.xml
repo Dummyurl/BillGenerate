@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/bill_details_layout"
-    tools:context=".BillDetails">
+    tools:context=".Activiies.BillDetails">
 
     <ScrollView
         android:id="@+id/scrollView"

@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -19,7 +19,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import app.zingo.com.billgenerate.LoginApi;
 import app.zingo.com.billgenerate.Model.HotelDetails;
+import app.zingo.com.billgenerate.R;
 import app.zingo.com.billgenerate.Utils.PreferenceHandler;
 import app.zingo.com.billgenerate.Model.RoomCategories;
 import app.zingo.com.billgenerate.Model.Rooms;

@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
 import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import com.dd.processbutton.FlatButton;
 
+import app.zingo.com.billgenerate.LoginApi;
+import app.zingo.com.billgenerate.R;
 import app.zingo.com.billgenerate.Utils.DataBaseHelper;
 import app.zingo.com.billgenerate.Model.Documents;
 import app.zingo.com.billgenerate.Utils.PreferenceHandler;

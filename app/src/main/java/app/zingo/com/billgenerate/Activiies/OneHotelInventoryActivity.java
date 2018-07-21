@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -7,100 +7,94 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import app.zingo.com.billgenerate.Adapter.PropertyAdapter;
-import app.zingo.com.billgenerate.Model.*;
+import app.zingo.com.billgenerate.LoginApi;
+import app.zingo.com.billgenerate.Model.FireBaseModel;
 import app.zingo.com.billgenerate.Model.HotelDetails;
-import app.zingo.com.billgenerate.Utils.*;
+import app.zingo.com.billgenerate.Model.NotificationManager;
+import app.zingo.com.billgenerate.R;
+import app.zingo.com.billgenerate.Utils.PreferenceHandler;
+import app.zingo.com.billgenerate.Adapter.PropertyAdapter;
 import app.zingo.com.billgenerate.Utils.ThreadExecuter;
 import app.zingo.com.billgenerate.Utils.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
-public class InventoryOptionsActivity extends AppCompatActivity {
-
-    Button mAll,mOne,mNotifications;
+public class OneHotelInventoryActivity extends AppCompatActivity {
+    
+    Spinner mProperty;
+    Button mSend;
+    ArrayList<HotelDetails> hotelList;
+    int hotelId;
+    String hotelName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
-            setContentView(R.layout.activity_inventory_options);
+            setContentView(R.layout.activity_one_hotel_inventory);
 
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            setTitle("Inventory");
+            setTitle("Send Inventory");
+            
+            mProperty = (Spinner)findViewById(R.id.bill_property_name);
+            mSend = (Button)findViewById(R.id.send_notify);
 
-            /*
-            mAll.setVisibility(View.GONE);*/
-            mOne = (Button)findViewById(R.id.send_one_hotel);
-            mNotifications = (Button)findViewById(R.id.notifications);
-            mAll = (Button)findViewById(R.id.all_hotel);
+            getHotels();
 
-            mOne.setOnClickListener(new View.OnClickListener() {
+            mProperty.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
-                public void onClick(View view) {
-                    Intent one = new Intent(InventoryOptionsActivity.this,OneHotelInventoryActivity.class);
-                    startActivity(one);
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    hotelId = hotelList.get(i).getHotelId();
+                    hotelName = hotelList.get(i).getHotelName();
+
                 }
-            });
 
-            mNotifications.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
-                    Intent one = new Intent(InventoryOptionsActivity.this,NotificationListActivity.class);
-                    startActivity(one);
-                }
-            });
-
-            mAll.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    getHotels();
+                public void onNothingSelected(AdapterView<?> adapterView) {
 
                 }
             });
+            
+            mSend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    System.out.println("Hotel Name=="+hotelName);
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy hh:mm a");
+
+                    Date date = new Date();
+                    String notifyDate = sdf.format(date);
+                    FireBaseModel fm = new FireBaseModel();
+                    fm.setSenderId("415720091200");
+                    fm.setServerId("AIzaSyBFdghUu7AgQVnu27xkKKLHJ6oSz9AnQ8M");
+                    fm.setHotelId(hotelId);
+                    fm.setTitle("Please Update Inventory");
+
+                    fm.setMessage(hotelId+"-"+ PreferenceHandler.getInstance(OneHotelInventoryActivity.this).getUserId()+"-"+hotelName+"-"+notifyDate);
+                    //registerTokenInDB(fm);
+                    sendNotification(fm);
+                }
+            });
+
+
 
         }catch (Exception e){
             e.printStackTrace();
         }
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        try{
-            switch (item.getItemId()) {
-                case android.R.id.home:
-                    Intent main = new Intent(InventoryOptionsActivity.this,MainActivity.class);
-                    startActivity(main);
-                    this.finish();
-                    return true;
-
-
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent main = new Intent(InventoryOptionsActivity.this,MainActivity.class);
-        startActivity(main);
-        this.finish();
+        
     }
 
     private void getHotels() {
@@ -111,52 +105,36 @@ public class InventoryOptionsActivity extends AppCompatActivity {
         progressDialog.show();
 
 
-        new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
+        new ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = app.zingo.com.billgenerate.Utils.Util.getToken(InventoryOptionsActivity.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
+                String auth_string = Util.getToken(OneHotelInventoryActivity.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
                 LoginApi hotelOperation = Util.getClient().create(LoginApi.class);
                 Call<ArrayList<HotelDetails>> response = hotelOperation.getHotelsList(auth_string/*userId*/);
 
-                response.enqueue(new Callback<ArrayList<app.zingo.com.billgenerate.Model.HotelDetails>>() {
+                response.enqueue(new Callback<ArrayList<HotelDetails>>() {
                     @Override
-                    public void onResponse(Call<ArrayList<app.zingo.com.billgenerate.Model.HotelDetails>> call, Response<ArrayList<app.zingo.com.billgenerate.Model.HotelDetails>> response) {
+                    public void onResponse(Call<ArrayList<HotelDetails>> call, Response<ArrayList<HotelDetails>> response) {
                         System.out.println("GetHotelByProfileId = " + response.code());
-
+                        hotelList = response.body();
 
                         if (progressDialog != null)
                             progressDialog.dismiss();
                         try{
                             if (response.code() == 200) {
-                                if (response.body() != null && response.body() .size() != 0) {
-
-
-                                    for(int i=0;i<response.body().size();i++){
-
-                                        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy hh:mm a");
-
-                                        Date date = new Date();
-                                        String notifyDate = sdf.format(date);
-                                        FireBaseModel fm = new FireBaseModel();
-                                        fm.setSenderId("415720091200");
-                                        fm.setServerId("AIzaSyBFdghUu7AgQVnu27xkKKLHJ6oSz9AnQ8M");
-                                        fm.setHotelId(response.body().get(i).getHotelId());
-                                        fm.setTitle("Please Update Inventory");
-
-                                        fm.setMessage(response.body().get(i).getHotelId()+"-"+ PreferenceHandler.getInstance(InventoryOptionsActivity.this).getUserId()+"-"+response.body().get(i).getHotelName()+"-"+notifyDate);
-                                        //registerTokenInDB(fm);
-                                        sendNotification(fm);
-                                    }
-
+                                if (hotelList != null && hotelList.size() != 0) {
+                                    PropertyAdapter chainAdapter = new PropertyAdapter(OneHotelInventoryActivity.this, hotelList);
+                                    mProperty.setAdapter(chainAdapter);
 //
 
 
                                 } else {
-                                    Toast.makeText(InventoryOptionsActivity.this, "No Hotels", Toast.LENGTH_SHORT).show();
-
+                                    Toast.makeText(OneHotelInventoryActivity.this, "No Hotels", Toast.LENGTH_SHORT).show();
+                                /*Intent intent = new Intent(OneHotelInventoryActivity.this,AddHotelActivity.class);
+                                startActivity(intent);*/
                                 }
                             } else {
-                                Toast.makeText(InventoryOptionsActivity.this, "Check your internet connection or please try after some time",
+                                Toast.makeText(OneHotelInventoryActivity.this, "Check your internet connection or please try after some time",
                                         Toast.LENGTH_LONG).show();
                             }
 
@@ -174,7 +152,7 @@ public class InventoryOptionsActivity extends AppCompatActivity {
                         if (progressDialog != null)
                             progressDialog.dismiss();
 
-                        Toast.makeText(InventoryOptionsActivity.this, "Check your internet connection or please try after some time",
+                        Toast.makeText(OneHotelInventoryActivity.this, "Check your internet connection or please try after some time",
                                 Toast.LENGTH_LONG).show();
 
                     }
@@ -183,19 +161,18 @@ public class InventoryOptionsActivity extends AppCompatActivity {
         });
     }
 
-
     public void sendNotification(final FireBaseModel fireBaseModel) {
 
-        final ProgressDialog dialog = new ProgressDialog(InventoryOptionsActivity.this);
+        final ProgressDialog dialog = new ProgressDialog(OneHotelInventoryActivity.this);
         dialog.setMessage("Loading");
         dialog.setCancelable(false);
         dialog.show();
 
 
-        new app.zingo.com.billgenerate.Utils.ThreadExecuter().execute(new Runnable() {
+        new ThreadExecuter().execute(new Runnable() {
             @Override
             public void run() {
-                String auth_string = Util.getToken(InventoryOptionsActivity.this);
+                String auth_string = Util.getToken(OneHotelInventoryActivity.this);
                 LoginApi apiService =
                         Util.getClient().create(LoginApi.class);
 
@@ -218,7 +195,7 @@ public class InventoryOptionsActivity extends AppCompatActivity {
 
                                 ArrayList<String> list = response.body();
 
-                                Toast.makeText(InventoryOptionsActivity.this, "Notification Send Successfully", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(OneHotelInventoryActivity.this, "Notification Send Successfully", Toast.LENGTH_SHORT).show();
 
 
 
@@ -233,7 +210,7 @@ public class InventoryOptionsActivity extends AppCompatActivity {
 
                             } else {
 
-                                Toast.makeText(InventoryOptionsActivity.this, " failed due to status code:" + statusCode, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(OneHotelInventoryActivity.this, " failed due to status code:" + statusCode, Toast.LENGTH_SHORT).show();
                             }
                         }catch (Exception e){
                             if(dialog != null)
@@ -265,7 +242,7 @@ public class InventoryOptionsActivity extends AppCompatActivity {
 
     private void savenotification(final NotificationManager notification) {
 
-        final ProgressDialog dialog = new ProgressDialog(InventoryOptionsActivity.this);
+        final ProgressDialog dialog = new ProgressDialog(OneHotelInventoryActivity.this);
         dialog.setMessage("Loading");
         dialog.setCancelable(false);
         dialog.show();
@@ -274,7 +251,7 @@ public class InventoryOptionsActivity extends AppCompatActivity {
             @Override
             public void run() {
                 System.out.println("Hotel id = "+notification.getHotelId());
-                String auth_string = Util.getToken(InventoryOptionsActivity.this);
+                String auth_string = Util.getToken(OneHotelInventoryActivity.this);
                 LoginApi travellerApi = Util.getClient().create(LoginApi.class);
                 Call<NotificationManager> response = travellerApi.saveNotification(auth_string,notification);
 
@@ -294,8 +271,8 @@ public class InventoryOptionsActivity extends AppCompatActivity {
                                 {
 
 
-                                    Toast.makeText(InventoryOptionsActivity.this, "Notification Saved", Toast.LENGTH_SHORT).show();
-
+                                        Toast.makeText(OneHotelInventoryActivity.this, "Notification Saved", Toast.LENGTH_SHORT).show();
+                                       
 
 
 
@@ -322,5 +299,24 @@ public class InventoryOptionsActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        try{
+            switch (item.getItemId()) {
+                case android.R.id.home:
+                    Intent main = new Intent(OneHotelInventoryActivity.this,InventoryOptionsActivity.class);
+                    startActivity(main);
+                    this.finish();
+                    return true;
+
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

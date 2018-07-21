@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import app.zingo.com.billgenerate.R;
+import app.zingo.com.billgenerate.ThreadExecuter;
 import app.zingo.com.billgenerate.Utils.Util;
 
 /*import app.zingo.com.hotelmanagement.Customviews.CustomFontTextView;

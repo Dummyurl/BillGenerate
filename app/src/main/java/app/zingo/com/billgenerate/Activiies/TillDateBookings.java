@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
@@ -36,12 +36,13 @@ import java.util.Date;
 import java.util.Locale;
 
 import app.zingo.com.billgenerate.Adapter.SettlementAdapters;
+import app.zingo.com.billgenerate.HotelOperations;
 import app.zingo.com.billgenerate.Model.BookingAndTraveller;
 import app.zingo.com.billgenerate.Model.Bookings1;
 import app.zingo.com.billgenerate.Model.Payment;
-import app.zingo.com.billgenerate.Model.Rooms;
 import app.zingo.com.billgenerate.Model.Traveller;
-import app.zingo.com.billgenerate.Utils.PreferenceHandler;
+import app.zingo.com.billgenerate.R;
+import app.zingo.com.billgenerate.ThreadExecuter;
 import app.zingo.com.billgenerate.WebApis.AccountApi;
 import app.zingo.com.billgenerate.WebApis.PaymentApi;
 import app.zingo.com.billgenerate.WebApis.TravellerApi;

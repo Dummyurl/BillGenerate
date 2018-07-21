@@ -19,9 +19,9 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 
-import app.zingo.com.billgenerate.RoomBookingNotifyActivity;
+import app.zingo.com.billgenerate.Activiies.RoomBookingNotifyActivity;
 import app.zingo.com.billgenerate.Utils.PreferenceHandler;
-import app.zingo.com.billgenerate.NotificationListActivity;
+import app.zingo.com.billgenerate.Activiies.NotificationListActivity;
 import app.zingo.com.billgenerate.R;
 
 

@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
 import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,8 +12,10 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import app.zingo.com.billgenerate.LoginApi;
 import app.zingo.com.billgenerate.Model.NotificationManager;
 import app.zingo.com.billgenerate.Adapter.NotificationManagerAdapter;
+import app.zingo.com.billgenerate.R;
 import app.zingo.com.billgenerate.Utils.PreferenceHandler;
 import app.zingo.com.billgenerate.Utils.ThreadExecuter;
 import app.zingo.com.billgenerate.Utils.Util;

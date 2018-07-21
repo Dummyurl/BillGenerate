@@ -10,10 +10,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import app.zingo.com.billgenerate.BillDetails;
+import app.zingo.com.billgenerate.Activiies.BillDetails;
 import app.zingo.com.billgenerate.Model.Traveller;
 import app.zingo.com.billgenerate.R;
-import app.zingo.com.billgenerate.UpdateBookingsActivity;
+import app.zingo.com.billgenerate.Activiies.UpdateBookingsActivity;
 
 
 /**

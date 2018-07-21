@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -33,7 +33,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.Marker;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -60,8 +59,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import app.zingo.com.billgenerate.GeneralAdapter;
+import app.zingo.com.billgenerate.HotelOperations;
 import app.zingo.com.billgenerate.Model.NotificationManager;
-import app.zingo.com.billgenerate.Utils.Constatnts;
+import app.zingo.com.billgenerate.R;
+import app.zingo.com.billgenerate.ThreadExecuter;
+import app.zingo.com.billgenerate.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

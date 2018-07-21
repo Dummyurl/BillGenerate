@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/bill_details_layout"
-    tools:context=".UpdateBookingsActivity">
+    tools:context=".Activiies.UpdateBookingsActivity">
     <com.dd.processbutton.FlatButton
         android:id="@+id/update"
         android:layout_alignParentBottom="true"

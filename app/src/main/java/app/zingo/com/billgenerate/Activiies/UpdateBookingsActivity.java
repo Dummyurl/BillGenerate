@@ -1,6 +1,5 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
-import android.*;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -59,13 +58,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import app.zingo.com.billgenerate.*;
 import app.zingo.com.billgenerate.Adapter.AutocompleteCustomArrayAdapter;
 import app.zingo.com.billgenerate.Adapter.PaidStatusSpinnerAdapter;
-import app.zingo.com.billgenerate.Adapter.PropertyAdapter;
 import app.zingo.com.billgenerate.Adapter.RoomAdapter;
-import app.zingo.com.billgenerate.Adapter.RoomCategorySpinnerAdapter;
 import app.zingo.com.billgenerate.Model.*;
 import app.zingo.com.billgenerate.Model.HotelDetails;
+import app.zingo.com.billgenerate.R;
 import app.zingo.com.billgenerate.Utils.*;
 import app.zingo.com.billgenerate.Utils.Util;
 import retrofit2.Call;
@@ -163,7 +162,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         try{
 
-            setContentView(R.layout.activity_update_bookings);
+            setContentView(app.zingo.com.billgenerate.R.layout.activity_update_bookings);
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             setTitle("Update Booking");

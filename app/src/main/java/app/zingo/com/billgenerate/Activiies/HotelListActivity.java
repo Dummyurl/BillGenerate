@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -18,6 +18,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import app.zingo.com.billgenerate.HotelListAdapter;
+import app.zingo.com.billgenerate.HotelOperations;
+import app.zingo.com.billgenerate.R;
+import app.zingo.com.billgenerate.ThreadExecuter;
+import app.zingo.com.billgenerate.Util;
 import app.zingo.com.billgenerate.Utils.RecyclerToutchListener;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -71,6 +76,12 @@ public class HotelListActivity extends AppCompatActivity {
                     }
                     else if(screen.equalsIgnoreCase("Payment")){
                         Intent intent = new Intent(HotelListActivity.this,TillDateBookings.class);
+                        intent.putExtra("HotelId",hotelDetailsArrayList.get(position).getHotelId());
+                        startActivity(intent);
+
+
+                    } else if(screen.equalsIgnoreCase("OTABooking")){
+                        Intent intent = new Intent(HotelListActivity.this,BookingLIstActivity.class);
                         intent.putExtra("HotelId",hotelDetailsArrayList.get(position).getHotelId());
                         startActivity(intent);
 

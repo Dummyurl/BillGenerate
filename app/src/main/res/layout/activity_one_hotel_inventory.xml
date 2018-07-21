@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="app.zingo.com.billgenerate.OneHotelInventoryActivity">
+    tools:context="app.zingo.com.billgenerate.Activiies.OneHotelInventoryActivity">
 
     <LinearLayout
         android:id="@+id/data_property_layout"

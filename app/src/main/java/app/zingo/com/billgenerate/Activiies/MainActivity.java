@@ -1,4 +1,4 @@
-package app.zingo.com.billgenerate;
+package app.zingo.com.billgenerate.Activiies;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -6,12 +6,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import app.zingo.com.billgenerate.R;
 import app.zingo.com.billgenerate.Utils.PreferenceHandler;
 
 public class MainActivity extends AppCompatActivity {
 
     Button mProperty,mBill,mPlan,mRoom,mCancel,
-            mAnalysis,mNotification,mGetNotifications,mPayment;
+            mAnalysis,mNotification,mGetNotifications,mPayment,mOtaConfirm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         mNotification = (Button)findViewById(R.id.send_notification);
         mGetNotifications = (Button)findViewById(R.id.hotel_list);
         mPayment = (Button)findViewById(R.id.payment);
+        mOtaConfirm = (Button)findViewById(R.id.ota_booking_confirm);
 
         mProperty.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,6 +111,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent notiIntent = new Intent(MainActivity.this,HotelListActivity.class);
                 notiIntent.putExtra("ScreenName","Payment");
+                startActivity(notiIntent);
+                MainActivity.this.finish();
+            }
+        });
+
+        mOtaConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent notiIntent = new Intent(MainActivity.this,HotelListActivity.class);
+                notiIntent.putExtra("ScreenName","OTABooking");
                 startActivity(notiIntent);
                 MainActivity.this.finish();
             }
