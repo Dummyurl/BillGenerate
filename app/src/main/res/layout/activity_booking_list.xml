@@ -101,9 +101,95 @@
                 android:textColor="#ffffff"
                 android:gravity="center"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:orientation="vertical"
+                >
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="By Zingo Booking Id"
+                        android:id="@+id/zingo_id"
+                        />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ota_id"
+                        android:text="By OTA Id"/>
+                </RadioGroup>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Booking ID"
+                        android:layout_weight="2"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#000000"/>
+                    <EditText
+                        android:id="@+id/bill_booking_id"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:inputType="text"
+                        android:paddingLeft="10dp"
+                        android:hint="Booking ID"
+                        android:layout_weight="1"
+                        android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                        android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                        android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                        android:background="@drawable/spinner_background"/>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:layout_weight="2"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#000000"/>
+                    <Button
+                        android:id="@+id/search_booking"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:inputType="numberDecimal"
+                        android:paddingLeft="10dp"
+                        android:text="Find Bookings"
+                        android:layout_weight="1"
+                        android:textColor="#000000"
+                        android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                        android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                        android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                        />
+
+
+                </LinearLayout>
+
+            </LinearLayout>
 
 
         </LinearLayout>
+
+
     </android.support.v7.widget.CardView>
 
 

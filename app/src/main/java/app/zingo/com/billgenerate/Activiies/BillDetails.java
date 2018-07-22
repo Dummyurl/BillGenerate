@@ -1414,7 +1414,7 @@ public class BillDetails extends AppCompatActivity {
             }
 
             System.out.println("Ota hotel == "+otaHotel);
-            Toast.makeText(this, "Ota hotel == "+otaHotel, Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "Ota hotel == "+otaHotel, Toast.LENGTH_SHORT).show();
             if(otaHotel<0){
                 bookings.setOTAToPayHotel(otaHotel);
                 bookings.setHotelToPayOTA(Math.abs(otaHotel));

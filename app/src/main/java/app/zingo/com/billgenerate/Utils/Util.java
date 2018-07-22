@@ -33,7 +33,7 @@ public class Util {
                 .readTimeout(100,TimeUnit.SECONDS).build();
         if (retrofit==null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://zingoapi.azurewebsites.net/api/")
+                    .baseUrl("http://zingotesting.azurewebsites.net/api/")
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();

@@ -983,13 +983,21 @@ public class UpdateBookingsActivity extends AppCompatActivity {
 
             double roomCount = Double.parseDouble(mRoomCount.getSelectedItem().toString());
 
+            double otaHotel=0;
+            double netAmount =  (Double.parseDouble(total)-otaAmt);
 
-            if(otaToHotelPay<0){
-                updateBooking.setOTAToPayHotel(0);
-                updateBooking.setHotelToPayOTA(Math.abs(otaToHotelPay));
+            if(mPayment.getSelectedItem().toString().equalsIgnoreCase("PaY@HOTEL")){
+                otaHotel = netAmount - customerToHotel;
             }else{
-                updateBooking.setOTAToPayHotel(Math.abs(otaToHotelPay));
-                updateBooking.setHotelToPayOTA(0);
+                otaHotel = netAmount;
+            }
+
+            if(otaHotel<0){
+                bookings.setOTAToPayHotel(otaHotel);
+                bookings.setHotelToPayOTA(Math.abs(otaHotel));
+            }else{
+                bookings.setOTAToPayHotel(Math.abs(otaHotel));
+                bookings.setHotelToPayOTA(0);
             }
             updateBooking.setZingoCommision(zingoAmt);
             updateBooking.setCustomerPaymentAtOTA(payCustomer);
