@@ -563,7 +563,35 @@ public class TillDateBookings extends AppCompatActivity {
 
                                             }else{
                                                 getTravellerName(till.get(i).getTravellerId(),till.get(i));
-                                                paymentBookings.add(bookings1);
+
+                                                String zingoPayment = "Payment Done By Zingo";
+                                                int count = 0;
+                                                int adjustCount = 0;
+
+                                                if(bookings1.getPaymentList()!=null&&bookings1.getPaymentList().size()!=0){
+
+                                                    for(int j=0;j<bookings1.getPaymentList().size();j++){
+
+                                                        if(zingoPayment.equalsIgnoreCase(bookings1.getPaymentList().get(j).getPaymentStatus())){
+                                                            count = 1;
+                                                        }
+
+                                                        if(bookings1.getPaymentList().get(j).getPaymentStatus().equalsIgnoreCase("Adjustment")){
+                                                            adjustCount = 1;
+                                                        }
+                                                    }
+                                                }else{
+                                                    paymentBookings.add(bookings1);
+                                                }
+
+                                                if(count==0){
+                                                    paymentBookings.add(bookings1);
+                                                }
+
+                                                if(adjustCount==0){
+                                                    otaAdjust = otaAdjust+bookings1.getOTAToPayHotel();
+                                                }
+
                                                 totalRoomNights = totalRoomNights +(bookings1.getNoOfRooms()*bookings1.getDurationOfStay());
                                                 totalGrossRevenue = totalGrossRevenue+bookings1.getTotalAmount();
 
@@ -1258,7 +1286,7 @@ public class TillDateBookings extends AppCompatActivity {
                                 payment.setPaymentName("Zingo Payment");
                                 SimpleDateFormat date = new SimpleDateFormat("MM/dd/yyyy");
                                 payment.setPaymentDate(date.format(new Date()));
-                                payment.setPaymentStatus("Done By Zingo");
+                                payment.setPaymentStatus("Payment Done By Zingo");
 
                                /* String paymentName = "Zingo Payment";
                                 String paymentType = "Advance/Done";*/

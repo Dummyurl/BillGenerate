@@ -2,14 +2,20 @@ package app.zingo.com.billgenerate.Activiies;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,8 +28,7 @@ import java.util.Date;
 
 import app.zingo.com.billgenerate.Adapter.BookingConfirmOtaAdapter;
 import app.zingo.com.billgenerate.Adapter.SettlementAdapters;
-import app.zingo.com.billgenerate.Model.Bookings1;
-import app.zingo.com.billgenerate.Model.Traveller;
+import app.zingo.com.billgenerate.Model.*;
 import app.zingo.com.billgenerate.R;
 import app.zingo.com.billgenerate.ThreadExecuter;
 import app.zingo.com.billgenerate.Utils.Util;
@@ -39,10 +44,13 @@ public class BookingLIstActivity extends AppCompatActivity {
     Button mSearchallBookings;
     Spinner mFilter;
 
+    EditText mBookingID;
+    Button mGet;
+    RadioButton mOTAId,mZingoId;
+    LinearLayout mBookingLayout;
+
     String to,from;
-    ArrayList<Traveller> travellerArrayList;
-    ArrayList<Bookings1> bookings1ArrayList;
-    ArrayList<Bookings1> paymentBookings;
+    ArrayList<Bookings1> till;
     String allFromDate,allToDate;
 
     BookingConfirmOtaAdapter adapter;
@@ -66,6 +74,15 @@ public class BookingLIstActivity extends AppCompatActivity {
             alltoDate = (TextView) findViewById(R.id.all_book_to_date);
             mSearchallBookings = (Button)findViewById(R.id.all_search_bookings);
             mFilter = (Spinner) findViewById(R.id.filter_search);
+
+            mBookingID = (EditText)findViewById(R.id.bill_booking_id);
+            mGet = (Button)findViewById(R.id.search_booking);
+            mBookingLayout = (LinearLayout) findViewById(R.id.filter_by_id);
+            mBookingLayout.setVisibility(View.GONE);
+
+            mOTAId = (RadioButton) findViewById(R.id.ota_id);
+            mZingoId = (RadioButton) findViewById(R.id.zingo_id);
+            mZingoId.setChecked(true);
 
             hotelID = getIntent().getIntExtra("HotelId",0);
 
@@ -110,6 +127,28 @@ public class BookingLIstActivity extends AppCompatActivity {
                 }
             });
 
+            mBookingID.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+
+                        filterBookings(charSequence.toString().toLowerCase());
+
+
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
 
         }catch (Exception e){
             e.printStackTrace();
@@ -146,7 +185,7 @@ public class BookingLIstActivity extends AppCompatActivity {
                                     ArrayList<Bookings1> list = response.body();
                                     String filter = mFilter.getSelectedItem().toString();
 
-                                    ArrayList<Bookings1> till = new ArrayList<>();
+                                    till = new ArrayList<>();
                                     ArrayList<Bookings1> noShow = new ArrayList<>();
                                     ArrayList<Bookings1> cancel = new ArrayList<>();
                                     ArrayList<Bookings1> quick = new ArrayList<>();
@@ -272,6 +311,7 @@ public class BookingLIstActivity extends AppCompatActivity {
                                     if(till.size() != 0)
                                     {
 
+
                                         if(filter.equalsIgnoreCase("All")){
 
                                             adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,till);
@@ -316,7 +356,7 @@ public class BookingLIstActivity extends AppCompatActivity {
                                         }
 
 
-
+                                        mBookingLayout.setVisibility(View.VISIBLE);
 
 
 
@@ -422,5 +462,80 @@ public class BookingLIstActivity extends AppCompatActivity {
 
         datePickerDialog.show();
 
+    }
+
+    private void filterBookings(String s) {
+
+        ArrayList<Bookings1> filteredList = new ArrayList<>();
+
+        try{
+            for(int i=0;i<till.size();i++)
+            {
+
+                String otaId = "";
+
+                if(mZingoId.isChecked()){
+                    int id = till.get(i).getBookingId();
+                    String ids = String.valueOf(id);
+                    if(ids.contains(s))
+                    {
+                        filteredList.add(till.get(i));
+                    }
+                }else if(mOTAId.isChecked()){
+                    if(till.get(i).getOTABookingID()!=null){
+                        otaId= till.get(i).getOTABookingID();
+                    }
+
+                    if(otaId.contains(s))
+                    {
+                        filteredList.add(till.get(i));
+                    }
+                }
+
+
+            }
+
+            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,filteredList);
+            mBookingList.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("OTA Error "+e.getMessage());
+            //Toast.makeText(this, "OTA Error "+e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+
+
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        try{
+            switch (item.getItemId()) {
+                case android.R.id.home:
+                    Intent main = new Intent(BookingLIstActivity.this,MainActivity.class);
+                    startActivity(main);
+                    this.finish();
+                    return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        try{
+            Intent main = new Intent(BookingLIstActivity.this,MainActivity.class);
+            startActivity(main);
+            this.finish();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

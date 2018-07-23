@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,7 +46,7 @@ public class ShowBookingById extends AppCompatActivity {
     RadioButton mOTAId,mZingoId;
 
     TextView mBookedPersonName,mBookedDate,mBookingDates,mNoofRooms,
-            mNetAmount,mShortName,mCall,mPayAtHotel,mBookedRoom,mBookingSourceType,mOtaBookingId;
+            mNetAmount,mShortName,mStatus,mPayAtHotel,mBookedRoom,mBookingSourceType,mOtaBookingId;
     LinearLayout mparent;
     int bookingId;
     Bookings1 updateBooking;
@@ -75,7 +76,7 @@ public class ShowBookingById extends AppCompatActivity {
             mNoofRooms = (TextView) findViewById(R.id.booked_no_rooms_night);
             mNetAmount = (TextView) findViewById(R.id.net_amount);
             mShortName = (TextView) findViewById(R.id.person_short_name);
-            mCall = (TextView) findViewById(R.id.call_booked_person);
+            mStatus = (TextView) findViewById(R.id.booking_status);
             mPayAtHotel = (TextView) findViewById(R.id.pay_at_hotel);
             mBookedRoom = (TextView) findViewById(R.id.call_booked_room_no);
             mparent = (LinearLayout) findViewById(R.id.parent_layout_for_user_details);
@@ -351,6 +352,23 @@ public class ShowBookingById extends AppCompatActivity {
                                 mOtaBookingId.setText(""+response.body().getOTABookingID());
                             }
 
+                            if(response.body().getBookingStatus().equalsIgnoreCase("Active")){
+                                mStatus.setText("Confirmed");
+                                mStatus.setBackgroundColor(Color.GREEN);
+                            }else  if(response.body().getBookingStatus().equalsIgnoreCase("Quick")|| response.body().getBookingStatus().equalsIgnoreCase("Delay")){
+                                mStatus.setText("Confirmed");
+                                mStatus.setBackgroundColor(Color.GREEN);
+                            }else if(response.body().getBookingStatus().equalsIgnoreCase("Cancelled")){
+
+                                mStatus.setText("Cancelled");
+                                mStatus.setBackgroundColor(Color.RED);
+                            }else if(response.body().getBookingStatus().equalsIgnoreCase("Abandoned")){
+                                mStatus.setText("No Show");
+                                mStatus.setBackgroundColor(Color.CYAN);
+                            }else{
+                                mStatus.setText("Confirmed");
+                                mStatus.setBackgroundColor(Color.GREEN);
+                            }
                             mNoofRooms.setText((long)getDays(response.body().getCheckInDate(),response.body().getCheckOutDate())+" Night(s)");
                             getTravellerDetails(response.body().getTravellerId());
                             getHotelName(response.body().getHotelId());
@@ -416,6 +434,24 @@ public class ShowBookingById extends AppCompatActivity {
                             mNoofRooms.setText((long)getDays(response.body().get(0).getCheckInDate(),response.body().get(0).getCheckOutDate())+" Night(s)");
                             getTravellerDetails(response.body().get(0).getTravellerId());
                             getHotelName(response.body().get(0).getHotelId());
+
+                            if(response.body().get(0).getBookingStatus().equalsIgnoreCase("Active")){
+                                mStatus.setText("Confirmed");
+                                mStatus.setBackgroundColor(Color.GREEN);
+                            }else  if(response.body().get(0).getBookingStatus().equalsIgnoreCase("Quick")|| response.body().get(0).getBookingStatus().equalsIgnoreCase("Delay")){
+                                mStatus.setText("Confirmed");
+                                mStatus.setBackgroundColor(Color.GREEN);
+                            }else if(response.body().get(0).getBookingStatus().equalsIgnoreCase("Cancelled")){
+
+                                mStatus.setText("Cancelled");
+                                mStatus.setBackgroundColor(Color.RED);
+                            }else if(response.body().get(0).getBookingStatus().equalsIgnoreCase("Abandoned")){
+                                mStatus.setText("No Show");
+                                mStatus.setBackgroundColor(Color.CYAN);
+                            }else{
+                                mStatus.setText("Confirmed");
+                                mStatus.setBackgroundColor(Color.GREEN);
+                            }
 
                         }else{
                             Toast.makeText(ShowBookingById.this, "There is no Booking", Toast.LENGTH_SHORT).show();

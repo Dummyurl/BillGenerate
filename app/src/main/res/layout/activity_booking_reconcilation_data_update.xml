@@ -1,0 +1,912 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/bre_details_short_name"
+            android:background="@drawable/circular_border"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="hi"
+            android:textSize="16sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/bre_details_person_name"
+            android:textColor="#000"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:ems="7"
+            android:id="@+id/bre_booking_details_brec_status"
+            android:background="#46A865"
+            android:text="Confirmed"
+            android:gravity="center"
+            android:textColor="#fff"
+            android:layout_gravity="center"
+            />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#afafaf"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Details"
+        android:layout_gravity="center"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:textSize="18sp"
+        android:background="#dcdbdb"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="false"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="20dp"
+                    android:text="Booking No"
+                    android:textColor="#262626"
+                    android:textSize="18sp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:id="@+id/bre_details_booking_id"
+                    android:paddingRight="20dp"
+                    android:textColor="#5c5c5c"
+                    android:textSize="18sp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
+
+            </RelativeLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#b1b0b0"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="false"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="20dp"
+                    android:text="Booking Date"
+                    android:textColor="#262626"
+                    android:textSize="18sp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="20dp"
+                    android:id="@+id/bre_details_booking_date"
+                    android:paddingRight="20dp"
+                    android:textColor="#5c5c5c"
+                    android:textSize="18sp"
+                    />
+
+            </RelativeLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#b1b0b0"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="false"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="20dp"
+                    android:text="Booking Status"
+                    android:textColor="#262626"
+                    android:textSize="18sp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="20dp"
+                    android:id="@+id/bre_details_booking_status"
+                    android:paddingRight="20dp"
+                    android:textColor="#5c5c5c"
+                    android:textSize="18sp"
+                    />
+
+            </RelativeLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#b1b0b0"/>
+            <!--<RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="false"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="20dp"
+                    android:text="Payment Status"
+                    android:textColor="#262626"
+                    android:textSize="18sp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="20dp"
+                    android:id="@+id/details_payment_status"
+                    android:paddingRight="20dp"
+                    android:textColor="#5c5c5c"
+                    android:textSize="18sp"
+                    />
+
+            </RelativeLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#b1b0b0"/>-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="false"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="20dp"
+                    android:text="Check In"
+                    android:textColor="#262626"
+                    android:textSize="18sp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="20dp"
+                    android:id="@+id/bre_details_check_in"
+                    android:paddingRight="20dp"
+                    android:textColor="#5c5c5c"
+                    android:textSize="18sp"
+                    />
+
+            </RelativeLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#b1b0b0"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="false"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="20dp"
+                    android:text="Check Out"
+                    android:textColor="#262626"
+                    android:textSize="18sp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="20dp"
+                    android:id="@+id/bre_details_check_out"
+                    android:paddingRight="20dp"
+                    android:textColor="#5c5c5c"
+                    android:textSize="18sp"
+                    />
+
+            </RelativeLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#b1b0b0"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="false"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="20dp"
+                    android:text="Guest Count"
+                    android:textColor="#262626"
+                    android:textSize="18sp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="20dp"
+                    android:id="@+id/bre_details_guest_count"
+                    android:paddingRight="20dp"
+                    android:textColor="#5c5c5c"
+                    android:textSize="18sp"
+                    />
+
+
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#b1b0b0"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Editable Details"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:textSize="18sp"
+                android:background="#dcdbdb"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Room Charge"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_room_charge"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="Room Charge"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Extra Charge"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_extra_charge"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="Extra Charge"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Hotel Taxes"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_hotel_taxes"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="Hotel Taxes"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Total Booking Amount"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_property_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="Total amount with taxes"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ota_transaction"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/ota_commision_amt_layout"
+                    android:layout_marginTop="5dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="OTA Commission Amount"
+                        android:layout_weight="2"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#000000"/>
+                    <EditText
+                        android:id="@+id/bill_booking_com_amount"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:inputType="numberDecimal"
+                        android:paddingLeft="10dp"
+                        android:hint="OTA Commission Amount"
+                        android:layout_weight="1"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                        android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                        android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                        android:background="@drawable/spinner_background"/>
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/ota_gst_layout"
+                    android:layout_marginTop="5dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="OTA GST"
+                        android:layout_weight="2"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#000000"/>
+                    <EditText
+                        android:id="@+id/bill_booking_com_gst"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:inputType="numberDecimal"
+                        android:paddingLeft="10dp"
+                        android:hint="OTA GST"
+                        android:layout_weight="1"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                        android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                        android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                        android:background="@drawable/spinner_background"/>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:id="@+id/ota_commision_per_layout"
+                    android:layout_marginTop="5dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="OTA Commission %"
+                        android:layout_weight="2"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#000000"/>
+                    <EditText
+                        android:id="@+id/bill_booking_com_percentage"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:inputType="numberDecimal"
+                        android:paddingLeft="10dp"
+                        android:hint="OTA Commission %"
+                        android:layout_weight="1"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                        android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                        android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                        android:background="@drawable/spinner_background"/>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="OTA Commission (Incl GST)"
+                        android:layout_weight="2"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#000000"/>
+                    <EditText
+                        android:id="@+id/bill_booking_com"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:inputType="numberDecimal"
+                        android:paddingLeft="10dp"
+                        android:hint="OTA Commission(Incl GST)"
+                        android:layout_weight="1"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                        android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                        android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                        android:background="@drawable/spinner_background"/>
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/ota_service"
+                    android:layout_marginTop="5dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="OTA Service Fee"
+                        android:layout_weight="2"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#000000"/>
+                    <EditText
+                        android:id="@+id/bill_booking_com_service"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:inputType="numberDecimal"
+                        android:paddingLeft="10dp"
+                        android:hint="OTA Service Fee"
+                        android:layout_weight="1"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                        android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                        android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                        android:background="@drawable/spinner_background"/>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/customer_pay_layout"
+                    android:layout_marginTop="5dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Customer payment at OTA"
+                        android:layout_weight="2"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#000000"/>
+                    <EditText
+                        android:id="@+id/bill_customer_pay"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:inputType="numberDecimal"
+                        android:paddingLeft="10dp"
+                        android:hint="Customer payment at OTA"
+                        android:layout_weight="1"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                        android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                        android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                        android:background="@drawable/spinner_background"/>
+
+
+                </LinearLayout>
+
+
+
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/additional_layout"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Additional Charge"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_additional_charge"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="Additional Charge"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:id="@+id/part_payment"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Customer Paid At OTA"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/bill_part_paid"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="Customer Paid"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="OTA to Hotel"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/ota_to_hotel"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="OTA to Hotel"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Hotel to OTA"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/hotel_to_ota"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="Hotel_to OTA"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Zingo to Hotel"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/zingo_to_hotel"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="Zingo to Hotel"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Hotel to Zingo"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/hotel_to_zingo"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="Hotel to Zingo"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Zingo Commission"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"/>
+                <EditText
+                    android:id="@+id/zingo_commission"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:hint="Zingo Commission"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/registration_padding_drawable_margin"
+                    android:layout_marginLeft="@dimen/registration_edit_horizontal_margin"
+                    android:layout_marginRight="@dimen/registration_edit_horizontal_margin"
+                    android:background="@drawable/spinner_background"/>
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#b1b0b0"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#dcdbdb"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Payments Details"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:textSize="18sp"
+                />
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/show_payment"
+                android:src="@drawable/eye_icon"/>
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/add_payment"
+                android:src="@drawable/add_services"/>
+
+        </LinearLayout>
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/payment_list"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="match_parent"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+
+
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Update"
+                android:layout_margin="10dp"
+                android:id="@+id/booking_update"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

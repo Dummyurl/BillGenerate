@@ -201,7 +201,7 @@
                         android:layout_weight="1"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:id="@+id/call_booked_room_no"
+                        android:id="@+id/booking_status"
                         android:textColor="#706f6f"/>
                     <TextView
                         android:layout_width="match_parent"

@@ -101,7 +101,10 @@
         <activity android:name=".Activiies.UpdateBookingsActivity" />
         <activity android:name=".Activiies.TillDateBookings" />
         <activity android:name=".Activiies.SettleAudit" />
-        <activity android:name=".Activiies.BookingLIstActivity"></activity>
+        <activity android:name=".Activiies.BookingLIstActivity" />
+        <activity android:name=".Activiies.BookingReconcilationDataUpdate">
+
+        </activity>
     </application>
 
 </manifest>

@@ -158,7 +158,7 @@ public class BillDetails extends AppCompatActivity {
 
 
     //pdf
-    String property, email, ota, city, location, guest,
+    String property,propertyGuest, email, ota, city, location, guest,
             mobile, bdate, cit, cot, rooms, roomNum, count, plans,
             payment, desc, total, booking, zingo, net, nights,comments,
             arr, cits, cots,roomCharge,extraCharge,hoteltaxes,addtional,customer,otaFee,otaCommission,otaGST;
@@ -957,6 +957,8 @@ public class BillDetails extends AppCompatActivity {
                             zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_woodlands));
                         }else if(property.equalsIgnoreCase("Airport Stay Inn")){
                             zingoAmts = Double.parseDouble(getResources().getString(R.string.commission_airport));
+                        }else if(property.equalsIgnoreCase("Shree Vara Residency")){
+                            zingoAmts = 200.00;
                         }else{
                             zingoAmts=0;
                         }
@@ -1059,6 +1061,7 @@ public class BillDetails extends AppCompatActivity {
 
                     hotelId = chainsList.get(i).getHotelId();
                     property = chainsList.get(i).getHotelName();
+                    propertyGuest = chainsList.get(i).getHotelName();
 
                     mLocation.setText(chainsList.get(i).getLocalty());
                     mCity.setText(chainsList.get(i).getCity());
@@ -2627,7 +2630,7 @@ public class BillDetails extends AppCompatActivity {
                         Util.getClient().create(LoginApi.class);
 
 
-                System.out.println("Nodel" + fireBaseModel.toString());
+                System.out.println("Model" + fireBaseModel.toString());
                 Call<ArrayList<String>> call = apiService.send(auth_string, fireBaseModel)/*getString()*/;
 
                 call.enqueue(new Callback<ArrayList<String>>() {
@@ -3707,7 +3710,7 @@ public class BillDetails extends AppCompatActivity {
 
             // createHeadingsTitles(cb,50,630,"Zingo Premium Hotel Richmond Road");
 
-            createHeadingsTitles(cb,50,630,property);
+            createHeadingsTitles(cb,50,630,propertyGuest);
             createHeadingsTitle(cb,50,610,mLocation.getText().toString());
             createHeadingsTitle(cb,50,590,mCity.getText().toString());
 
@@ -4014,16 +4017,16 @@ public class BillDetails extends AppCompatActivity {
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setType("application/pdf");
         emailIntent.putExtra(Intent.EXTRA_EMAIL, mailto);
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT,"Your Hotel Booking is Confirmed at "+property+","+location+", "+city+",India "+" - "+zingoBookingId);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT,"Your Hotel Booking is Confirmed at "+propertyGuest+","+location+", "+city+",India "+" - "+zingoBookingId);
         emailIntent.putExtra(Intent.EXTRA_TEXT, "Booking ID:"+zingoBookingId+"\n"
                 +"Booked on:"+mBook.getText().toString()+","+bookingTime+"\n"
                 +"BOOKING CONFIRMED\n"+
                 "Dear "+mGuest.getText().toString()+",\n" +
-                    "Thank you for choosing "+property+" sold and Marketed by ZingoHotels. \n\n"
+                    "Thank you for choosing "+propertyGuest+" sold and Marketed by ZingoHotels. \n\n"
                 +"Your hotel booking is confirmed. No need to call us to reconfirm this booking. \n" +
                 "Your eTicket is attached with the email sent to your email-Id.\n\n" +
                 "\n Hotel Details:\n\n"+
-                property+"\n"+location+"\n"+city+"\n"+email+
+                propertyGuest+"\n"+location+"\n"+city+"\n"+
                 "\n\n\nThis hotel is powered by Zingo Hotels.\n Customer care-number: \n+91-7065651651");
         File root = Environment.getExternalStorageDirectory();
         String pathToMyAttachedFile = "/BillGenerate/Pdf/Guest/"+guestPdf;

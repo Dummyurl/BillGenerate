@@ -2,6 +2,9 @@ package app.zingo.com.billgenerate.Adapter;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import app.zingo.com.billgenerate.Activiies.BookingReconcilationDataUpdate;
 import app.zingo.com.billgenerate.LoginApi;
 import app.zingo.com.billgenerate.Model.Bookings1;
 import app.zingo.com.billgenerate.Model.Rooms;
@@ -59,7 +63,7 @@ public class BookingConfirmOtaAdapter extends RecyclerView.Adapter<BookingConfir
 
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         DecimalFormat df = new DecimalFormat("#.##");
 
@@ -70,6 +74,41 @@ public class BookingConfirmOtaAdapter extends RecyclerView.Adapter<BookingConfir
                         //holder.mBookedPersonName.setText(traveller.getFirstName()+" "+traveller.getLastName());
 
 
+                        if(bookingAndTraveller.getBookingStatus().equalsIgnoreCase("Active")){
+                            holder.mUpdateCheckIn.setVisibility(View.VISIBLE);
+                            holder.mUpdateNoShow.setVisibility(View.VISIBLE);
+                            holder.mUpdateCancel.setVisibility(View.VISIBLE);
+                            holder.mUpdateCheckIn.setText("Check-Out");
+                            holder.mStatus.setText("Confirmed");
+                            holder.mStatus.setBackgroundColor(Color.GREEN);
+                        }else  if(bookingAndTraveller.getBookingStatus().equalsIgnoreCase("Quick")|| bookingAndTraveller.getBookingStatus().equalsIgnoreCase("Delay")){
+
+                            holder.mUpdateCheckIn.setVisibility(View.VISIBLE);
+                            holder.mUpdateNoShow.setVisibility(View.VISIBLE);
+                            holder.mUpdateCancel.setVisibility(View.VISIBLE);
+                            holder.mUpdateCheckIn.setText("Check-In");
+                            holder.mStatus.setText("Confirmed");
+                            holder.mStatus.setBackgroundColor(Color.GREEN);
+                        }else if(bookingAndTraveller.getBookingStatus().equalsIgnoreCase("Cancelled")){
+                            holder.mUpdateCheckIn.setVisibility(View.GONE);
+                            holder.mUpdateNoShow.setVisibility(View.GONE);
+                            holder.mUpdateCancel.setVisibility(View.GONE);
+                            holder.mStatus.setText("Cancelled");
+                            holder.mStatus.setBackgroundColor(Color.RED);
+                        }else if(bookingAndTraveller.getBookingStatus().equalsIgnoreCase("Abandoned")){
+                            holder.mUpdateCheckIn.setVisibility(View.VISIBLE);
+                            holder.mUpdateNoShow.setVisibility(View.VISIBLE);
+                            holder.mUpdateCancel.setVisibility(View.VISIBLE);
+                            holder.mUpdateCheckIn.setText("Check-In");
+                            holder.mStatus.setText("No Show");
+                            holder.mStatus.setBackgroundColor(Color.CYAN);
+                        }else{
+                            holder.mUpdateCheckIn.setVisibility(View.VISIBLE);
+                            holder.mUpdateNoShow.setVisibility(View.VISIBLE);
+                            holder.mUpdateCancel.setVisibility(View.VISIBLE);
+                            holder.mStatus.setText("Confirmed");
+                            holder.mStatus.setBackgroundColor(Color.GREEN);
+                        }
                         getTraveller(bookingAndTraveller,holder.mBookedPersonName,holder.mShortName);
                         holder.mBookedDate.setText("Booked On: "+getBookedOnDateFormate(bookingAndTraveller.getBookingDate()));
                         if(bookingAndTraveller.getCheckInDate()!=null && !bookingAndTraveller.getCheckInDate().isEmpty()&&bookingAndTraveller.getCheckOutDate()!=null && !bookingAndTraveller.getCheckOutDate().isEmpty()){
@@ -122,14 +161,17 @@ public class BookingConfirmOtaAdapter extends RecyclerView.Adapter<BookingConfir
                                         {
                                             updateBooking(bookingAndTraveller,"Completed");
                                         }
-                                        else
+                                        else  if(bookingAndTraveller.getBookingStatus().equalsIgnoreCase("Quick")|| bookingAndTraveller.getBookingStatus().equalsIgnoreCase("Delay")||bookingAndTraveller.getBookingStatus().equalsIgnoreCase("Abandoned"))
                                         {
+
                                             updateBooking(bookingAndTraveller,"Active");
                                         }
                                     }
                                 }
                             }
                         });
+
+
                         holder.mUpdateNoShow.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -139,15 +181,25 @@ public class BookingConfirmOtaAdapter extends RecyclerView.Adapter<BookingConfir
 
                                     if(bookingAndTraveller != null)
                                     {
-                                        if(bookingAndTraveller.getBookingStatus().equalsIgnoreCase("Quick") ||
-                                                bookingAndTraveller.getBookingStatus().equalsIgnoreCase("delay"))
-                                        {
+
                                             updateBooking(bookingAndTraveller,"Abandoned");
-                                        }
-                                        else
-                                        {
+
+                                    }
+                                }
+                            }
+                        });
+
+                        holder.mUpdateCancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if(bookingAndTraveller != null )
+                                {
+
+                                    if(bookingAndTraveller != null)
+                                    {
+
                                             updateBooking(bookingAndTraveller,"Cancelled");
-                                        }
                                     }
                                 }
                             }
@@ -163,6 +215,22 @@ public class BookingConfirmOtaAdapter extends RecyclerView.Adapter<BookingConfir
 
 
                     }
+
+                    holder.mAdapterParent.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            Bundle bundle = new Bundle();
+                            Intent update = new Intent(context, BookingReconcilationDataUpdate.class);
+                            bundle.putSerializable("Bookings",bookingAndTraveller);
+                            bundle.putString("GuestName",holder.mBookedPersonName.getText().toString());
+                            bundle.putInt("HotelId",bookingAndTraveller.getHotelId());
+                            bundle.putString("Status",holder.mStatus.getText().toString());
+                            update.putExtras(bundle);
+                            context.startActivity(update);
+
+                        }
+                    });
 
 
     }
@@ -192,8 +260,8 @@ public class BookingConfirmOtaAdapter extends RecyclerView.Adapter<BookingConfir
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView mBookedPersonName,mBookedDate,mBookingDates,mNoofRooms,mNetAmount,mTotalAmount,mOtaBookingId,
-                mShortName,mCall,mPayAtHotel,mBookedRoom,mBookingSourceType,mUpdateCheckIn,mUpdateNoShow;
-        LinearLayout mparent,mButtonsParent;
+                mShortName,mStatus,mPayAtHotel,mBookedRoom,mBookingSourceType,mUpdateCheckIn,mUpdateNoShow,mUpdateCancel;
+        LinearLayout mparent,mButtonsParent,mAdapterParent;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -206,12 +274,14 @@ public class BookingConfirmOtaAdapter extends RecyclerView.Adapter<BookingConfir
             mTotalAmount = (TextView) itemView.findViewById(R.id.total_amount);
             mOtaBookingId = (TextView) itemView.findViewById(R.id.ota_booking_id);
             mShortName = (TextView) itemView.findViewById(R.id.person_short_name);
-            mCall = (TextView) itemView.findViewById(R.id.call_booked_person);
+            mStatus = (TextView) itemView.findViewById(R.id.booking_status);
             mPayAtHotel = (TextView) itemView.findViewById(R.id.pay_at_hotel);
             mUpdateCheckIn = (TextView) itemView.findViewById(R.id.recycler_update_checkin);
             mUpdateNoShow = (TextView) itemView.findViewById(R.id.recycler_update_noshow);
+            mUpdateCancel = (TextView) itemView.findViewById(R.id.recycler_update_cancel);
             mBookedRoom = (TextView) itemView.findViewById(R.id.call_booked_room_no);
             mparent = (LinearLayout) itemView.findViewById(R.id.parent_layout_for_user_details);
+            mAdapterParent = (LinearLayout) itemView.findViewById(R.id.adapter_parent);
             mButtonsParent = (LinearLayout) itemView.findViewById(R.id.buttons_parent_view);
             mBookingSourceType = (TextView) itemView.findViewById(R.id.booking_source_type);
 
