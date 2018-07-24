@@ -69,6 +69,13 @@ public class BookingLIstActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+            Bundle bundle = getIntent().getExtras();
+
+            if(bundle!=null){
+                allFromDate = bundle.getString("From");
+                allToDate = bundle.getString("To");
+            }
+
             mBookingList = (RecyclerView) findViewById(R.id.booking_list);
             allfromDate = (TextView) findViewById(R.id.all_book_from_date);
             alltoDate = (TextView) findViewById(R.id.all_book_to_date);
@@ -99,6 +106,10 @@ public class BookingLIstActivity extends AppCompatActivity {
                     openDatePicker(alltoDate);
                 }
             });
+
+            if(allFromDate!=null && !allFromDate.isEmpty() && allToDate!=null &&!allToDate.isEmpty()){
+                getAll(allFromDate,allToDate);
+            }
 
             mSearchallBookings.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -314,43 +325,43 @@ public class BookingLIstActivity extends AppCompatActivity {
 
                                         if(filter.equalsIgnoreCase("All")){
 
-                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,till);
+                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,till,allFromDate,allToDate);
                                             mBookingList.setAdapter(adapter);
 
                                         }else if(filter.equalsIgnoreCase("No Show")){
 
-                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,noShow);
+                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,noShow,allFromDate,allToDate);
                                             mBookingList.setAdapter(adapter);
 
 
                                         }else  if(filter.equalsIgnoreCase("Cancelled")){
 
-                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,cancel);
+                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,cancel,allFromDate,allToDate);
                                             mBookingList.setAdapter(adapter);
 
                                         }else  if(filter.equalsIgnoreCase("Quick")){
 
-                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,quick);
+                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,quick,allFromDate,allToDate);
                                             mBookingList.setAdapter(adapter);
 
                                         }else  if(filter.equalsIgnoreCase("Delay")){
 
-                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,delay);
+                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,delay,allFromDate,allToDate);
                                             mBookingList.setAdapter(adapter);
 
                                         }else  if(filter.equalsIgnoreCase("Completed")){
 
-                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,completed);
+                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,completed,allFromDate,allToDate);
                                             mBookingList.setAdapter(adapter);
 
                                         }else  if(filter.equalsIgnoreCase("Active")){
 
-                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,active);
+                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,active,allFromDate,allToDate);
                                             mBookingList.setAdapter(adapter);
 
                                         }else  if(filter.equalsIgnoreCase("Confirmed")){
 
-                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,confirmed);
+                                            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,confirmed,allFromDate,allToDate);
                                             mBookingList.setAdapter(adapter);
 
                                         }
@@ -495,7 +506,7 @@ public class BookingLIstActivity extends AppCompatActivity {
 
             }
 
-            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,filteredList);
+            adapter = new BookingConfirmOtaAdapter(BookingLIstActivity.this,filteredList,allFromDate,allToDate);
             mBookingList.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }catch (Exception e){

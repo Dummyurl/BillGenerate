@@ -81,6 +81,7 @@ public class TillDateBookings extends AppCompatActivity {
     Traveller traveller;
     HotelDetails details;
     DecimalFormat decimalFormat;
+    int travellerCount=0;
 
     //intent
     int hotelID=0;
@@ -224,6 +225,7 @@ public class TillDateBookings extends AppCompatActivity {
                     if(bookingAndTravellerArrayList != null && details != null)
                     {
                         System.out.println("Booking Size = "+bookingAndTravellerArrayList.size());
+                        Toast.makeText(TillDateBookings.this, "Booking Size = "+bookingAndTravellerArrayList.size(), Toast.LENGTH_SHORT).show();
 
                         Collections.sort(bookingAndTravellerArrayList, new Comparator<BookingAndTraveller>() {
                             @Override
@@ -231,6 +233,7 @@ public class TillDateBookings extends AppCompatActivity {
                                 return o2.getRoomBooking().getCheckInDate().compareTo(o1.getRoomBooking().getCheckInDate());
                             }
                         });
+
                         boolean isfilecreated = generateReport(bookingAndTravellerArrayList);
                         if(isfilecreated)
                         {
@@ -549,20 +552,18 @@ public class TillDateBookings extends AppCompatActivity {
 
                                         bookingAndTravellerArrayList = new ArrayList<>();
                                         paymentBookings = new ArrayList<>();
-                                        for(int i=0;i<till.size();i++){
+                                        for(int i=0;i<confirmed.size();i++){
 
 
 
-                                            Bookings1 bookings1 = till.get(i);
+                                            Bookings1 bookings1 = confirmed.get(i);
 
 
 
 
 
-                                            if(bookings1.getBookingStatus().equalsIgnoreCase("Cancelled")||bookings1.getBookingStatus().equalsIgnoreCase("Abandoned")){
 
-                                            }else{
-                                                getTravellerName(till.get(i).getTravellerId(),till.get(i));
+                                                getTravellerName(confirmed.get(i).getTravellerId(),confirmed.get(i));
 
                                                 String zingoPayment = "Payment Done By Zingo";
                                                 int count = 0;
@@ -578,6 +579,7 @@ public class TillDateBookings extends AppCompatActivity {
 
                                                         if(bookings1.getPaymentList().get(j).getPaymentStatus().equalsIgnoreCase("Adjustment")){
                                                             adjustCount = 1;
+                                                            otaAdjust = otaAdjust+bookings1.getPaymentList().get(j).getAmount();
                                                         }
                                                     }
                                                 }else{
@@ -588,9 +590,16 @@ public class TillDateBookings extends AppCompatActivity {
                                                     paymentBookings.add(bookings1);
                                                 }
 
-                                                if(adjustCount==0){
+                                               /* if(adjustCount==0){
                                                     otaAdjust = otaAdjust+bookings1.getOTAToPayHotel();
+                                                }*/
+
+                                                if(bookings1.getOTAStatus()!=null){
+                                                    if(bookings1.getOTAStatus().equalsIgnoreCase("Pending")){
+                                                        pendingOta = pendingOta+bookings1.getOTAToPayHotel();
+                                                    }
                                                 }
+
 
                                                 totalRoomNights = totalRoomNights +(bookings1.getNoOfRooms()*bookings1.getDurationOfStay());
                                                 totalGrossRevenue = totalGrossRevenue+bookings1.getTotalAmount();
@@ -619,7 +628,6 @@ public class TillDateBookings extends AppCompatActivity {
                                                 //payHotelRevenue = payHotelRevenue+bookings1.getCustomerPaymentAtOTA();
                                                 prepaidBookingRevenue = prepaidBookingRevenue+bookings1.getOTAToPayHotel();
                                                 hotelPay = hotelPay+bookings1.getHotelToPayOTA();
-                                            }
 
                                             System.out.println("Added to list");
 
@@ -930,7 +938,7 @@ public class TillDateBookings extends AppCompatActivity {
             sheet.addCell(new Label(23, 6, "Payment Collected By",cellFormats));
             sheet.addCell(new Label(24, 6, "Zingo Total Commission",cellFormats));
             sheet.addCell(new Label(25, 6, "Payment Status",cellFormats));
-            sheet.addCell(new Label(26, 6, "Difference",cellFormats));
+           // sheet.addCell(new Label(26, 6, "Difference",cellFormats));
             /*sheet.addCell(new Label(22, 0, "Status"));
             sheet.addCell(new Label(23, 0, "Status"));*/
 
@@ -966,10 +974,10 @@ public class TillDateBookings extends AppCompatActivity {
                     sheet.addCell(new Label(18, i+7, (bookings1.getTotalAmount()-bookings1.getOTATotalCommissionAmount())+"",cellFormatsRight));
                     if(bookings1.getTotalAmount()==bookings1.getBalanceAmount()||bookings1.getBalanceAmount()!=0){
                         sheet.addCell(new Label(19, i+7, "Pay@Hotel",cellFormatsRight));
-                        sheet.addCell(new Label(20, i+7, bookings1.getBalanceAmount()+"",cellFormatsRight));
+                        sheet.addCell(new Label(20, i+7, (bookings1.getTotalAmount()-bookings1.getCustomerPaymentAtOTA()+bookings1.getOTAServiceFees())+"",cellFormatsRight));
                     }else if(bookings1.getBalanceAmount()==0){
                         sheet.addCell(new Label(19, i+7, "Prepaid",cellFormatsRight));
-                        sheet.addCell(new Label(20, i+7, ((bookings1.getTotalAmount()-bookings1.getOTATotalCommissionAmount())-bookings1.getOTAToPayHotel())+"",cellFormatsRight));
+                        sheet.addCell(new Label(20, i+7, "0",cellFormatsRight));
                     }
 
 
@@ -983,13 +991,28 @@ public class TillDateBookings extends AppCompatActivity {
                     }
 
                     sheet.addCell(new Label(24, i+7, bookings1.getZingoCommision()+"",cellFormatsRight));
-                    if(bookings1.getAuditSettlementList()!=null&&bookings1.getAuditSettlementList().size()!=0){
-                        sheet.addCell(new Label(25, i+7, bookings1.getAuditSettlementList().get(0).getPaymentStatus()+"",cellFormatsRight));
-                        sheet.addCell(new Label(26, i+7, bookings1.getAuditSettlementList().get(0).getDifferenceAmount()+"",cellFormatsRight));
-                    }else{
-                        sheet.addCell(new Label(25, i+7, "Pending",cellFormatsRight));
-                        sheet.addCell(new Label(26, i+7, "0",cellFormatsRight));
+                    int adjustCount = 0;
+                    if(bookings1.getPaymentList()!=null&&bookings1.getPaymentList().size()!=0){
+                        for(int j=0;j<bookings1.getPaymentList().size();j++){
+                            if(bookings1.getPaymentList().get(j).getPaymentStatus().equalsIgnoreCase("Adjustment")){
+                              adjustCount =1;
+                                    break;
+                            }
+                        }
                     }
+
+                    if(adjustCount==1){
+                        sheet.addCell(new Label(25, i+7, "Adjustment",cellFormatsRight));
+                    }else{
+                        if(bookings1.getOTAStatus()!=null&&!bookings1.getOTAStatus().isEmpty()){
+                            sheet.addCell(new Label(25, i+7, bookings1.getOTAStatus()+"",cellFormatsRight));
+                            //  sheet.addCell(new Label(26, i+7, bookings1.getAuditSettlementList().get(0).getDifferenceAmount()+"",cellFormatsRight));
+                        }else{
+                            sheet.addCell(new Label(25, i+7, "Pending",cellFormatsRight));
+                            // sheet.addCell(new Label(26, i+7, "0",cellFormatsRight));
+                        }
+                    }
+
 
 
                        /* if(bookings1.getPaymentList() != null && bookings1.getPaymentList().size() != 0)
@@ -1155,20 +1178,23 @@ public class TillDateBookings extends AppCompatActivity {
 
     public  void getTravellerName(final int i,final Bookings1 bookings1)
     {
+        travellerCount = travellerCount+1;
         String auth_string = Util.getToken(TillDateBookings.this);//"Basic " +  Base64.encodeToString(authentication.getBytes(), Base64.NO_WRAP);
         TravellerApi api = Util.getClient().create(TravellerApi.class);
         Call<Traveller> getTrav = api.getTravellerDetails(auth_string,i);
+        System.out.println("Traveller id = "+(travellerCount));
 
 
 
         getTrav.enqueue(new Callback<Traveller>() {
             @Override
             public void onResponse(Call<Traveller> call, Response<Traveller> response) {
-                if(response.code() == 200)
+                if(response.code() == 200||response.code() == 201||response.code() == 204)
                 {
                     BookingAndTraveller bookingAndTraveller = new BookingAndTraveller();
                     if(response.body() != null)
                     {
+                        System.out.println("Traveller id 2 = "+(travellerCount));
                         bookingAndTraveller.setTravellers(response.body());
                         bookingAndTraveller.setRoomBooking(bookings1);
                         bookingAndTravellerArrayList.add(bookingAndTraveller);

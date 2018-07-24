@@ -156,6 +156,11 @@ public class CompetitiveAnalisysActivity extends AppCompatActivity {
                 competitorsHotelList = getResources().getStringArray(R.array.competitor_hotel_nagananda);
                 email = getResources().getString(R.string.email_naga);
 
+            }else if(hotelName.equalsIgnoreCase("Airport Stay Inn")){
+
+                competitorsHotelList = getResources().getStringArray(R.array.airport_stay_inn);
+                email = getResources().getString(R.string.email_airport);
+
             }else if(hotelName.equalsIgnoreCase("RB Hospitality")){
 
                 competitorsHotelList = getResources().getStringArray(R.array.competitor_hotel_rb);

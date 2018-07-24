@@ -125,6 +125,16 @@
         <item>Hotel Ganesh Mahal</item>
         <item>Sathyam Lodge</item>
     </array>
+    <array name="airport_stay_inn">
+        <item>Tranzotel</item>
+        <item>Airport Gateway</item>
+        <item>OYO 10242 Hotel Shelton Suites</item>
+        <item>Grande Suites - Arra Transit Stay</item>
+        <item>Arra Suites</item>
+        <item>OYO 9653 Ample Premium Suites</item>
+        <item> Green Leaf International Comfort</item>
+        <item>S R Comforts</item>
+    </array>
 
     <array name="competitor_hotel_nagananda">
         <item>Pratik Comforts</item>
@@ -212,6 +222,7 @@
     <string name="email_hoilday">hotelholidayhome999@gmail.com</string>
     <string name="email_emir">emiratessuitesindia@gmail.com,info@emiratessuitesindia.com</string>
     <string name="email_naga">PRAKSHETTY29@gmail.com</string>
+    <string name="email_airport">airportstayinn@gmail.com</string>
     <string name="email_ashapura">hotelaashapurainternational@yahoo.in,pankaj.jha53@gmail.com</string>
 
     <string name="hotel_policy_1">• The standard check-in time is 12:00 PM and the standard check-out time is 11:00 AM. Early check-in or late check-out is strictly subjected to availability and may be chargeable by the hotel. Any early check-in or late check-out request must be directed and reconfirmed with hotel directly</string>
@@ -262,12 +273,13 @@ customer who are the ultimate users of the hotel accommodation services rendered
 
 
     <array name="audit_payment_status">
+        <item>Pending</item>
         <item>Received By OTA</item>
         <item>Received By ZINGO</item>
         <item>Received By Hotel</item>
         <item>Zingo to Hotel</item>
         <item>Payment Done</item>
-        <item>Pending</item>
+
     </array>
 
     <array name="filter_bookings">

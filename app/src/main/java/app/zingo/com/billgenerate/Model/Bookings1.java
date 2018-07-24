@@ -182,6 +182,18 @@ public class Bookings1 implements Serializable {
     @SerializedName("MultipleProfileId")
     private String MultipleProfileId;
 
+    @SerializedName("OTAStatus")
+    private String OTAStatus;
+
+
+    public String getOTAStatus() {
+        return OTAStatus;
+    }
+
+    public void setOTAStatus(String OTAStatus) {
+        this.OTAStatus = OTAStatus;
+    }
+
     public String getMultipleProfileId() {
         return MultipleProfileId;
     }

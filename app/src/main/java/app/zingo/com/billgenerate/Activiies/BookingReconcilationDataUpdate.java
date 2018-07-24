@@ -20,8 +20,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
+import app.zingo.com.billgenerate.Adapter.PaidStatusSpinnerAdapter;
 import app.zingo.com.billgenerate.Adapter.PaymentAdapter;
 import app.zingo.com.billgenerate.Model.Bookings1;
 import app.zingo.com.billgenerate.Model.Payment;
@@ -45,6 +47,8 @@ public class BookingReconcilationDataUpdate extends AppCompatActivity {
             mOtaServiceFees,mCustomerPaymentAtOtA,mAdditionCharge,mOTAToHotel,
             mHOtelToOTA,mZingoToHotel,mHotelToZingo,mZingoCommsion;
 
+    Spinner mOtaStatus;
+
     RecyclerView mPaymentList;
 
     ImageView mAddPayment,mShowPayment;
@@ -53,7 +57,7 @@ public class BookingReconcilationDataUpdate extends AppCompatActivity {
 
     //Intent
     Bookings1 bookings1;
-    String guestName,status;
+    String guestName,status,fromDate,toDate;
     int hotelId;
 
     @Override
@@ -71,6 +75,8 @@ public class BookingReconcilationDataUpdate extends AppCompatActivity {
                 bookings1 = (Bookings1)bundle.getSerializable("Bookings");
                 guestName = bundle.getString("GuestName");
                 status = bundle.getString("Status");
+                fromDate = bundle.getString("From");
+                toDate = bundle.getString("To");
                 hotelId = bundle.getInt("HotelId");
             }
 
@@ -102,6 +108,7 @@ public class BookingReconcilationDataUpdate extends AppCompatActivity {
             mAddPayment = (ImageView) findViewById(R.id.add_payment);
             mShowPayment = (ImageView) findViewById(R.id.show_payment);
             mPaymentList = (RecyclerView) findViewById(R.id.payment_list);
+            mOtaStatus = (Spinner) findViewById(R.id.ota_payment_status);
 
             if(guestName!=null||!guestName.isEmpty()){
                 mGuestName.setText(""+guestName);
@@ -211,6 +218,17 @@ public class BookingReconcilationDataUpdate extends AppCompatActivity {
             mHotelToZingo.setText(""+bookingsData.getHotelToZingo());
             mZingoCommsion.setText(""+bookingsData.getZingoCommision());
 
+            if(bookingsData.getOTAStatus()!=null&&!bookingsData.getOTAStatus().isEmpty()){
+                String[] otaStatusArray = getResources().getStringArray(R.array.audit_payment_status);
+
+                mOtaStatus.setAdapter(new PaidStatusSpinnerAdapter(BookingReconcilationDataUpdate.this,otaStatusArray));
+                int i = Arrays.asList(otaStatusArray).indexOf(bookingsData.getOTAStatus());
+                mOtaStatus.setSelection(i);
+            }else{
+                String[] otaStatusArray = getResources().getStringArray(R.array.audit_payment_status);
+                mOtaStatus.setAdapter(new PaidStatusSpinnerAdapter(BookingReconcilationDataUpdate.this,otaStatusArray));
+            }
+
             if(bookingsData.getPaymentList()!=null&&bookingsData.getPaymentList().size()!=0){
                 PaymentAdapter adapter = new PaymentAdapter(BookingReconcilationDataUpdate.this,bookingsData.getPaymentList());
                 mPaymentList.setAdapter(adapter);
@@ -292,6 +310,7 @@ public class BookingReconcilationDataUpdate extends AppCompatActivity {
                 updateBookings.setZingoToHotel(Double.parseDouble(zingoToHotel));
                 updateBookings.setHotelToZingo(Double.parseDouble(hotelToZingo));
                 updateBookings.setZingoCommision(Double.parseDouble(zingoCommision));
+                updateBookings.setOTAStatus(mOtaStatus.getSelectedItem().toString());
 
                 updateBooking(updateBookings);
 
@@ -496,6 +515,8 @@ public class BookingReconcilationDataUpdate extends AppCompatActivity {
                 case android.R.id.home:
                     Intent main = new Intent(BookingReconcilationDataUpdate.this,BookingLIstActivity.class);
                     main.putExtra("HotelId",hotelId);
+                    main.putExtra("From",fromDate);
+                    main.putExtra("To",toDate);
                     startActivity(main);
                     this.finish();
                     return true;

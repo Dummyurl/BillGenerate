@@ -45,12 +45,16 @@ public class BookingConfirmOtaAdapter extends RecyclerView.Adapter<BookingConfir
 
     private Context context;
     private ArrayList<Bookings1> list;
+    String fromDate;
+    String toDate;
 
     private boolean isLoadingAdded = false;
-    public BookingConfirmOtaAdapter(Context context,ArrayList<Bookings1> list)
+    public BookingConfirmOtaAdapter(Context context,ArrayList<Bookings1> list,String fromDate,String toDate)
     {
         this.context = context;
         this.list = list;
+        this.fromDate = fromDate;
+        this.toDate = toDate;
 
     }
 
@@ -226,6 +230,8 @@ public class BookingConfirmOtaAdapter extends RecyclerView.Adapter<BookingConfir
                             bundle.putString("GuestName",holder.mBookedPersonName.getText().toString());
                             bundle.putInt("HotelId",bookingAndTraveller.getHotelId());
                             bundle.putString("Status",holder.mStatus.getText().toString());
+                            bundle.putString("From",fromDate);
+                            bundle.putString("To",toDate);
                             update.putExtras(bundle);
                             context.startActivity(update);
 
