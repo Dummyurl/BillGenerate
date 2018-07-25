@@ -582,13 +582,15 @@ public class TillDateBookings extends AppCompatActivity {
                                                             otaAdjust = otaAdjust+bookings1.getPaymentList().get(j).getAmount();
                                                         }
                                                     }
+
+                                                    if(count==0){
+                                                        paymentBookings.add(bookings1);
+                                                    }
                                                 }else{
                                                     paymentBookings.add(bookings1);
                                                 }
 
-                                                if(count==0){
-                                                    paymentBookings.add(bookings1);
-                                                }
+
 
                                                /* if(adjustCount==0){
                                                     otaAdjust = otaAdjust+bookings1.getOTAToPayHotel();

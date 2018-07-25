@@ -17,8 +17,8 @@
     <string-array name="payment_mode">
         <item>PaY@HOTEL</item>
         <item>PREPAID/ONLINE</item>
-        <item>B2C PREPAID</item>
-        <item>B2C POSTPAID</item>
+        <item>BTC PREPAID</item>
+        <item>BTC POSTPAID</item>
         <item>PART PAYMENT</item>
     </string-array>
 
@@ -111,6 +111,18 @@
         <item>Hotel Aarti International</item>
         <item>Hotel Shivam</item>
         <item>Hotel Seven spice</item>
+    </array>
+
+    <array name="competitor_shree_vara_residency">
+        <item>Hotel Sarayu</item>
+        <item>Hotel Jewel Rock</item>
+        <item>iLike Satya Comfort</item>
+        <item>Aakash hotel</item>
+        <item>Kadamba Comforts Boarding</item>
+        <item>SS Residency</item>
+        <item>Hotel Apoorva</item>
+        <item>Suvarna Regency</item>
+        <item>Amber Castle</item>
     </array>
 
     <array name="competitor_hotel_hoilday">
@@ -217,6 +229,7 @@
 
     <string name="email_rb">rajendrababum.rb@gmail.com</string>
     <string name="email_ssl">GM@sslumina.com,Hello@sslumina.com</string>
+    <string name="email_shree_vara_res">shreevararesidency63@gmail.com</string>
     <string name="email_tranquil">tranquilreservation@gmail.com</string>
     <string name="email_woodlands">info@woodlands.in,gm@woodlands.in</string>
     <string name="email_hoilday">hotelholidayhome999@gmail.com</string>
