@@ -1445,6 +1445,7 @@ public class BillDetails extends AppCompatActivity {
                 bookings.setExtraCharges(0);
             }else{
 
+
                 double sellRate = Double.parseDouble(mExtraCharge.getText().toString());
                 bookings.setExtraCharges((int) sellRate);
             }
@@ -2550,7 +2551,7 @@ public class BillDetails extends AppCompatActivity {
                                     fm.setServerId("AIzaSyBFdghUu7AgQVnu27xkKKLHJ6oSz9AnQ8M");
                                     fm.setHotelId(hotelId);
                                     fm.setTitle("New Booking from Zingo Hotels");
-                                    fm.setMessage("Congrats! "+property+" got one new booking for "+nights +" nights from "+cit+" to "+cot+"\nBooking Number:"+dto.getBookingNumber());
+                                    fm.setMessage("Congrats! "+property+" got one new booking for "+nights +" nights from "+cit+" to "+cot+"\nBooking ID:"+dto.getBookingId());
                                     //registerTokenInDB(fm);
                                     fm.setTravellerName(guest);
                                     fm.setNoOfGuest("No of Guest: "+dto.getNoOfAdults());
@@ -2631,7 +2632,7 @@ public class BillDetails extends AppCompatActivity {
 
 
                 System.out.println("Model" + fireBaseModel.toString());
-                Call<ArrayList<String>> call = apiService.send(auth_string, fireBaseModel)/*getString()*/;
+                Call<ArrayList<String>> call = apiService.sendBookingNotification(auth_string, fireBaseModel)/*getString()*/;
 
                 call.enqueue(new Callback<ArrayList<String>>() {
                     @Override
@@ -2648,13 +2649,13 @@ public class BillDetails extends AppCompatActivity {
 
 
                                 //sendEmailattache();
-                                NotificationManager nf = new NotificationManager();
+                               /* NotificationManager nf = new NotificationManager();
                                 nf.setNotificationText(fireBaseModel.getTitle());
                                 nf.setNotificationFor(fireBaseModel.getMessage());
                                 nf.setHotelId(fireBaseModel.getHotelId());
-                                savenotification(nf);
+                                savenotification(nf);*/
 
-                              /*  BookingsNotificationManagers nf = new BookingsNotificationManagers();
+                                BookingsNotificationManagers nf = new BookingsNotificationManagers();
                                 nf.setTitle(fireBaseModel.getTitle());
                                 nf.setMessage(fireBaseModel.getMessage());
                                 nf.setHotelId(fireBaseModel.getHotelId());
@@ -2669,7 +2670,7 @@ public class BillDetails extends AppCompatActivity {
                                 nf.setNotificationTime(fireBaseModel.getNotificationTime());
                                 nf.setBookingDateTime(fireBaseModel.getBookingDateTime());
                                 nf.setBooking(bookingStatus);
-                                saveBookingnotification(nf);*/
+                                saveBookingnotification(nf);
 
 
 

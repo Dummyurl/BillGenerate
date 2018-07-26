@@ -66,6 +66,7 @@ import app.zingo.com.billgenerate.Model.*;
 import app.zingo.com.billgenerate.Model.HotelDetails;
 import app.zingo.com.billgenerate.R;
 import app.zingo.com.billgenerate.Utils.*;
+import app.zingo.com.billgenerate.Utils.ThreadExecuter;
 import app.zingo.com.billgenerate.Utils.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -1808,8 +1809,19 @@ public class UpdateBookingsActivity extends AppCompatActivity {
                                     fm.setServerId("AIzaSyBFdghUu7AgQVnu27xkKKLHJ6oSz9AnQ8M");
                                     fm.setHotelId(hotelId);
                                     fm.setTitle("Modified booking");
-                                    fm.setMessage("Dear "+property+" got Modified booking for "+mGuest.getText().toString() +"\nBooking Number:"+bookings.getBookingNumber());
-                                    //registerTokenInDB(fm);
+                                    fm.setMessage("Dear "+property+" got Modified booking for "+mGuest.getText().toString() +"\nBooking ID:"+bookings.getBookingId());
+                                    fm.setTravellerName(mGuest.getText().toString());
+                                    fm.setNoOfGuest("No of Guest: "+bookings.getNoOfAdults());
+                                    fm.setCheckInDate(cit);
+                                    fm.setCheckOutDate(cot);
+                                    fm.setTotalAmount("Rs. "+bookings.getTotalAmount());
+                                    fm.setCommissionAmount("Rs. "+bookings.getCommissionAmount());
+                                    fm.setNetAmount("Rs. "+mNet.getText().toString());
+                                    SimpleDateFormat sdfs = new SimpleDateFormat("MMM dd yyyy, hh:mm a");
+                                    SimpleDateFormat sdft = new SimpleDateFormat("hh:mm a");
+                                    fm.setNotificationDate(sdfs.format(new Date()));
+                                    fm.setNotificationTime(sdft.format(new Date()));
+                                    fm.setBookingDateTime(mBook.getText().toString()+","+bookings.getBookingTime());
                                     sendNotification(fm);
                                     double roomCount = Double.parseDouble(mRoomCount.getSelectedItem().toString());
 
@@ -1856,7 +1868,7 @@ public class UpdateBookingsActivity extends AppCompatActivity {
 
 
                 System.out.println("Nodel" + fireBaseModel.toString());
-                Call<ArrayList<String>> call = apiService.send(auth_string, fireBaseModel)/*getString()*/;
+                Call<ArrayList<String>> call = apiService.sendBookingNotification(auth_string, fireBaseModel)/*getString()*/;
 
                 call.enqueue(new Callback<ArrayList<String>>() {
                     @Override
@@ -1873,11 +1885,28 @@ public class UpdateBookingsActivity extends AppCompatActivity {
 
 
                                 //sendEmailattache();
-                                NotificationManager nf = new NotificationManager();
+                              /*  NotificationManager nf = new NotificationManager();
                                 nf.setNotificationText(fireBaseModel.getTitle());
                                 nf.setNotificationFor(fireBaseModel.getMessage());
                                 nf.setHotelId(fireBaseModel.getHotelId());
-                                savenotification(nf);
+                                savenotification(nf);*/
+
+                                BookingsNotificationManagers nf = new BookingsNotificationManagers();
+                                nf.setTitle(fireBaseModel.getTitle());
+                                nf.setMessage(fireBaseModel.getMessage());
+                                nf.setHotelId(fireBaseModel.getHotelId());
+                                nf.setTravellerName(fireBaseModel.getTravellerName());
+                                nf.setCheckInDate(fireBaseModel.getCheckInDate());
+                                nf.setCheckOutDate(fireBaseModel.getCheckOutDate());
+                                nf.setTotalAmount(fireBaseModel.getTotalAmount());
+                                nf.setCommissionAmount(fireBaseModel.getCommissionAmount());
+                                nf.setNetAmount(fireBaseModel.getNetAmount());
+                                nf.setNoOfGuest(fireBaseModel.getNoOfGuest());
+                                nf.setNotificationDate(fireBaseModel.getNotificationDate());
+                                nf.setNotificationTime(fireBaseModel.getNotificationTime());
+                                nf.setBookingDateTime(fireBaseModel.getBookingDateTime());
+                                nf.setBooking("Cancelled");
+                                saveBookingnotification(nf);
 
 
 
@@ -2887,6 +2916,71 @@ public class UpdateBookingsActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    private void saveBookingnotification(final BookingsNotificationManagers notification) {
+
+        final ProgressDialog dialog = new ProgressDialog(UpdateBookingsActivity.this);
+        dialog.setMessage("Loading");
+        dialog.setCancelable(false);
+        dialog.show();
+
+        new ThreadExecuter().execute(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Hotel id = "+notification.getHotelId());
+                String auth_string = Util.getToken(UpdateBookingsActivity.this);
+                LoginApi travellerApi = Util.getClient().create(LoginApi.class);
+                Call<BookingsNotificationManagers> response = travellerApi.saveBookingNotification(auth_string,notification);
+
+                response.enqueue(new Callback<BookingsNotificationManagers>() {
+                    @Override
+                    public void onResponse(Call<BookingsNotificationManagers> call, Response<BookingsNotificationManagers> response) {
+
+                        if(dialog != null)
+                        {
+                            dialog.dismiss();
+                        }
+                        try{
+                            System.out.println(response.code());
+                            if(response.code() == 200||response.code() == 201)
+                            {
+                                if(response.body() != null)
+                                {
+                                    /*Toast.makeText(UpdateBookingsActivity.this,"Thank you for selecting room. Your request has been sent to hotel. " +
+                                        "Please wait for there reply.",Toast.LENGTH_SHORT).show();*/
+                                    //SelectRoom.this.finish();
+                                    boolean fileCreated = createPdf();
+                                    if(fileCreated){
+                                        onShareClick();
+                                    }else{
+                                        Toast.makeText(UpdateBookingsActivity.this, "File not created", Toast.LENGTH_SHORT).show();
+                                        createPdf();
+                                    }
+
+
+                                    //Toast.makeText(UpdateBookingsActivity.this, "Save Notification", Toast.LENGTH_SHORT).show();
+
+
+
+                                }
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<BookingsNotificationManagers> call, Throwable t) {
+                        if(dialog != null)
+                        {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+            }
+        });
     }
 
 

@@ -392,14 +392,15 @@ public class TillDateBookings extends AppCompatActivity {
                                 mWeekList.setAdapter(adapter);*/
                                     for (int i=0;i<list.size();i++)
                                     {
-                                        try {
-                                            System.out.println(list.get(i).getCheckOutDate());
+                                        if(list.get(i)!=null){
+                                            try {
+                                                // System.out.println(list.get(i).getCheckOutDate());
 
-                                            Date checkout,bookDate,checkinDate,payment = null;
-                                            Date froms;
-                                            Date too;
+                                                Date checkout,bookDate,checkinDate,payment = null;
+                                                Date froms;
+                                                Date too;
 
-                                            if(list.get(i).getCheckOutDate().contains("-"))
+                                            /*if(list.get(i).getCheckOutDate().contains("-"))
                                             {
                                                 checkout  = new SimpleDateFormat("yyyy-MM-dd").parse(list.get(i).getCheckOutDate());
                                                 froms = new SimpleDateFormat("MM/dd/yyyy").parse(from);
@@ -410,20 +411,20 @@ public class TillDateBookings extends AppCompatActivity {
                                                 checkout  = new SimpleDateFormat("MM/dd/yyyy").parse(list.get(i).getCheckOutDate());
                                                 froms = new SimpleDateFormat("MM/dd/yyyy").parse(from);
                                                 too = new SimpleDateFormat("MM/dd/yyyy").parse(to);
-                                            }
-                                            if(list.get(i).getCheckInDate().contains("-"))
-                                            {
-                                                checkinDate  = new SimpleDateFormat("yyyy-MM-dd").parse(list.get(i).getCheckInDate());
-                                                froms = new SimpleDateFormat("MM/dd/yyyy").parse(from);
-                                                too = new SimpleDateFormat("MM/dd/yyyy").parse(to);
-                                            }
-                                            else
-                                            {
-                                                checkinDate  = new SimpleDateFormat("MM/dd/yyyy").parse(list.get(i).getCheckInDate());
-                                                froms = new SimpleDateFormat("MM/dd/yyyy").parse(from);
-                                                too = new SimpleDateFormat("MM/dd/yyyy").parse(to);
-                                            }
-                                            if(list.get(i).getBookingDate().contains("-"))
+                                            }*/
+                                                if(list.get(i).getCheckInDate().contains("-"))
+                                                {
+                                                    checkinDate  = new SimpleDateFormat("yyyy-MM-dd").parse(list.get(i).getCheckInDate());
+                                                    froms = new SimpleDateFormat("MM/dd/yyyy").parse(from);
+                                                    too = new SimpleDateFormat("MM/dd/yyyy").parse(to);
+                                                }
+                                                else
+                                                {
+                                                    checkinDate  = new SimpleDateFormat("MM/dd/yyyy").parse(list.get(i).getCheckInDate());
+                                                    froms = new SimpleDateFormat("MM/dd/yyyy").parse(from);
+                                                    too = new SimpleDateFormat("MM/dd/yyyy").parse(to);
+                                                }
+                                           /* if(list.get(i).getBookingDate().contains("-"))
                                             {
                                                 bookDate  = new SimpleDateFormat("yyyy-MM-dd").parse(list.get(i).getBookingDate());
                                                 froms = new SimpleDateFormat("MM/dd/yyyy").parse(from);
@@ -434,9 +435,9 @@ public class TillDateBookings extends AppCompatActivity {
                                                 bookDate  = new SimpleDateFormat("MM/dd/yyyy").parse(list.get(i).getBookingDate());
                                                 froms = new SimpleDateFormat("MM/dd/yyyy").parse(from);
                                                 too = new SimpleDateFormat("MM/dd/yyyy").parse(to);
-                                            }
+                                            }*/
 
-                                            if(list.get(i).getPaymentList()!=null&&list.get(i).getPaymentList().size()!=0){
+                                           /* if(list.get(i).getPaymentList()!=null&&list.get(i).getPaymentList().size()!=0){
 
                                                 for(int j=0;j<list.get(i).getPaymentList().size();j++){
 
@@ -454,51 +455,54 @@ public class TillDateBookings extends AppCompatActivity {
                                                 payment = new SimpleDateFormat("MM/dd/yyyy").parse("01/01/1970");
                                                 froms = new SimpleDateFormat("MM/dd/yyyy").parse(from);
                                                 too = new SimpleDateFormat("MM/dd/yyyy").parse(to);
-                                            }
+                                            }*/
                                            /* if((froms.getTime() <= checkout.getTime() && too.getTime() >= checkout.getTime())||(froms.getTime() <= checkinDate.getTime() && too.getTime() >= checkinDate.getTime())||(froms.getTime() <= bookDate.getTime() && too.getTime() >= bookDate.getTime())||(froms.getTime() <= payment.getTime() && too.getTime() >= payment.getTime()))
                                             {
                                                 till.add(list.get(i));
                                             }*/
+                                                System.out.println("Booking id = "+list.get(i).getBookingId());
+                                                //  Toast.makeText(TillDateBookings.this, "Booking id = "+list.get(i).getBookingId(), Toast.LENGTH_SHORT).show();
 
-                                            if((froms.getTime() <= checkinDate.getTime() && too.getTime() >= checkinDate.getTime()))
-                                            {
-                                                till.add(list.get(i));
+                                                if((froms.getTime() <= checkinDate.getTime() && too.getTime() >= checkinDate.getTime()))
+                                                {
+                                                    till.add(list.get(i));
 
-                                                if(list.get(i).getBookingStatus().equalsIgnoreCase("Abandoned")){
+                                                    if(list.get(i).getBookingStatus().equalsIgnoreCase("Abandoned")){
 
-                                                    noShow.add(list.get(i));
+                                                        noShow.add(list.get(i));
 
-                                                }else  if(list.get(i).getBookingStatus().equalsIgnoreCase("Cancelled")){
+                                                    }else  if(list.get(i).getBookingStatus().equalsIgnoreCase("Cancelled")){
 
-                                                    cancel.add(list.get(i));
+                                                        cancel.add(list.get(i));
 
-                                                }else  if(list.get(i).getBookingStatus().equalsIgnoreCase("Quick")){
+                                                    }else  if(list.get(i).getBookingStatus().equalsIgnoreCase("Quick")){
 
-                                                    quick.add(list.get(i));
-                                                    confirmed.add(list.get(i));
+                                                        quick.add(list.get(i));
+                                                        confirmed.add(list.get(i));
 
-                                                }else  if(list.get(i).getBookingStatus().equalsIgnoreCase("Delay")){
+                                                    }else  if(list.get(i).getBookingStatus().equalsIgnoreCase("Delay")){
 
-                                                    delay.add(list.get(i));
-                                                    confirmed.add(list.get(i));
+                                                        delay.add(list.get(i));
+                                                        confirmed.add(list.get(i));
 
-                                                }else  if(list.get(i).getBookingStatus().equalsIgnoreCase("Completed")){
+                                                    }else  if(list.get(i).getBookingStatus().equalsIgnoreCase("Completed")){
 
-                                                    completed.add(list.get(i));
-                                                    confirmed.add(list.get(i));
+                                                        completed.add(list.get(i));
+                                                        confirmed.add(list.get(i));
 
-                                                }else  if(list.get(i).getBookingStatus().equalsIgnoreCase("Active")){
+                                                    }else  if(list.get(i).getBookingStatus().equalsIgnoreCase("Active")){
 
-                                                    active.add(list.get(i));
-                                                    confirmed.add(list.get(i));
+                                                        active.add(list.get(i));
+                                                        confirmed.add(list.get(i));
 
+                                                    }
                                                 }
+
+
+
+                                            } catch (ParseException e) {
+                                                e.printStackTrace();
                                             }
-
-
-
-                                        } catch (ParseException e) {
-                                            e.printStackTrace();
                                         }
 
                                     }

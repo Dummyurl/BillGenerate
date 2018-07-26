@@ -21,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class GetBookingByHotel extends AppCompatActivity {
     ArrayList<HotelDetails> chainsList;
     int hotelId;
     Bookings1 updateBooking;
-    String property;
+    String property,guest="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -343,10 +344,11 @@ public class GetBookingByHotel extends AppCompatActivity {
                     holder.mBookedTo.setText(bookings1.getCheckOutDate());
                     holder.mBookedStatus.setText(bookings1.getBookingStatus());
                     holder.mRoom.setText(bookings1.getRoomNo());
+
                     holder.mEdit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            getBookings(bookings1.getBookingId());
+                            getBookings(bookings1.getBookingId(),bookings1.getFirstName());
                         }
                     });
 
@@ -450,18 +452,40 @@ public class GetBookingByHotel extends AppCompatActivity {
                                 SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy");
                                 String cits = updateBooking.getCheckInDate() + " 00:00:00";
                                 String cots = updateBooking.getCheckOutDate() + " 00:00:00";
+                                String bookingDate = updateBooking.getBookingDate() + " 00:00:00";
 
                                 String cit = sdf.format(format.parse(cits));
                                 String cot = sdf.format(format.parse(cots));
+                                String bookDates = sdf.format(format.parse(bookingDate));
+
+                                DecimalFormat df = new DecimalFormat("#,###.##");
+                                double netAmt = updateBooking.getTotalAmount() - (updateBooking.getCommissionAmount()-updateBooking.getOTAServiceFees());
 
                                 FireBaseModel fm = new FireBaseModel();
                                 fm.setSenderId("415720091200");
                                 fm.setServerId("AIzaSyBFdghUu7AgQVnu27xkKKLHJ6oSz9AnQ8M");
                                 fm.setHotelId(updateBooking.getHotelId());
                                 fm.setTitle("Cancelled Booking");
-                                fm.setMessage("Sorry! "+property+" got one cancel booking for "+nights +" nights from "+cit+" to "+cot+"\nBooking Number:"+updateBooking.getBookingNumber());
+                                fm.setMessage("Sorry! "+property+" got one cancel booking for "+nights +" nights from "+cit+" to "+cot+"\nBooking ID:"+updateBooking.getBookingId());
                                 //registerTokenInDB(fm);
-                               sendNotification(fm);
+
+
+
+
+                                //registerTokenInDB(fm);
+                                fm.setTravellerName(guest);
+                                fm.setNoOfGuest("No of Guest: "+updateBooking.getNoOfAdults());
+                                fm.setCheckInDate(cit);
+                                fm.setCheckOutDate(cot);
+                                fm.setTotalAmount("Rs. "+updateBooking.getTotalAmount());
+                                fm.setCommissionAmount("Rs. "+updateBooking.getCommissionAmount());
+                                fm.setNetAmount("Rs. "+df.format(netAmt));
+                                SimpleDateFormat sdfs = new SimpleDateFormat("MMM dd yyyy, hh:mm a");
+                                SimpleDateFormat sdft = new SimpleDateFormat("hh:mm a");
+                                fm.setNotificationDate(sdfs.format(new Date()));
+                                fm.setNotificationTime(sdft.format(new Date()));
+                                fm.setBookingDateTime(bookingDate+","+updateBooking.getBookingTime());
+                                sendNotification(fm);
                             }
                             else
                             {
@@ -550,8 +574,9 @@ public class GetBookingByHotel extends AppCompatActivity {
         });
     }
 
-    public  void getBookings(final int bookingId)
+    public  void getBookings(final int bookingId,final String guests)
     {
+        guest = guests;
         LoginApi api = Util.getClient().create(LoginApi.class);
         String authenticationString = Util.getToken(GetBookingByHotel.this);
         Call<Bookings1> getBooking = api.getBookingById(authenticationString,bookingId);
