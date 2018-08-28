@@ -53,7 +53,7 @@ public class AllHotelNotification extends AppCompatActivity {
             mSend = (Button)findViewById(R.id.send_notify);
 
 
-           /* mProperty.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+           /* mProperty.setOnItemSealectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
